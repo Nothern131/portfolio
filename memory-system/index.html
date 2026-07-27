@@ -3,116 +3,137 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>冷热记忆提炼 · 记忆系统演示</title>
+<title>冷热记忆提炼 · 记忆漏斗</title>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{background:#0B0E14;color:#E8E6E3;font-family:"PingFang SC","Microsoft YaHei",sans-serif;height:100vh;overflow:hidden;user-select:none}
-.app{display:flex;height:100vh}
-.sidebar{width:260px;min-width:260px;background:#11151D;border-right:1px solid #1E2430;display:flex;flex-direction:column;overflow-y:auto}
-.sidebar-header{padding:16px;border-bottom:1px solid #1E2430}
-.sidebar-header h2{font-size:14px;color:#4ade80;font-weight:600}
-.sidebar-header .desc{font-size:10px;color:#6B7280;margin-top:4px}
-.npc-list{flex:1;overflow-y:auto;padding:8px}
-.npc-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;cursor:pointer;border:1px solid transparent;transition:all .2s;margin-bottom:4px;position:relative}
-.npc-item:hover{background:#1A1D27}
-.npc-item.active{border-color:#4ade80;background:rgba(74,222,128,.08)}
-.npc-item .avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
-.npc-item .info{flex:1;min-width:0}
-.npc-item .info .name{font-size:13px;font-weight:600}
-.npc-item .info .role{font-size:10px;color:#6B7280}
-.npc-item .mem-count{font-size:10px;color:#4ade80;flex-shrink:0}
-.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
-.main-header{padding:16px 20px;border-bottom:1px solid #1E2430;display:flex;align-items:center;gap:12px}
-.main-header h3{font-size:14px;color:#E8E6E3;font-weight:600}
-.main-header .tick{font-size:11px;color:#4ade80;font-family:monospace;margin-left:auto}
-.panels{flex:1;display:flex;overflow:hidden}
-/* 左：记忆漏斗可视化 */
-.funnel-panel{flex:1;display:flex;flex-direction:column;border-right:1px solid #1E2430;overflow-y:auto;padding:16px}
-.funnel-title{font-size:12px;color:#6B7280;margin-bottom:12px;font-weight:600}
-.funnel-layer{background:#11151D;border:1px solid #1E2430;border-radius:8px;padding:12px;margin-bottom:12px}
-.funnel-layer h4{font-size:11px;color:#4ade80;margin-bottom:8px;display:flex;align-items:center;gap:6px}
-.funnel-layer h4 .count{font-size:10px;color:#6B7280;margin-left:auto}
-.mem-item{font-size:11px;padding:4px 8px;margin:3px 0;border-radius:4px;background:rgba(74,222,128,.04);border:1px solid transparent;transition:all .3s}
-.mem-item.new{animation:slideIn .3s ease}
-.mem-item.positive{border-color:rgba(74,222,128,.2)}
-.mem-item.negative{border-color:rgba(248,113,113,.2)}
-.mem-item .tag{font-size:9px;padding:1px 5px;border-radius:3px;margin-right:4px}
-.mem-item .tag.positive{background:rgba(74,222,128,.15);color:#4ade80}
-.mem-item .tag.negative{background:rgba(248,113,113,.15);color:#f87171}
-.mem-item .tag.abstract{background:rgba(192,132,252,.15);color:#c084fc}
-.mem-item .age{font-size:9px;color:#6B7280;float:right}
-.mem-item .confidence{font-size:9px;color:#c084fc;float:right;margin-left:6px}
-@keyframes slideIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
-/* 右：事件注入+日志 */
-.right-panel{width:380px;min-width:380px;display:flex;flex-direction:column;overflow:hidden}
-.event-inject{background:#11151D;border-bottom:1px solid #1E2430;padding:16px}
-.event-inject label{font-size:11px;color:#6B7280;display:block;margin-bottom:8px}
-.event-presets{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
-.event-preset{padding:6px 12px;border-radius:6px;font-size:11px;cursor:pointer;border:1px solid #1E2430;background:#11151D;color:#E8E6E3;transition:all .2s}
-.event-preset:hover{border-color:#4ade80;background:rgba(74,222,128,.04)}
-.event-preset.active{border-color:#4ade80;background:rgba(74,222,128,.08);color:#4ade80}
-.inject-row{display:flex;gap:8px}
-.inject-row input{flex:1;background:#0B0E14;border:1px solid #1E2430;border-radius:6px;padding:8px 12px;font-size:12px;color:#E8E6E3;outline:none}
-.inject-row input:focus{border-color:#4ade80}
-.inject-row button{padding:8px 16px;background:#4ade80;color:#0B0E14;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s}
-.inject-row button:hover{opacity:.9}
-.log-panel{flex:1;overflow-y:auto;padding:16px;background:#0B0E14}
-.log-panel h4{font-size:11px;color:#6B7280;margin-bottom:8px}
-.log-entry{font-size:11px;padding:6px 8px;margin:4px 0;border-radius:4px;background:#11151D;border-left:2px solid transparent;animation:slideIn .3s ease}
-.log-entry.consolidate{border-left-color:#c084fc}
-.log-entry.prune{border-left-color:#f87171}
-.log-entry.recall{border-left-color:#60a5fa}
-.log-entry.drive{border-left-color:#ffa84d}
-.log-entry .log-tag{font-size:9px;padding:1px 5px;border-radius:3px;margin-right:4px}
-.log-entry .log-tag.consolidate{background:rgba(192,132,252,.15);color:#c084fc}
-.log-entry .log-tag.prune{background:rgba(248,113,113,.15);color:#f87171}
-.log-entry .log-tag.recall{background:rgba(96,165,250,.15);color:#60a5fa}
-.log-entry .log-tag.drive{background:rgba(255,168,77,.15);color:#ffa84d}
-/* 漏斗动画 */
-.funnel-arrow{text-align:center;color:#1E2430;font-size:18px;margin:-8px 0}
-.stats-bar{display:flex;gap:16px;padding:8px 16px;background:#11151D;border-bottom:1px solid #1E2430;font-size:11px}
-.stat{display:flex;align-items:center;gap:4px}
-.stat .label{color:#6B7280}
-.stat .value{color:#E8E6E3;font-family:monospace}
+body{background:#0B0E14;color:#E8E6E3;font-family:"PingFang SC","Microsoft YaHei",sans-serif;height:100vh;overflow:hidden}
+.app{display:flex;flex-direction:column;height:100vh}
+/* 顶部控制栏 */
+.top-bar{display:flex;align-items:center;gap:12px;padding:10px 20px;background:#11151D;border-bottom:1px solid #1E2430}
+.top-bar .logo{font-size:14px;color:#4ade80;font-weight:700}
+.top-bar .step-indicator{display:flex;gap:6px;margin-left:24px}
+.top-bar .step-dot{width:24px;height:24px;border-radius:50%;border:1px solid #1E2430;display:flex;align-items:center;justify-content:center;font-size:10px;transition:all .3s}
+.top-bar .step-dot.done{background:#4ade80;border-color:#4ade80;color:#0B0E14}
+.top-bar .step-dot.current{background:rgba(74,222,128,.2);border-color:#4ade80;color:#4ade80;animation:pulse 1.5s ease infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(74,222,128,.4)}50%{box-shadow:0 0 0 6px rgba(74,222,128,0)}}
+.top-bar .btn-group{margin-left:auto;display:flex;gap:8px}
+.top-bar button{padding:6px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;border:none;transition:all .2s}
+.btn-play{background:#4ade80;color:#0B0E14}
+.btn-play:hover{opacity:.85}
+.btn-reset{background:rgba(248,113,113,.15);color:#f87171;border:1px solid rgba(248,113,113,.3)!important}
+.btn-reset:hover{background:rgba(248,113,113,.25)}
+.btn-skip{background:rgba(96,165,250,.15);color:#60a5fa;border:1px solid rgba(96,165,250,.3)!important}
+.btn-skip:hover{background:rgba(96,165,250,.25)}
+/* 主体 */
+.main{flex:1;display:flex;overflow:hidden}
+/* 左：故事线 */
+.story-panel{width:300px;min-width:300px;background:#11151D;border-right:1px solid #1E2430;display:flex;flex-direction:column;overflow:hidden}
+.story-header{padding:14px 16px;border-bottom:1px solid #1E2430}
+.story-header h3{font-size:12px;color:#6B7280;font-weight:600}
+.story-list{flex:1;overflow-y:auto;padding:12px}
+.story-item{display:flex;gap:10px;padding:10px;margin-bottom:8px;border-radius:8px;background:#0B0E14;border:1px solid #1E2430;opacity:.4;transition:all .5s}
+.story-item.active{opacity:1;border-color:#4ade80;background:rgba(74,222,128,.04)}
+.story-item.done{opacity:.7;border-color:#1E2430}
+.story-item .step-num{font-size:18px;font-weight:700;flex-shrink:0;width:24px;text-align:center}
+.story-item .step-num.done{color:#4ade80}
+.story-item .step-content{flex:1}
+.story-item .step-title{font-size:12px;font-weight:600;margin-bottom:2px}
+.story-item .step-desc{font-size:10px;color:#6B7280;line-height:1.4}
+/* 中：漏斗可视化 */
+.funnel-panel{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 40px;position:relative;overflow:hidden}
+.funnel-panel .narration{position:absolute;top:16px;font-size:13px;color:#f0b958;text-align:center;transition:all .5s;max-width:500px}
+.funnel-svg{width:100%;max-width:480px}
+/* 右：NPC对比 + 内存仪表 */
+.right-panel{width:320px;min-width:320px;background:#11151D;border-left:1px solid #1E2430;display:flex;flex-direction:column;overflow:hidden}
+.npc-compare{padding:14px 16px;border-bottom:1px solid #1E2430}
+.npc-compare h3{font-size:12px;color:#6B7280;font-weight:600;margin-bottom:10px}
+.npc-row{display:flex;align-items:center;gap:8px;padding:6px 0;font-size:11px}
+.npc-row .avatar{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0}
+.npc-row .name{width:55px;flex-shrink:0}
+.npc-row .em-bar{flex:1;height:14px;border-radius:3px;background:#1E2430;position:relative;overflow:hidden}
+.npc-row .em-fill{height:100%;border-radius:3px;transition:width .5s}
+.npc-row .em-fill.pos{background:rgba(74,222,128,.5)}
+.npc-row .em-fill.neg{background:rgba(248,113,113,.5)}
+.npc-row .em-val{width:32px;text-align:right;font-family:monospace;flex-shrink:0}
+.mem-meter{padding:14px 16px;border-bottom:1px solid #1E2430}
+.mem-meter h3{font-size:12px;color:#6B7280;font-weight:600;margin-bottom:10px}
+.mem-bar-wrap{height:24px;background:#1E2430;border-radius:4px;overflow:hidden;position:relative}
+.mem-bar-fill{height:100%;border-radius:4px;transition:width .5s;display:flex;align-items:center;justify-content:flex-end;padding-right:8px;font-size:10px;font-weight:600}
+.mem-bar-fill.safe{background:rgba(74,222,128,.3);color:#4ade80}
+.mem-bar-fill.warn{background:rgba(240,185,88,.3);color:#f0b958}
+.mem-bar-fill.danger{background:rgba(248,113,113,.3);color:#f87171}
+.mem-cap{position:absolute;right:0;top:-18px;font-size:9px;color:#6B7280}
+.mem-stats{display:flex;gap:16px;margin-top:8px;font-size:10px;color:#6B7280}
+.mem-stats span{color:#E8E6E3;font-family:monospace}
+/* 抽象印象卡片 */
+.abstract-panel{flex:1;padding:14px 16px;overflow-y:auto}
+.abstract-panel h3{font-size:12px;color:#6B7280;font-weight:600;margin-bottom:10px}
+.abstract-card{background:#0B0E14;border:1px solid #1E2430;border-radius:8px;padding:10px 12px;margin-bottom:8px;transition:all .5s}
+.abstract-card.positive{border-color:rgba(74,222,128,.3)}
+.abstract-card.negative{border-color:rgba(248,113,113,.3)}
+.abstract-card .card-title{font-size:12px;font-weight:600;margin-bottom:4px}
+.abstract-card .card-conf{font-size:10px;color:#6B7280;margin-bottom:4px}
+.abstract-card .card-bar{height:4px;background:#1E2430;border-radius:2px;overflow:hidden;margin-top:4px}
+.abstract-card .card-fill{height:100%;border-radius:2px;transition:width .5s}
+.abstract-card .card-fill.pos{background:#4ade80}
+.abstract-card .card-fill.neg{background:#f87171}
+.empty-state{text-align:center;padding:30px 0;color:#3D4450;font-size:11px}
+/* 动画 */
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{animation:fadeIn .5s ease}
 </style>
 </head>
 <body>
 <div class="app">
-<div class="sidebar">
-  <div class="sidebar-header">
-    <h2>记忆漏斗 v2</h2>
-    <div class="desc">冷热记忆提炼 · 选择一个NPC</div>
+<div class="top-bar">
+  <div class="logo">记忆漏斗 v2</div>
+  <div class="step-indicator" id="stepDots">
+    <div class="step-dot" data-step="1">1</div>
+    <div class="step-dot" data-step="2">2</div>
+    <div class="step-dot" data-step="3">3</div>
+    <div class="step-dot" data-step="4">4</div>
+    <div class="step-dot" data-step="5">5</div>
+    <div class="step-dot" data-step="6">6</div>
   </div>
-  <div class="npc-list" id="npcList"></div>
+  <div class="btn-group">
+    <button class="btn-play" onclick="startDemo()" id="btnPlay">▶ 播放演示</button>
+    <button class="btn-skip" onclick="skipStep()">⏭ 跳过</button>
+    <button class="btn-reset" onclick="resetDemo()">↺ 重置</button>
+  </div>
 </div>
 <div class="main">
-  <div class="main-header">
-    <h3 id="panelTitle">选择一个NPC查看记忆系统</h3>
-    <div class="tick">Tick: <span id="tickCount">0</span></div>
+  <!-- 左：故事线 -->
+  <div class="story-panel">
+    <div class="story-header"><h3>演示流程</h3></div>
+    <div class="story-list" id="storyList"></div>
   </div>
-  <div class="stats-bar">
-    <div class="stat"><span class="label">原始记忆</span>: <span class="value" id="statRaw">0</span></div>
-    <div class="stat"><span class="label">抽象印象</span>: <span class="value" id="statAbstract">0</span></div>
-    <div class="stat"><span class="label">内存占用</span>: <span class="value" id="statMem">0 KB</span></div>
-    <div class="stat"><span class="label">记忆驱动</span>: <span class="value" id="statDriven">0</span></div>
+
+  <!-- 中：漏斗 -->
+  <div class="funnel-panel" id="funnelPanel">
+    <div class="narration" id="narration">点击 ▶ 播放演示 开始</div>
+    <svg class="funnel-svg" id="funnelSvg" viewBox="0 0 480 400"></svg>
   </div>
-  <div class="panels">
-    <div class="funnel-panel" id="funnelPanel">
-      <div class="funnel-title">记忆漏斗 — 原始事件 → 情感标签 → 抽象印象</div>
-      <div id="funnelContent"></div>
+
+  <!-- 右：NPC对比 + 内存 -->
+  <div class="right-panel">
+    <div class="npc-compare">
+      <h3>同一事件，五个NPC的情感差异</h3>
+      <div id="npcCompare"></div>
     </div>
-    <div class="right-panel">
-      <div class="event-inject">
-        <label>环境注入 — 事件会写入NPC记忆</label>
-        <div class="event-presets" id="eventPresets"></div>
-        <div class="inject-row">
-          <input type="text" id="customEvent" placeholder="自定义事件，如：阿福偷了云溪的钱袋" />
-          <button onclick="injectEvent()">注入</button>
-        </div>
+    <div class="mem-meter">
+      <h3>云溪的记忆占用</h3>
+      <div style="position:relative">
+        <div class="mem-cap">5KB上限</div>
+        <div class="mem-bar-wrap"><div class="mem-bar-fill safe" id="memBar" style="width:0%"></div></div>
       </div>
-      <div class="log-panel" id="logPanel">
-        <h4>系统日志</h4>
-        <div id="logContent"></div>
+      <div class="mem-stats">
+        原始<span id="memRaw">0</span>条 · 抽象<span id="memAbs">0</span>条 · <span id="memKB">0.0 KB</span>
+      </div>
+    </div>
+    <div class="abstract-panel">
+      <h3>云溪的抽象印象</h3>
+      <div id="abstractCards">
+        <div class="empty-state">尚未形成抽象印象<br>等待演示推进...</div>
       </div>
     </div>
   </div>
@@ -122,258 +143,369 @@ body{background:#0B0E14;color:#E8E6E3;font-family:"PingFang SC","Microsoft YaHei
 <script>
 // ═══════════════ NPC 数据 ═══════════════
 var NPCS=[
-  {id:'A',name:'云溪',role:'侠客',avatar:'⚔',color:'#60a5fa',personality:{正义:92,勇敢:85,沉默:75,贪婪:8,善良:78},memories:[],abstractMemory:[],mood:'neutral'},
-  {id:'B',name:'阿福',role:'村民',avatar:'🍞',color:'#f0b958',personality:{正义:45,勇敢:28,沉默:20,贪婪:68,善良:55},memories:[],abstractMemory:[],mood:'neutral'},
-  {id:'C',name:'小翠',role:'少女',avatar:'🌸',color:'#4ade80',personality:{正义:60,勇敢:35,沉默:45,贪婪:12,善良:88},memories:[],abstractMemory:[],mood:'neutral'},
-  {id:'D',name:'老村长',role:'村长',avatar:'🏮',color:'#ffa84d',personality:{正义:78,勇敢:55,沉默:50,贪婪:22,善良:72},memories:[],abstractMemory:[],mood:'neutral'},
-  {id:'E',name:'书生',role:'书生',avatar:'📜',color:'#c084fc',personality:{正义:55,勇敢:20,沉默:65,贪婪:15,善良:65},memories:[],abstractMemory:[],mood:'neutral'}
+  {id:'A',name:'云溪',role:'侠客',avatar:'⚔',color:'#60a5fa',personality:{正义:92,勇敢:85,沉默:75,贪婪:8,善良:78},memories:[],abstractMemory:[]},
+  {id:'B',name:'阿福',role:'村民',avatar:'🍞',color:'#f0b958',personality:{正义:45,勇敢:28,沉默:20,贪婪:68,善良:55},memories:[],abstractMemory:[]},
+  {id:'C',name:'小翠',role:'少女',avatar:'🌸',color:'#4ade80',personality:{正义:60,勇敢:35,沉默:45,贪婪:12,善良:88},memories:[],abstractMemory:[]},
+  {id:'D',name:'老村长',role:'村长',avatar:'🏮',color:'#ffa84d',personality:{正义:78,勇敢:55,沉默:50,贪婪:22,善良:72},memories:[],abstractMemory:[]},
+  {id:'E',name:'书生',role:'书生',avatar:'📜',color:'#c084fc',personality:{正义:55,勇敢:20,沉默:65,贪婪:15,善良:65},memories:[],abstractMemory:[]}
 ];
-var selectedNpc=null;
 var engineTick=0;
-var tickInterval=null;
+var demoRunning=false;
+var demoStep=0;
+var demoTimeout=null;
+var lastEvent=null;
 
-// 预设事件
-var presetEvents=[
-  {text:'阿福在井边帮老村长打水',pos:1,imp:30},
-  {text:'云溪在村口帮小翠赶走了野狗',pos:1,imp:55},
-  {text:'阿福偷了云溪的钱袋',pos:-1,imp:70},
-  {text:'书生在茶馆讲了个笑话，大家都很开心',pos:1,imp:25},
-  {text:'老村长帮阿福修好了铁匠铺的炉子',pos:1,imp:40},
-  {text:'云溪在祠堂前救了摔倒的小翠',pos:1,imp:60},
-  {text:'阿福说谎被老村长当众揭穿',pos:-1,imp:65},
-  {text:'书生在村口偷了老村长的酒',pos:-1,imp:55},
-  {text:'小翠帮书生找到了丢失的书',pos:1,imp:35},
-  {text:'云溪和阿福因为钱的事在井边大吵',pos:-1,imp:80},
-  {text:'老村长在祠堂开会，表扬了云溪',pos:1,imp:45},
-  {text:'阿福在茶馆对书生恶语相向',pos:-1,imp:50},
-  {text:'小翠在田埂上帮老村长收庄稼',pos:1,imp:30},
-  {text:'书生在河边帮云溪包扎伤口',pos:1,imp:50},
-  {text:'阿福在村外欺负小翠',pos:-1,imp:75}
+// 演示步骤定义
+var demoSteps=[
+  {id:1,title:'事件发生',desc:'阿福在村口偷了云溪的钱袋，被小翠看到',narration:'村子里发生了一件事：阿福偷了云溪的钱袋',event:{text:'阿福在村口偷了云溪的钱袋',pos:-1,imp:70}},
+  {id:2,title:'记忆写入',desc:'事件以不同情感值写入五个NPC的记忆',narration:'同一件事，五个NPC记住了不同的"情感版本"',event:null},
+  {id:3,title:'多次注入',desc:'再注入几个事件，积累记忆数据',narration:'继续发生更多事件，记忆开始堆积...',event:{text:'云溪在祠堂前救了摔倒的小翠',pos:1,imp:60}},
+  {id:4,title:'再注入',desc:'阿福说谎被老村长当众揭穿',narration:'事件越多，记忆越丰富，但也越混乱',event:{text:'阿福说谎被老村长当众揭穿',pos:-1,imp:65}},
+  {id:5,title:'记忆提炼',desc:'系统分析最近10条记忆，形成抽象印象',narration:'第15 Tick：记忆漏斗启动提炼！',event:null},
+  {id:6,title:'遗忘清理',desc:'旧记忆被稀疏化，抽象印象持续衰减',narration:'超过15条记忆触发遗忘：旧记忆每3条保留1条',event:null}
 ];
 
 // ═══════════════ 渲染 ═══════════════
-function renderNPCList(){
+function renderStory(){
   var html='';
-  NPCS.forEach(function(n){
-    var cls=n===selectedNpc?'active':'';
-    html+='<div class="npc-item '+cls+'" onclick="selectNPC(\''+n.id+'\')">';
-    html+='<div class="avatar" style="background:rgba('+hexToRgb(n.color)+',.15)">'+n.avatar+'</div>';
-    html+='<div class="info"><div class="name">'+n.name+'</div><div class="role">'+n.role+' · 原始'+n.memories.length+'条</div></div>';
-    html+='<div class="mem-count">'+n.memories.length+'条</div>';
+  demoSteps.forEach(function(s){
+    var cls='';
+    if(s.id<demoStep)cls='done';
+    else if(s.id===demoStep)cls='active';
+    html+='<div class="story-item '+cls+'">';
+    html+='<div class="step-num '+(s.id<=demoStep?'done':'')+'">'+(s.id<=demoStep?'✓':s.id)+'</div>';
+    html+='<div class="step-content"><div class="step-title">'+s.title+'</div><div class="step-desc">'+s.desc+'</div></div>';
     html+='</div>';
   });
-  document.getElementById('npcList').innerHTML=html;
+  document.getElementById('storyList').innerHTML=html;
+  // 滚动到当前步骤
+  setTimeout(function(){
+    var items=document.querySelectorAll('.story-item');
+    if(items[demoStep-1])items[demoStep-1].scrollIntoView({behavior:'smooth',block:'center'});
+  },100);
 }
 
-function renderEventPresets(){
-  var html='';
-  presetEvents.forEach(function(p,i){
-    html+='<div class="event-preset" onclick="quickInject('+i+')">'+p.text+'</div>';
+function updateStepDots(){
+  var dots=document.querySelectorAll('.step-dot');
+  dots.forEach(function(d){
+    var s=parseInt(d.dataset.step);
+    d.className='step-dot';
+    if(s<demoStep)d.classList.add('done');
+    else if(s===demoStep)d.classList.add('current');
   });
-  document.getElementById('eventPresets').innerHTML=html;
 }
 
-function hexToRgb(hex){var r=parseInt(hex.slice(1,3),16);var g=parseInt(hex.slice(3,5),16);var b=parseInt(hex.slice(5,7),16);return r+','+g+','+b;}
-
-function selectNPC(id){
-  var npc=NPCS.find(function(n){return n.id===id;});
-  if(!npc)return;
-  selectedNpc=npc;
-  renderNPCList();
-  renderFunnel();
-  document.getElementById('panelTitle').innerHTML=npc.name+' — 记忆系统';
-  updateStats();
-}
-
-function renderFunnel(){
-  if(!selectedNpc){document.getElementById('funnelContent').innerHTML='<div style="color:#6B7280;font-size:12px;text-align:center;padding:40px">选择一个NPC查看记忆漏斗</div>';return;}
-  var npc=selectedNpc;
+function renderNPCCompare(){
+  if(!lastEvent)return;
   var html='';
-
-  // 第1层：原始记忆
-  html+='<div class="funnel-layer"><h4>原始记忆 ('+npc.memories.length+'条) <span class="count">容量: 20条</span></h4>';
-  var shown=npc.memories.slice().reverse().slice(0,8);
-  shown.forEach(function(m){
-    var cls=m.em>0?'positive':'negative';
-    var tag=m.em>0?'<span class="tag positive">+</span>':'<span class="tag negative">-</span>';
-    var age=engineTick-m.t;
-    var ageStr=age===0?'刚刚':age+'tick前';
-    html+='<div class="mem-item '+cls+'">'+tag+m.text+'<span class="age">'+ageStr+'</span></div>';
+  NPCS.forEach(function(npc){
+    var em=calcEmotion(npc,lastEvent.pos);
+    var absEm=Math.abs(em);
+    var pct=Math.min(100,absEm*12.5);
+    var isPos=em>0;
+    html+='<div class="npc-row">';
+    html+='<div class="avatar" style="background:rgba('+hexToRgb(npc.color)+',.15)">'+npc.avatar+'</div>';
+    html+='<div class="name">'+npc.name+'</div>';
+    html+='<div class="em-bar"><div class="em-fill '+(isPos?'pos':'neg')+'" style="width:'+pct+'%"></div></div>';
+    html+='<div class="em-val" style="color:'+(isPos?'#4ade80':'#f87171')+'">'+(em>0?'+':'')+em.toFixed(1)+'</div>';
+    html+='</div>';
   });
-  if(npc.memories.length>8)html+='<div class="mem-item" style="color:#6B7280">...还有'+(npc.memories.length-8)+'条更早的记忆</div>';
-  html+='</div>';
+  document.getElementById('npcCompare').innerHTML=html;
+}
 
-  // 漏斗箭头
-  html+='<div class="funnel-arrow">▼ 每15tick提炼一次 ▼</div>';
+function renderAbstractCards(){
+  var npc=NPCS[0]; // 云溪
+  if(!npc.abstractMemory||npc.abstractMemory.length===0){
+    document.getElementById('abstractCards').innerHTML='<div class="empty-state">尚未形成抽象印象<br>注入更多事件后触发提炼</div>';
+    return;
+  }
+  var html='';
+  npc.abstractMemory.forEach(function(a){
+    var cls=a.valence==='positive'?'positive':'negative';
+    var icon=a.valence==='positive'?'✓':'⚠';
+    html+='<div class="abstract-card '+cls+' fade-in">';
+    html+='<div class="card-title">'+icon+' '+a.text+'</div>';
+    html+='<div class="card-conf">置信度 '+a.confidence+'%</div>';
+    html+='<div class="card-bar"><div class="card-fill '+(a.valence==='positive'?'pos':'neg')+'" style="width:'+a.confidence+'%"></div></div>';
+    html+='</div>';
+  });
+  document.getElementById('abstractCards').innerHTML=html;
+}
+
+function updateMemMeter(){
+  var npc=NPCS[0];
+  var memBytes=npc.memories.length*200+npc.abstractMemory.length*100;
+  var pct=Math.min(100,memBytes/5120*100);
+  var bar=document.getElementById('memBar');
+  bar.style.width=pct+'%';
+  bar.className='mem-bar-fill '+(pct<60?'safe':pct<85?'warn':'danger');
+  bar.textContent=pct>15?(memBytes/1024).toFixed(1)+' KB':'';
+  document.getElementById('memRaw').textContent=npc.memories.length;
+  document.getElementById('memAbs').textContent=npc.abstractMemory.length;
+  document.getElementById('memKB').textContent=(memBytes/1024).toFixed(1)+' KB';
+}
+
+function drawFunnel(){
+  var svg=document.getElementById('funnelSvg');
+  var npc=NPCS[0];
+  var memCount=npc.memories.length;
+  var absCount=npc.abstractMemory.length;
+
+  var html='';
+  // 背景
+  html+='<rect width="480" height="400" fill="none"/>';
+
+  // 第1层：原始记忆（宽口）
+  var w1=380, h1=80, x1=50, y1=30;
+  html+='<rect x="'+x1+'" y="'+y1+'" width="'+w1+'" height="'+h1+'" rx="8" fill="none" stroke="#1E2430" stroke-width="1"/>';
+  html+='<text x="'+x1+'" y="'+y1+'" dy="-6" fill="#6B7280" font-size="10" font-family="sans-serif">原始记忆</text>';
+  html+='<text x="'+(x1+w1)+'" y="'+y1+'" dy="-6" fill="#4ade80" font-size="10" font-family="sans-serif" text-anchor="end">'+memCount+'条</text>';
+
+  // 记忆条目
+  var shown=npc.memories.slice().reverse().slice(0,6);
+  var itemH=10, gap=2, startY=y1+12;
+  shown.forEach(function(m,i){
+    var y=startY+i*(itemH+gap);
+    var isPos=m.em>0;
+    var emAbs=Math.min(1,Math.abs(m.em)/8);
+    var fillW=w1-16;
+    html+='<rect x="'+(x1+8)+'" y="'+y+'" width="'+(fillW*emAbs)+'" height="'+itemH+'" rx="2" fill="'+(isPos?'rgba(74,222,128,.15)':'rgba(248,113,113,.15)')+'"/>';
+    html+='<text x="'+(x1+12)+'" y="'+y+'" dy="'+itemH+'" fill="'+(isPos?'#4ade80':'#f87171')+'" font-size="8" font-family="sans-serif">'+(m.text.length>18?m.text.slice(0,16)+'…':m.text)+'</text>';
+  });
+  if(memCount>6)html+='<text x="'+(x1+w1/2)+'" y="'+(startY+6*(itemH+gap)+12)+'" fill="#6B7280" font-size="9" font-family="sans-serif" text-anchor="middle">…还有'+(memCount-6)+'条</text>';
+
+  // 漏斗壁
+  var w2=280, h2=70, x2=100, y2=130;
+  html+='<polygon points="'+(x1+20)+','+(y1+h1)+' '+(x1+w1-20)+','+(y1+h1)+' '+x2+','+y2+' '+(x2+w2)+','+y2+'" fill="none" stroke="#1E2430" stroke-width="1"/>';
+  html+='<text x="240" y="'+(y1+h1+20)+'" fill="#3D4450" font-size="9" font-family="sans-serif" text-anchor="middle">▼ 每15tick提炼 ▼</text>';
 
   // 第2层：抽象印象
-  html+='<div class="funnel-layer"><h4>抽象印象 ('+npc.abstractMemory.length+'条) <span class="count">置信度衰减中</span></h4>';
-  if(npc.abstractMemory.length===0){
-    html+='<div class="mem-item" style="color:#6B7280">尚未形成抽象印象</div>';
-  }else{
-    npc.abstractMemory.forEach(function(a){
-      var cls=a.valence==='positive'?'positive':a.valence==='negative'?'negative':'';
-      var tag=a.valence==='positive'?'<span class="tag positive">信任</span>':a.valence==='negative'?'<span class="tag negative">警惕</span>':'<span class="tag abstract">混合</span>';
-      var age=engineTick-a.tick;
-      var ageStr=age===0?'刚刚':age+'tick前';
-      html+='<div class="mem-item '+cls+'">'+tag+a.text+'<span class="confidence">置信度:'+a.confidence+'%</span><span class="age">'+ageStr+'</span></div>';
-    });
-    html+='</div>';
-  }
-  html+='</div>';
+  html+='<rect x="'+x2+'" y="'+y2+'" width="'+w2+'" height="'+h2+'" rx="8" fill="none" stroke="#1E2430" stroke-width="1"/>';
+  html+='<text x="'+x2+'" y="'+y2+'" dy="-6" fill="#6B7280" font-size="10" font-family="sans-serif">抽象印象</text>';
+  html+='<text x="'+(x2+w2)+'" y="'+y2+'" dy="-6" fill="#c084fc" font-size="10" font-family="sans-serif" text-anchor="end">'+absCount+'条</text>';
 
-  // 漏斗箭头
-  html+='<div class="funnel-arrow">▼ 记忆驱动行为 ▼</div>';
+  if(absCount>0){
+    var absShown=npc.abstractMemory.slice(0,3);
+    absShown.forEach(function(a,i){
+      var y=y2+12+i*16;
+      var isPos=a.valence==='positive';
+      html+='<rect x="'+(x2+8)+'" y="'+y+'" width="'+(w2-16)*a.confidence/100+'" height="12" rx="3" fill="'+(isPos?'rgba(74,222,128,.2)':'rgba(248,113,113,.2)')+'"/>';
+      html+='<text x="'+(x2+12)+'" y="'+y+'" dy="11" fill="'+(isPos?'#4ade80':'#f87171')+'" font-size="9" font-family="sans-serif">'+a.text+' · '+a.confidence+'%</text>';
+    });
+  }else{
+    html+='<text x="'+(x2+10)+'" y="'+(y2+30)+'" fill="#3D4450" font-size="10" font-family="sans-serif">等待提炼…</text>';
+  }
+
+  // 漏斗壁2
+  var w3=180, h3=60, x3=150, y3=220;
+  html+='<polygon points="'+(x2+20)+','+(y2+h2)+' '+(x2+w2-20)+','+(y2+h2)+' '+x3+','+y3+' '+(x3+w3)+','+y3+'" fill="none" stroke="#1E2430" stroke-width="1"/>';
+  html+='<text x="240" y="'+(y2+h2+20)+'" fill="#3D4450" font-size="9" font-family="sans-serif" text-anchor="middle">▼ 记忆驱动行为 ▼</text>';
 
   // 第3层：记忆驱动
-  html+='<div class="funnel-layer"><h4>记忆驱动目标</h4>';
+  html+='<rect x="'+x3+'" y="'+y3+'" width="'+w3+'" height="'+h3+'" rx="8" fill="none" stroke="#1E2430" stroke-width="1"/>';
+  html+='<text x="'+x3+'" y="'+y3+'" dy="-6" fill="#6B7280" font-size="10" font-family="sans-serif">记忆驱动</text>';
+
   var hasDrive=false;
   if(npc.memories.length>0){
     var recent=npc.memories.filter(function(m){return m.imp>40&&(engineTick-m.t)<=10;});
     if(recent.length>0){
       hasDrive=true;
-      recent.forEach(function(m){
-        html+='<div class="mem-item" style="border-left:2px solid #ffa84d">'+npc.name+'还在想着「'+m.text+'」</div>';
-      });
+      html+='<text x="'+(x3+10)+'" y="'+(y3+20)+'" fill="#ffa84d" font-size="9" font-family="sans-serif">'+npc.name+'还在想着…</text>';
+      html+='<text x="'+(x3+10)+'" y="'+(y3+36)+'" fill="#6B7280" font-size="8" font-family="sans-serif">'+recent[0].text.slice(0,18)+'…</text>';
     }
   }
-  if(!hasDrive)html+='<div class="mem-item" style="color:#6B7280">暂无记忆驱动目标</div>';
-  html+='</div>';
+  if(!hasDrive){
+    html+='<text x="'+(x3+10)+'" y="'+(y3+30)+'" fill="#3D4450" font-size="10" font-family="sans-serif">暂无驱动</text>';
+  }
 
-  document.getElementById('funnelContent').innerHTML=html;
+  svg.innerHTML=html;
 }
 
-function addLog(type,tag,text){
-  var container=document.getElementById('logContent');
-  var div=document.createElement('div');
-  div.className='log-entry '+type;
-  div.innerHTML='<span class="log-tag '+type+'">'+tag+'</span>'+text;
-  container.insertBefore(div,container.firstChild);
-  if(container.children.length>50)container.removeChild(container.lastChild);
+function hexToRgb(hex){var r=parseInt(hex.slice(1,3),16);var g=parseInt(hex.slice(3,5),16);var b=parseInt(hex.slice(5,7),16);return r+','+g+','+b;}
+
+function calcEmotion(npc,pos){
+  var em=pos*(npc.personality.善良/100)*5;
+  if(lastEvent&&npc.name.indexOf(lastEvent.text.split(/在|帮|偷|打|说|骂|救|吵|欺负|表扬/)[0])>=0){
+    em=pos*8;
+  }
+  return em;
 }
 
-function updateStats(){
-  if(!selectedNpc)return;
-  var npc=selectedNpc;
-  document.getElementById('statRaw').textContent=npc.memories.length;
-  document.getElementById('statAbstract').textContent=npc.abstractMemory.length;
-  // 估算内存：每条记忆约200字节，抽象印象约100字节
-  var memBytes=npc.memories.length*200+npc.abstractMemory.length*100;
-  document.getElementById('statMem').textContent=(memBytes/1024).toFixed(1)+' KB';
-  document.getElementById('tickCount').textContent=engineTick;
+function injectEventCore(text,pos,imp){
+  lastEvent={text:text,pos:pos,imp:imp};
+  engineTick++;
+  NPCS.forEach(function(npc){
+    var em=calcEmotion(npc,pos);
+    var mem={text:text,imp:imp,em:em,t:engineTick,tag:imp>50?'事件':'daily'};
+    npc.memories.unshift(mem);
+    if(npc.memories.length>20)npc.memories.length=20;
+  });
+  renderNPCCompare();
+  drawFunnel();
+  updateMemMeter();
 }
 
-// ═══════════════ 核心：记忆提炼与遗忘 ═══════════════
 function consolidateMemories(npc){
   if(!npc.memories||npc.memories.length<3)return;
-  if(engineTick%15!==0)return;
   if(!npc.abstractMemory)npc.abstractMemory=[];
-
   var recent=npc.memories.slice(0,10);
-  var posCount=0,negCount=0,posEm=0,negEm=0;
+  var posCount=0,negCount=0;
   var subjects={};
-
   recent.forEach(function(m){
-    if(m.em>0){posCount++;posEm+=m.em;}
-    else{negCount++;negEm+=Math.abs(m.em);}
+    if(m.em>0)posCount++;else negCount++;
     var subMatch=m.text.match(/(.{2,6})(?:在|来|给|帮|打|偷|抢|说|骂|给|送|拿|做|干|找|丢)/);
     if(subMatch){var sub=subMatch[1];if(!subjects[sub])subjects[sub]={pos:0,neg:0,count:0};subjects[sub].count++;if(m.em>0)subjects[sub].pos++;else subjects[sub].neg++;}
   });
-
   var conclusions=[];
-  if(posCount>negCount*2&&posCount>=3){
-    conclusions.push({text:'最近运气不错，遇到不少好事',confidence:Math.min(90,posCount*15)});
-  }else if(negCount>posCount*2&&negCount>=3){
-    conclusions.push({text:'最近不太顺，心情有些低落',confidence:Math.min(90,negCount*15)});
-  }
+  if(posCount>negCount*2&&posCount>=3)conclusions.push({text:'最近运气不错，遇到不少好事',confidence:Math.min(90,posCount*15)});
+  else if(negCount>posCount*2&&negCount>=3)conclusions.push({text:'最近不太顺，心情有些低落',confidence:Math.min(90,negCount*15)});
   for(var sub in subjects){
     var s=subjects[sub];
     if(s.count>=3){
-      if(s.pos>s.neg*2){
-        conclusions.push({text:sub+'是个好人，可以信任',confidence:Math.min(85,s.pos*20),subject:sub,valence:'positive'});
-      }else if(s.neg>s.pos*2){
-        conclusions.push({text:sub+'不太靠谱，得防着点',confidence:Math.min(85,s.neg*20),subject:sub,valence:'negative'});
-      }
+      if(s.pos>s.neg*2)conclusions.push({text:sub+'是个好人，可以信任',confidence:Math.min(85,s.pos*20),subject:sub,valence:'positive'});
+      else if(s.neg>s.pos*2)conclusions.push({text:sub+'不太靠谱，得防着点',confidence:Math.min(85,s.neg*20),subject:sub,valence:'negative'});
     }
   }
-
   conclusions.forEach(function(c){
     var existing=npc.abstractMemory.filter(function(a){return a.text===c.text;});
     if(existing.length>0){existing[0].confidence=Math.min(100,existing[0].confidence+5);existing[0].tick=engineTick;}
     else{npc.abstractMemory.push({text:c.text,confidence:c.confidence,subject:c.subject,valence:c.valence,tick:engineTick});}
   });
-
-  // 抽象记忆衰减
   npc.abstractMemory.forEach(function(a){if(engineTick-a.tick>30)a.confidence=Math.max(0,a.confidence-3);});
   npc.abstractMemory=npc.abstractMemory.filter(function(a){return a.confidence>15;});
   if(npc.abstractMemory.length>10)npc.abstractMemory=npc.abstractMemory.slice(-10);
-
-  // 清理原始记忆
   if(npc.memories.length>15){
     var keep=npc.memories.slice(0,8);
     npc.memories=keep.concat(npc.memories.slice(8).filter(function(m,i){return i%3===0;}));
-    addLog('prune','🔪 遗忘','清理旧记忆：保留最近8条，旧的每3条保留1条（剩余'+npc.memories.length+'条）');
-  }
-
-  if(conclusions.length>0){
-    addLog('consolidate','🧠 提炼','形成'+conclusions.length+'条抽象印象：'+conclusions.map(function(c){return c.text;}).join('；'));
   }
 }
 
-function injectEvent(){
-  var input=document.getElementById('customEvent');
-  var text=input.value.trim();
-  if(!text)return;
-  input.value='';
-  injectEventCore(text,0,35);
-}
-
-function quickInject(idx){
-  var p=presetEvents[idx];
-  injectEventCore(p.text,p.pos,p.imp);
-}
-
-function injectEventCore(text,pos,imp){
-  // 写入所有NPC的记忆（不同NPC不同情绪反应）
-  NPCS.forEach(function(npc){
-    var em=pos*(npc.personality.善良/100)*5;
-    if(npc.name.indexOf(text.split(/在|帮|偷|打|说|骂|救|吵|欺负|表扬/)[0])>=0){
-      em=pos*8; // 事件主角情绪更强
-    }
-    var mem={text:text,imp:imp,em:em,t:engineTick,tag:imp>50?'事件':'daily'};
-    npc.memories.unshift(mem);
-    if(npc.memories.length>20)npc.memories.length=20;
-  });
-
-  addLog('recall','📝 写入','事件「'+text+'」已写入5个NPC记忆');
-  if(selectedNpc)renderFunnel();
-  renderNPCList();
-  updateStats();
-}
-
-// ═══════════════ 引擎Tick ═══════════════
-function engineTickFn(){
-  engineTick++;
-  // 记忆提炼
+function doConsolidate(){
+  engineTick=15; // 跳到提炼tick
   NPCS.forEach(function(npc){consolidateMemories(npc);});
-  if(selectedNpc)renderFunnel();
-  renderNPCList();
-  updateStats();
+  drawFunnel();
+  updateMemMeter();
+  renderAbstractCards();
+}
+
+function doForget(){
+  engineTick=16;
+  // 注入足够多的事件触发遗忘
+  var extraEvents=[
+    {text:'老村长在祠堂开会，表扬了云溪',pos:1,imp:45},
+    {text:'阿福在茶馆对书生恶语相向',pos:-1,imp:50},
+    {text:'书生在河边帮云溪包扎伤口',pos:1,imp:50},
+    {text:'小翠在田埂上帮老村长收庄稼',pos:1,imp:30},
+    {text:'云溪和阿福因为钱的事在井边大吵',pos:-1,imp:80},
+    {text:'书生在村口偷了老村长的酒',pos:-1,imp:55},
+    {text:'阿福在村外欺负小翠',pos:-1,imp:75},
+    {text:'老村长帮阿福修好了铁匠铺的炉子',pos:1,imp:40}
+  ];
+  extraEvents.forEach(function(ev){
+    engineTick++;
+    NPCS.forEach(function(npc){
+      var em=ev.pos*(npc.personality.善良/100)*5;
+      if(npc.name.indexOf(ev.text.split(/在|帮|偷|打|说|骂|救|吵|欺负|表扬/)[0])>=0)em=ev.pos*8;
+      npc.memories.unshift({text:ev.text,imp:ev.imp,em:em,t:engineTick});
+      if(npc.memories.length>20)npc.memories.length=20;
+    });
+  });
+  // 触发遗忘
+  NPCS.forEach(function(npc){
+    if(npc.memories.length>15){
+      var keep=npc.memories.slice(0,8);
+      npc.memories=keep.concat(npc.memories.slice(8).filter(function(m,i){return i%3===0;}));
+    }
+  });
+  drawFunnel();
+  updateMemMeter();
+}
+
+// ═══════════════ 演示控制 ═══════════════
+function startDemo(){
+  if(demoRunning)return;
+  demoRunning=true;
+  demoStep=1;
+  document.getElementById('btnPlay').textContent='⏸ 播放中';
+  document.getElementById('btnPlay').style.opacity='.5';
+  document.getElementById('btnPlay').onclick=null;
+  updateStepDots();
+  renderStory();
+  runDemoStep();
+}
+
+function runDemoStep(){
+  if(demoStep>6){endDemo();return;}
+  updateStepDots();
+  renderStory();
+
+  var step=demoSteps[demoStep-1];
+  document.getElementById('narration').textContent=step.narration;
+  document.getElementById('narration').classList.add('fade-in');
+  setTimeout(function(){document.getElementById('narration').classList.remove('fade-in');},600);
+
+  if(step.event){
+    injectEventCore(step.event.text,step.event.pos,step.event.imp);
+  }
+
+  if(demoStep===5){
+    // 提炼步骤
+    doConsolidate();
+  }
+
+  if(demoStep===6){
+    doForget();
+  }
+
+  demoTimeout=setTimeout(function(){
+    demoStep++;
+    runDemoStep();
+  },3000);
+}
+
+function skipStep(){
+  if(!demoRunning)return;
+  clearTimeout(demoTimeout);
+  demoStep++;
+  runDemoStep();
+}
+
+function endDemo(){
+  demoRunning=false;
+  document.getElementById('narration').textContent='演示完成！点击重置可重新播放';
+  document.getElementById('btnPlay').textContent='▶ 播放演示';
+  document.getElementById('btnPlay').style.opacity='1';
+  document.getElementById('btnPlay').onclick=startDemo;
+  updateStepDots();
+}
+
+function resetDemo(){
+  clearTimeout(demoTimeout);
+  demoRunning=false;
+  demoStep=0;
+  engineTick=0;
+  lastEvent=null;
+  NPCS.forEach(function(n){n.memories=[];n.abstractMemory=[];});
+  document.getElementById('narration').textContent='点击 ▶ 播放演示 开始';
+  document.getElementById('btnPlay').textContent='▶ 播放演示';
+  document.getElementById('btnPlay').style.opacity='1';
+  document.getElementById('btnPlay').onclick=startDemo;
+  updateStepDots();
+  renderStory();
+  renderNPCCompare();
+  document.getElementById('npcCompare').innerHTML='<div class="empty-state" style="padding:20px;font-size:10px">等待事件注入...</div>';
+  document.getElementById('abstractCards').innerHTML='<div class="empty-state">尚未形成抽象印象<br>等待演示推进...</div>';
+  drawFunnel();
+  updateMemMeter();
 }
 
 // ═══════════════ 初始化 ═══════════════
 function init(){
-  renderNPCList();
-  renderEventPresets();
-  selectNPC('A');
-  // 预注入一些种子记忆
-  setTimeout(function(){injectEventCore('云溪在村口帮小翠赶走了野狗',1,55);},500);
-  setTimeout(function(){injectEventCore('阿福偷了云溪的钱袋',-1,70);},1500);
-  setTimeout(function(){injectEventCore('老村长帮阿福修好了铁匠铺的炉子',1,40);},2500);
-  setTimeout(function(){injectEventCore('云溪在祠堂前救了摔倒的小翠',1,60);},3500);
-  setTimeout(function(){injectEventCore('阿福说谎被老村长当众揭穿',-1,65);},4500);
-  tickInterval=setInterval(engineTickFn,8000);
-  addLog('recall','🚀 启动','记忆引擎启动，每8秒推进1 Tick，第15 Tick触发第一次提炼');
+  renderStory();
+  updateStepDots();
+  drawFunnel();
+  updateMemMeter();
+  document.getElementById('npcCompare').innerHTML='<div class="empty-state" style="padding:20px;font-size:10px">等待事件注入...</div>';
 }
 init();
 </script>
