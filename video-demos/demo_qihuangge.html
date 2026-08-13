@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>岐黄阁 · 方剂解析</title>
+<style>
+:root{
+  --paper:#f5f0e8; --paper-dark:#e8e0d0; --ink:#2c2c2c; --ink-light:#5a5a5a; --ink-muted:#8a8a7a;
+  --cinnabar:#c23b22; --cinnabar-light:#d45a42; --gold:#b8945c; --gold-light:#d4bb7c;
+  --herb:#5a7a4a; --herb-light:#7a9a6a;
+  --border:rgba(44,44,44,.08); --border-gold:rgba(184,148,92,.25);
+  --shadow:0 2px 12px rgba(44,44,44,.06); --shadow-lg:0 8px 32px rgba(44,44,44,.1);
+  --font-display:'Noto Serif SC','STSong','SimSun',serif;
+  --font-body:'PingFang SC','Noto Sans SC','Microsoft YaHei',sans-serif;
+  --radius:8px;
+  --ease:cubic-bezier(.4,0,.2,1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;background:var(--paper)}
+body{font-family:var(--font-body);color:var(--ink);-webkit-font-smoothing:antialiased;
+  background-image:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none'%3E%3Cg fill='%23d4c8b0' fill-opacity='.12'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")}
+
+/* 布局 */
+.layout{display:flex;flex-direction:column;height:100vh}
+
+/* 头部 */
+.header{display:flex;align-items:center;justify-content:space-between;padding:14px 32px;background:var(--ink);color:var(--paper);border-bottom:3px solid var(--gold);flex-shrink:0}
+.header .logo{display:flex;align-items:center;gap:12px}
+.header .logo-icon{font-size:28px}
+.header .logo h1{font-family:var(--font-display);font-size:22px;font-weight:600;letter-spacing:.08em}
+.header .logo .sub{font-size:10px;color:var(--gold-light);letter-spacing:.06em;margin-top:2px}
+.nav{display:flex;gap:4px}
+.nav-item{padding:6px 14px;border-radius:6px;font-size:12px;color:rgba(255,255,255,.5);text-decoration:none;transition:all .2s var(--ease)}
+.nav-item:hover{color:rgba(255,255,255,.8);background:rgba(255,255,255,.06)}
+.nav-item.active{color:var(--gold);background:rgba(184,148,92,.1)}
+
+/* 主内容 */
+.main{flex:1;overflow-y:auto;padding:28px 40px;max-width:960px;margin:0 auto;width:100%}
+
+/* 搜索区 */
+.search-area{display:flex;gap:10px;margin-bottom:24px}
+.search-input{flex:1;padding:10px 16px;border:1px solid var(--border);border-radius:var(--radius);font-size:14px;font-family:var(--font-body);background:white;outline:none;transition:border .2s;color:var(--ink)}
+.search-input:focus{border-color:var(--gold)}
+.search-btn{padding:10px 24px;background:var(--cinnabar);color:white;border:none;border-radius:var(--radius);font-size:13px;font-family:var(--font-body);cursor:pointer;transition:background .2s}
+.search-btn:hover{background:var(--cinnabar-light)}
+
+/* 方剂结果卡片 */
+.formula-card{background:white;border:1px solid var(--border);border-radius:var(--radius);padding:24px;box-shadow:var(--shadow);margin-bottom:16px}
+.formula-header{display:flex;align-items:baseline;gap:12px;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--border)}
+.formula-name{font-family:var(--font-display);font-size:24px;font-weight:700;color:var(--ink)}
+.formula-source{font-size:12px;color:var(--ink-muted)}
+.formula-category{font-size:10px;padding:3px 10px;border-radius:10px;background:rgba(194,59,34,.06);color:var(--cinnabar);margin-left:auto}
+
+/* 方剂组成 */
+.composition{margin-bottom:16px}
+.comp-title{font-size:12px;font-weight:600;color:var(--ink-light);margin-bottom:10px;letter-spacing:.04em}
+.comp-grid{display:flex;flex-wrap:wrap;gap:8px}
+.comp-item{display:flex;align-items:center;gap:6px;padding:8px 14px;background:var(--paper);border-radius:6px;border:1px solid var(--border);font-size:12px}
+.comp-role{font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;color:white}
+.comp-role.jun{background:var(--cinnabar)}
+.comp-role.chen{background:var(--gold)}
+.comp-role.zuo{background:var(--herb)}
+.comp-role.shi{background:var(--ink-light)}
+.comp-name{font-weight:600;color:var(--ink)}
+.comp-dose{color:var(--ink-muted);font-family:monospace;font-size:11px}
+
+/* 功效分析 */
+.analysis-cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
+.analysis-card{background:var(--paper);border:1px solid var(--border);border-radius:var(--radius);padding:16px}
+.analysis-title{font-family:var(--font-display);font-size:13px;font-weight:600;color:var(--ink);margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border);letter-spacing:.04em}
+.analysis-text{font-size:12px;line-height:1.8;color:var(--ink-light)}
+
+/* 古籍条文 */
+.ancient-block{background:var(--paper-dark);border-left:3px solid var(--cinnabar);border-radius:0 var(--radius) var(--radius) 0;padding:14px 18px;margin-bottom:12px}
+.ancient-source{font-size:10px;color:var(--cinnabar);font-weight:600;margin-bottom:6px;letter-spacing:.04em}
+.ancient-body{font-family:var(--font-display);font-size:13px;line-height:1.9;color:var(--ink)}
+
+/* 配伍提示 */
+.warning{display:flex;align-items:center;gap:8px;padding:10px 14px;background:rgba(194,59,34,.04);border:1px solid rgba(194,59,34,.15);border-radius:var(--radius);font-size:11px;color:var(--cinnabar);margin-bottom:16px}
+.warning-icon{font-size:16px;flex-shrink:0}
+
+/* 底部 */
+.footer{text-align:center;padding:12px;border-top:1px solid var(--border);font-size:10px;color:var(--ink-muted);flex-shrink:0}
+</style>
+</head>
+<body>
+
+<div class="layout">
+  <!-- 头部 -->
+  <div class="header">
+    <div class="logo">
+      <span class="logo-icon">☯</span>
+      <div>
+        <h1>岐 黄 阁</h1>
+        <div class="sub">中医药古籍知识推理系统</div>
+      </div>
+    </div>
+    <div class="nav">
+      <a class="nav-item" href="#">首页</a>
+      <a class="nav-item active" href="#">方剂解析</a>
+      <a class="nav-item" href="#">本草查询</a>
+      <a class="nav-item" href="#">辨证体质</a>
+      <a class="nav-item" href="#">药膳食谱</a>
+      <a class="nav-item" href="#">配伍检查</a>
+    </div>
+  </div>
+
+  <!-- 主内容 -->
+  <div class="main">
+    <!-- 搜索 -->
+    <div class="search-area">
+      <input class="search-input" type="text" placeholder="输入方剂名称，如：麻黄汤、桂枝汤、小柴胡汤..." value="麻黄汤">
+      <button class="search-btn">解析</button>
+    </div>
+
+    <!-- 方剂结果 -->
+    <div class="formula-card">
+      <div class="formula-header">
+        <span class="formula-name">麻黄汤</span>
+        <span class="formula-source">《伤寒论》· 太阳病篇</span>
+        <span class="formula-category">解表剂 · 辛温解表</span>
+      </div>
+
+      <div class="composition">
+        <div class="comp-title">方剂组成</div>
+        <div class="comp-grid">
+          <div class="comp-item">
+            <span class="comp-role jun">君</span>
+            <span class="comp-name">麻黄</span>
+            <span class="comp-dose">9g</span>
+          </div>
+          <div class="comp-item">
+            <span class="comp-role chen">臣</span>
+            <span class="comp-name">桂枝</span>
+            <span class="comp-dose">6g</span>
+          </div>
+          <div class="comp-item">
+            <span class="comp-role zuo">佐</span>
+            <span class="comp-name">杏仁</span>
+            <span class="comp-dose">6g</span>
+          </div>
+          <div class="comp-item">
+            <span class="comp-role shi">使</span>
+            <span class="comp-name">甘草</span>
+            <span class="comp-dose">3g</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="analysis-cards">
+        <div class="analysis-card">
+          <div class="analysis-title">功效主治</div>
+          <div class="analysis-text">
+            <strong>功效：</strong>发汗解表，宣肺平喘<br><br>
+            <strong>主治：</strong>外感风寒表实证。恶寒发热，头身疼痛，无汗而喘，舌苔薄白，脉浮紧。
+          </div>
+        </div>
+        <div class="analysis-card">
+          <div class="analysis-title">方解 · 君臣佐使</div>
+          <div class="analysis-text">
+            <strong>君 — 麻黄：</strong>发汗解表，宣肺平喘<br>
+            <strong>臣 — 桂枝：</strong>解肌发表，温通经脉<br>
+            <strong>佐 — 杏仁：</strong>降利肺气，止咳平喘<br>
+            <strong>使 — 甘草：</strong>调和诸药，缓和药性
+          </div>
+        </div>
+      </div>
+
+      <div class="ancient-block">
+        <div class="ancient-source">《伤寒论》第35条</div>
+        <div class="ancient-body">太阳病，头痛发热，身疼腰痛，骨节疼痛，恶风无汗而喘者，麻黄汤主之。</div>
+      </div>
+
+      <div class="warning">
+        <span class="warning-icon">⚠</span>
+        <span><strong>配伍禁忌提醒：</strong>麻黄与下列药物存在配伍禁忌：麻黄 + 乌头（十八反）</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 底部 -->
+  <div class="footer">
+    岐黄阁 · 中医药古籍知识推理系统 v1.0 · 仅供学习参考，不构成医疗建议
+  </div>
+</div>
+
+</body>
+</html>
