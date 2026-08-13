@@ -18,34 +18,26 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;overflow:hidden;background:var(--ink)}
 body{font-family:var(--font-body);color:var(--text2);-webkit-font-smoothing:antialiased}
-
-/* 星空 */
 #stars{position:fixed;inset:0;z-index:0}
 .vignette{position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse at 50% 45%,transparent 40%,rgba(7,6,12,.7) 100%)}
 .noise{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.025;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.7' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
-
-/* 布局 */
 .layout{position:relative;z-index:1;display:flex;height:100vh}
-
-/* 侧边栏 */
 .sidebar{width:220px;background:var(--panel);border-right:1px solid var(--rule);display:flex;flex-direction:column;padding:20px 0;flex-shrink:0;backdrop-filter:blur(8px)}
 .sidebar-header{text-align:center;padding:0 20px 20px;border-bottom:1px solid var(--rule)}
 .sidebar-header .logo{font-family:var(--font-display);font-size:22px;color:var(--text);font-weight:700;letter-spacing:.12em}
 .sidebar-header .sub{font-size:10px;color:var(--text3);letter-spacing:.1em;margin-top:4px}
 .nav-divider{font-size:10px;color:var(--text3);padding:16px 20px 8px;letter-spacing:.08em;text-transform:uppercase}
-.nav-link{display:flex;align-items:center;gap:10px;padding:9px 20px;font-size:12px;color:var(--text2);text-decoration:none;transition:all .2s var(--ease);border-left:2px solid transparent}
+.nav-link{display:flex;align-items:center;gap:10px;padding:9px 20px;font-size:12px;color:var(--text2);cursor:pointer;transition:all .2s var(--ease);border-left:2px solid transparent;user-select:none}
 .nav-link:hover{color:var(--text);background:rgba(184,154,92,.04)}
 .nav-link.active{color:var(--gold);background:rgba(184,154,92,.06);border-left-color:var(--gold)}
 .nav-link .nav-icon{font-size:14px;width:20px;text-align:center}
 .sidebar-footer{margin-top:auto;padding:16px 20px;border-top:1px solid var(--rule);font-size:10px;color:var(--text3);text-align:center;line-height:1.8}
 
-/* 主内容 */
 .main{flex:1;overflow-y:auto;padding:32px 40px}
 .main-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px}
 .main-header h2{font-family:var(--font-display);font-size:24px;color:var(--text);font-weight:700;letter-spacing:.08em}
 .main-header .badge{font-size:10px;padding:4px 12px;border-radius:12px;background:rgba(184,154,92,.08);border:1px solid rgba(184,154,92,.2);color:var(--gold);letter-spacing:.06em}
 
-/* 输入区 */
 .input-row{display:flex;gap:12px;margin-bottom:24px;flex-wrap:wrap}
 .input-group{display:flex;flex-direction:column;gap:4px}
 .input-group label{font-size:10px;color:var(--text3);letter-spacing:.06em}
@@ -53,21 +45,18 @@ body{font-family:var(--font-body);color:var(--text2);-webkit-font-smoothing:anti
 .input-group input:focus,.input-group select:focus{border-color:var(--gold)}
 .input-group select{appearance:none;cursor:pointer}
 
-/* 四柱八字 */
 .pillars{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
-.pillar{background:var(--panel);border:1px solid var(--rule);border-radius:var(--radius);padding:20px;text-align:center;backdrop-filter:blur(6px)}
+.pillar{background:var(--panel);border:1px solid var(--rule);border-radius:var(--radius);padding:20px;text-align:center;backdrop-filter:blur(6px);transition:all .3s var(--ease)}
 .pillar-label{font-size:10px;color:var(--text3);letter-spacing:.08em;margin-bottom:10px}
 .pillar-gan{font-family:var(--font-display);font-size:32px;color:var(--text);font-weight:900;line-height:1.2}
 .pillar-zhi{font-family:var(--font-display);font-size:20px;color:var(--gold);margin-top:4px}
 .pillar-wx{font-size:10px;color:var(--text3);margin-top:6px;padding:2px 10px;border-radius:8px;background:rgba(255,255,255,.03);display:inline-block}
 
-/* 分析卡片 */
 .cards{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .card{background:var(--panel);border:1px solid var(--rule);border-radius:var(--radius);padding:20px;backdrop-filter:blur(6px)}
 .card-title{font-family:var(--font-display);font-size:14px;font-weight:700;color:var(--gold);margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--rule);letter-spacing:.06em}
 .card-subtitle{font-size:10px;color:var(--text3);margin-bottom:4px;text-transform:uppercase;letter-spacing:.08em}
 
-/* 五行 */
 .wx-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
 .wx-item{text-align:center;padding:10px 6px;border-radius:6px;background:rgba(255,255,255,.02);border:1px solid var(--rule)}
 .wx-name{font-family:var(--font-display);font-size:14px;color:var(--text);font-weight:600}
@@ -83,20 +72,17 @@ body{font-family:var(--font-body);color:var(--text2);-webkit-font-smoothing:anti
 .wx-bar-fill.metal{background:#d4bb7c}
 .wx-bar-fill.water{background:#5a7a9a}
 
-/* 十神 */
 .god-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
 .god-item{display:flex;justify-content:space-between;padding:8px 10px;border-radius:6px;background:rgba(255,255,255,.02);font-size:11px}
 .god-name{color:var(--text2)}
 .god-val{color:var(--text);font-weight:600}
 
-/* 大运 */
 .dayun-row{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px}
 .dayun-item{flex-shrink:0;text-align:center;padding:10px 14px;border-radius:8px;background:rgba(255,255,255,.02);border:1px solid var(--rule);min-width:70px}
 .dayun-age{font-size:10px;color:var(--text3)}
 .dayun-ganzhi{font-family:var(--font-display);font-size:14px;color:var(--text);font-weight:600;margin:4px 0}
 .dayun-wx{font-size:9px;color:var(--gold)}
 
-/* 节奏 */
 .rhythm{display:flex;flex-direction:column;gap:8px}
 .rhythm-row{display:flex;align-items:center;gap:12px;padding:8px 12px;border-radius:6px;background:rgba(255,255,255,.02);font-size:11px}
 .rhythm-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
@@ -104,7 +90,26 @@ body{font-family:var(--font-body);color:var(--text2);-webkit-font-smoothing:anti
 .rhythm-label{color:var(--text2);width:60px;flex-shrink:0}
 .rhythm-val{color:var(--text);font-weight:500}
 
-@keyframes dotPulse{0%,100%{opacity:1}50%{opacity:.3}}
+/* 六爻卦象 */
+.liuyao-gua{display:flex;flex-direction:column;align-items:center;gap:6px;margin:16px 0}
+.yao-line{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text)}
+.yao-symbol{font-family:var(--font-display);font-size:18px;width:24px;text-align:center}
+.yao-symbol.yang{color:var(--gold)}
+.yao-symbol.yin{color:var(--text2)}
+.yao-line .yao-label{font-size:10px;color:var(--text3);width:40px}
+
+/* 梅花页 */
+.meihua-cards{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.meihua-num{font-family:var(--font-display);font-size:48px;color:var(--gold);text-align:center;line-height:1}
+
+/* 占卜页 */
+.empty-page{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 20px;text-align:center}
+.empty-page .icon{font-size:48px;margin-bottom:16px;opacity:.5}
+.empty-page .title{font-family:var(--font-display);font-size:18px;color:var(--text);margin-bottom:8px}
+.empty-page .desc{font-size:12px;color:var(--text3);max-width:300px}
+
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.page-content{animation:fadeIn .3s var(--ease)}
 </style>
 </head>
 <body>
@@ -113,166 +118,249 @@ body{font-family:var(--font-body);color:var(--text2);-webkit-font-smoothing:anti
 <div class="noise"></div>
 
 <div class="layout">
-  <!-- 侧边栏 -->
   <div class="sidebar">
     <div class="sidebar-header">
       <div class="logo">☯ 天机阁</div>
       <div class="sub">TIAN JI GE</div>
     </div>
     <div class="nav-divider">核心功能</div>
-    <a class="nav-link active"><span class="nav-icon">📅</span>八字排盘</a>
-    <a class="nav-link"><span class="nav-icon">🪙</span>六爻占卜</a>
-    <a class="nav-link"><span class="nav-icon">🌸</span>梅花易数</a>
-    <a class="nav-link"><span class="nav-icon">🚪</span>奇门遁甲</a>
-    <a class="nav-link"><span class="nav-icon">⭐</span>太乙神数</a>
-    <a class="nav-link"><span class="nav-icon">🎋</span>诸葛神数</a>
-    <a class="nav-link"><span class="nav-icon">🌙</span>周公解梦</a>
-    <a class="nav-link"><span class="nav-icon">🌊</span>大六壬</a>
-    <a class="nav-link"><span class="nav-icon">🔮</span>紫微斗数</a>
-    <a class="nav-link"><span class="nav-icon">🏔️</span>风水格局</a>
+    <div class="nav-link active" data-page="bazi"><span class="nav-icon">📅</span>八字排盘</div>
+    <div class="nav-link" data-page="liuyao"><span class="nav-icon">🪙</span>六爻占卜</div>
+    <div class="nav-link" data-page="meihua"><span class="nav-icon">🌸</span>梅花易数</div>
+    <div class="nav-link" data-page="qimen"><span class="nav-icon">🚪</span>奇门遁甲</div>
+    <div class="nav-link" data-page="taiyi"><span class="nav-icon">⭐</span>太乙神数</div>
+    <div class="nav-link" data-page="zhuge"><span class="nav-icon">🎋</span>诸葛神数</div>
+    <div class="nav-link" data-page="jiemeng"><span class="nav-icon">🌙</span>周公解梦</div>
+    <div class="nav-link" data-page="daliuren"><span class="nav-icon">🌊</span>大六壬</div>
+    <div class="nav-link" data-page="ziwei"><span class="nav-icon">🔮</span>紫微斗数</div>
+    <div class="nav-link" data-page="fengshui"><span class="nav-icon">🏔️</span>风水格局</div>
     <div class="sidebar-footer">天机不可尽泄<br>留三分与造化</div>
   </div>
 
-  <!-- 主内容 -->
-  <div class="main">
-    <div class="main-header">
-      <h2>八字排盘</h2>
-      <span class="badge">计算耗时 0.02ms</span>
-    </div>
-
-    <!-- 输入区 -->
-    <div class="input-row">
-      <div class="input-group"><label>姓名</label><input type="text" value="张三"></div>
-      <div class="input-group"><label>性别</label><select><option>男</option><option>女</option></select></div>
-      <div class="input-group"><label>年</label><select><option>1990</option></select></div>
-      <div class="input-group"><label>月</label><select><option>5</option></select></div>
-      <div class="input-group"><label>日</label><select><option>15</option></select></div>
-      <div class="input-group"><label>时</label><select><option>辰时 (7-9)</option></select></div>
-    </div>
-
-    <!-- 四柱 -->
-    <div class="pillars">
-      <div class="pillar">
-        <div class="pillar-label">年柱</div>
-        <div class="pillar-gan">庚</div>
-        <div class="pillar-zhi">午</div>
-        <div class="pillar-wx">金 · 火</div>
-      </div>
-      <div class="pillar">
-        <div class="pillar-label">月柱</div>
-        <div class="pillar-gan">辛</div>
-        <div class="pillar-zhi">巳</div>
-        <div class="pillar-wx">金 · 火</div>
-      </div>
-      <div class="pillar">
-        <div class="pillar-label">日柱</div>
-        <div class="pillar-gan">甲</div>
-        <div class="pillar-zhi">子</div>
-        <div class="pillar-wx" style="background:rgba(184,154,92,.08);color:var(--gold)">日主 · 木</div>
-      </div>
-      <div class="pillar">
-        <div class="pillar-label">时柱</div>
-        <div class="pillar-gan">戊</div>
-        <div class="pillar-zhi">辰</div>
-        <div class="pillar-wx">土 · 土</div>
-      </div>
-    </div>
-
-    <!-- 分析 -->
-    <div class="cards">
-      <!-- 五行分布 -->
-      <div class="card">
-        <div class="card-title">五行分布</div>
-        <div class="card-subtitle">日主 甲木 · 生于巳月</div>
-        <div class="wx-grid">
-          <div class="wx-item">
-            <div class="wx-name">木</div>
-            <div class="wx-count balance">1</div>
-            <div class="wx-bar"><div class="wx-bar-fill wood" style="width:20%"></div></div>
-          </div>
-          <div class="wx-item">
-            <div class="wx-name">火</div>
-            <div class="wx-count excess">3</div>
-            <div class="wx-bar"><div class="wx-bar-fill fire" style="width:60%"></div></div>
-          </div>
-          <div class="wx-item">
-            <div class="wx-name">土</div>
-            <div class="wx-count balance">2</div>
-            <div class="wx-bar"><div class="wx-bar-fill earth" style="width:40%"></div></div>
-          </div>
-          <div class="wx-item">
-            <div class="wx-name">金</div>
-            <div class="wx-count weak">2</div>
-            <div class="wx-bar"><div class="wx-bar-fill metal" style="width:40%"></div></div>
-          </div>
-          <div class="wx-item">
-            <div class="wx-name">水</div>
-            <div class="wx-count balance">1</div>
-            <div class="wx-bar"><div class="wx-bar-fill water" style="width:20%"></div></div>
-          </div>
-        </div>
-        <div style="margin-top:12px;font-size:10px;color:var(--text3);line-height:1.6">火旺木弱，日主偏弱。喜水木帮扶，忌火土金。巳月火旺，甲木泄气，需水调候。</div>
-      </div>
-
-      <!-- 十神 -->
-      <div class="card">
-        <div class="card-title">十神关系</div>
-        <div class="god-grid">
-          <div class="god-item"><span class="god-name">年干 庚</span><span class="god-val">七杀</span></div>
-          <div class="god-item"><span class="god-name">月干 辛</span><span class="god-val">正官</span></div>
-          <div class="god-item"><span class="god-name">日干 甲</span><span class="god-val" style="color:var(--gold)">日主</span></div>
-          <div class="god-item"><span class="god-name">时干 戊</span><span class="god-val">偏财</span></div>
-          <div class="god-item"><span class="god-name">年支 午</span><span class="god-val">伤官</span></div>
-          <div class="god-item"><span class="god-name">月支 巳</span><span class="god-val">食神</span></div>
-          <div class="god-item"><span class="god-name">日支 子</span><span class="god-val">正印</span></div>
-          <div class="god-item"><span class="god-name">时支 辰</span><span class="god-val">偏财</span></div>
-        </div>
-        <div style="margin-top:12px;font-size:10px;color:var(--text3);line-height:1.6">官杀混杂，食伤泄秀。日坐正印得生，时柱偏财透干。总体格局：食伤生财，官印相随。</div>
-      </div>
-
-      <!-- 大运 -->
-      <div class="card">
-        <div class="card-title">大运流年</div>
-        <div class="dayun-row">
-          <div class="dayun-item"><div class="dayun-age">0-9岁</div><div class="dayun-ganzhi">壬午</div><div class="dayun-wx">水·火</div></div>
-          <div class="dayun-item"><div class="dayun-age">10-19岁</div><div class="dayun-ganzhi">癸未</div><div class="dayun-wx">水·土</div></div>
-          <div class="dayun-item" style="border-color:rgba(184,154,92,.3);background:rgba(184,154,92,.04)"><div class="dayun-age">20-29岁</div><div class="dayun-ganzhi">甲申</div><div class="dayun-wx" style="color:var(--gold)">木·金</div></div>
-          <div class="dayun-item"><div class="dayun-age">30-39岁</div><div class="dayun-ganzhi">乙酉</div><div class="dayun-wx">木·金</div></div>
-          <div class="dayun-item"><div class="dayun-age">40-49岁</div><div class="dayun-ganzhi">丙戌</div><div class="dayun-wx">火·土</div></div>
-          <div class="dayun-item"><div class="dayun-age">50-59岁</div><div class="dayun-ganzhi">丁亥</div><div class="dayun-wx">火·水</div></div>
-        </div>
-      </div>
-
-      <!-- 节奏分析 -->
-      <div class="card">
-        <div class="card-title">格局节奏</div>
-        <div class="rhythm">
-          <div class="rhythm-row"><div class="rhythm-dot strong"></div><span class="rhythm-label">日主强弱</span><span class="rhythm-val">偏弱 · 甲木泄气于巳月</span></div>
-          <div class="rhythm-row"><div class="rhythm-dot"></div><span class="rhythm-label">用神</span><span class="rhythm-val">水（调候）· 木（帮扶）</span></div>
-          <div class="rhythm-row"><div class="rhythm-dot"></div><span class="rhythm-label">忌神</span><span class="rhythm-val">火 · 土 · 金</span></div>
-          <div class="rhythm-row"><div class="rhythm-dot strong"></div><span class="rhythm-label">当前大运</span><span class="rhythm-val">甲申 · 木金交战，需谨慎</span></div>
-          <div class="rhythm-row"><div class="rhythm-dot"></div><span class="rhythm-label">格局类型</span><span class="rhythm-val">食伤生财格 · 官印相随</span></div>
-        </div>
-      </div>
-    </div>
-  </div>
+  <div class="main" id="mainContent"></div>
 </div>
 
 <script>
-const c=document.getElementById('stars'),ctx=c.getContext('2d');
+const starCanvas=document.getElementById('stars'),ctx=starCanvas.getContext('2d');
 let stars=[];
-function resize(){c.width=window.innerWidth;c.height=window.innerHeight}
-function init(){
-  stars=[];
-  for(let i=0;i<180;i++)stars.push({x:Math.random()*c.width,y:Math.random()*c.height,r:Math.random()*1.2+.4,o:Math.random()*.5+.2,s:Math.random()*.004+.002})
-}
-function draw(){
-  ctx.clearRect(0,0,c.width,c.height);
-  stars.forEach(s=>{ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);ctx.fillStyle=`rgba(184,154,92,${s.o})`;ctx.fill();s.o+=s.s;if(s.o>.7||s.o<.15)s.s*=-1});
-  requestAnimationFrame(draw)
-}
+function resize(){starCanvas.width=window.innerWidth;starCanvas.height=window.innerHeight}
+function init(){stars=[];for(let i=0;i<180;i++)stars.push({x:Math.random()*starCanvas.width,y:Math.random()*starCanvas.height,r:Math.random()*1.2+.4,o:Math.random()*.5+.2,s:Math.random()*.004+.002})}
+function draw(){ctx.clearRect(0,0,starCanvas.width,starCanvas.height);stars.forEach(s=>{ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);ctx.fillStyle=`rgba(184,154,92,${s.o})`;ctx.fill();s.o+=s.s;if(s.o>.7||s.o<.15)s.s*=-1});requestAnimationFrame(draw)}
 resize();init();draw();
 window.addEventListener('resize',()=>{resize();init()});
+
+// 模拟八字数据
+const baziData=[
+  {year:'1990',month:'5',day:'15',hour:'辰时',pillars:[{gan:'庚',zhi:'午',wx:'金·火'},{gan:'辛',zhi:'巳',wx:'金·火'},{gan:'甲',zhi:'子',wx:'日主·木'},{gan:'戊',zhi:'辰',wx:'土·土'}],wuxing:{mu:1,huo:3,tu:2,jin:2,shui:1},summary:'火旺木弱，日主偏弱。喜水木帮扶，忌火土金。'},
+  {year:'2000',month:'1',day:'1',hour:'子时',pillars:[{gan:'己',zhi:'卯',wx:'土·木'},{gan:'丙',zhi:'子',wx:'火·水'},{gan:'壬',zhi:'寅',wx:'日主·水'},{gan:'庚',zhi:'子',wx:'金·水'}],wuxing:{mu:2,huo:1,tu:1,jin:1,shui:4},summary:'水势泛滥，日主过旺。喜土制水，忌金水帮扶。'},
+  {year:'1985',month:'8',day:'20',hour:'午时',pillars:[{gan:'乙',zhi:'丑',wx:'木·土'},{gan:'甲',zhi:'申',wx:'木·金'},{gan:'丙',zhi:'午',wx:'日主·火'},{gan:'甲',zhi:'午',wx:'木·火'}],wuxing:{mu:3,huo:3,tu:1,jin:1,shui:0},summary:'木火通明，日主得令。喜金水调候，忌木火过旺。'}
+];
+
+function getBaziPage(){
+  const d=baziData[Math.floor(Math.random()*baziData.length)];
+  return `
+    <div class="page-content">
+      <div class="main-header"><h2>八字排盘</h2><span class="badge">计算耗时 0.02ms</span></div>
+      <div class="input-row">
+        <div class="input-group"><label>姓名</label><input type="text" value="张三"></div>
+        <div class="input-group"><label>性别</label><select><option>男</option><option>女</option></select></div>
+        <div class="input-group"><label>年</label><select class="bazi-year">${[1990,2000,1985,1978,1995,1988,1992,1970].map(y=>'<option'+(y==d.year?' selected':'')+'>'+y+'</option>').join('')}</select></div>
+        <div class="input-group"><label>月</label><select class="bazi-month">${Array.from({length:12},(_,i)=>'<option'+((i+1)==parseInt(d.month)?' selected':'')+'>'+(i+1)+'</option>').join('')}</select></div>
+        <div class="input-group"><label>日</label><select class="bazi-day">${Array.from({length:31},(_,i)=>'<option'+((i+1)==parseInt(d.day)?' selected':'')+'>'+(i+1)+'</option>').join('')}</select></div>
+        <div class="input-group"><label>时</label><select class="bazi-hour">${['子时','丑时','寅时','卯时','辰时','巳时','午时','未时','申时','酉时','戌时','亥时'].map(h=>'<option'+(h===d.hour?' selected':'')+'>'+h+'</option>').join('')}</select></div>
+      </div>
+      <div class="pillars">
+        ${d.pillars.map((p,i)=>`
+          <div class="pillar">
+            <div class="pillar-label">${['年柱','月柱','日柱','时柱'][i]}</div>
+            <div class="pillar-gan">${p.gan}</div>
+            <div class="pillar-zhi">${p.zhi}</div>
+            <div class="pillar-wx"${p.wx.indexOf('日主')>-1?' style="background:rgba(184,154,92,.08);color:var(--gold)"':''}>${p.wx}</div>
+          </div>`).join('')}
+      </div>
+      <div class="cards">
+        <div class="card">
+          <div class="card-title">五行分布</div>
+          <div class="card-subtitle">日主 ${d.pillars[2].gan}${d.pillars[2].wx.split('·')[1]} · 生于${d.pillars[1].zhi}月</div>
+          <div class="wx-grid">
+            ${['木','火','土','金','水'].map((w,i)=>{
+              const k=['mu','huo','tu','jin','shui'][i];
+              const v=d.wuxing[k];
+              const cls=v>2?'excess':v<1?'weak':'balance';
+              return `<div class="wx-item"><div class="wx-name">${w}</div><div class="wx-count ${cls}">${v}</div><div class="wx-bar"><div class="wx-bar-fill ${k}" style="width:${v*20}%"></div></div></div>`;
+            }).join('')}
+          </div>
+          <div style="margin-top:12px;font-size:10px;color:var(--text3);line-height:1.6">${d.summary}</div>
+        </div>
+        <div class="card">
+          <div class="card-title">十神关系</div>
+          <div class="god-grid">
+            <div class="god-item"><span class="god-name">年干 ${d.pillars[0].gan}</span><span class="god-val">七杀</span></div>
+            <div class="god-item"><span class="god-name">月干 ${d.pillars[1].gan}</span><span class="god-val">正官</span></div>
+            <div class="god-item"><span class="god-name">日干 ${d.pillars[2].gan}</span><span class="god-val" style="color:var(--gold)">日主</span></div>
+            <div class="god-item"><span class="god-name">时干 ${d.pillars[3].gan}</span><span class="god-val">偏财</span></div>
+            <div class="god-item"><span class="god-name">年支 ${d.pillars[0].zhi}</span><span class="god-val">伤官</span></div>
+            <div class="god-item"><span class="god-name">月支 ${d.pillars[1].zhi}</span><span class="god-val">食神</span></div>
+            <div class="god-item"><span class="god-name">日支 ${d.pillars[2].zhi}</span><span class="god-val">正印</span></div>
+            <div class="god-item"><span class="god-name">时支 ${d.pillars[3].zhi}</span><span class="god-val">偏财</span></div>
+          </div>
+          <div style="margin-top:12px;font-size:10px;color:var(--text3);line-height:1.6">官杀混杂，食伤泄秀。日坐正印得生，时柱偏财透干。总体格局：食伤生财，官印相随。</div>
+        </div>
+        <div class="card">
+          <div class="card-title">大运流年</div>
+          <div class="dayun-row">
+            <div class="dayun-item"><div class="dayun-age">0-9岁</div><div class="dayun-ganzhi">壬午</div><div class="dayun-wx">水·火</div></div>
+            <div class="dayun-item"><div class="dayun-age">10-19岁</div><div class="dayun-ganzhi">癸未</div><div class="dayun-wx">水·土</div></div>
+            <div class="dayun-item" style="border-color:rgba(184,154,92,.3);background:rgba(184,154,92,.04)"><div class="dayun-age">20-29岁</div><div class="dayun-ganzhi">甲申</div><div class="dayun-wx" style="color:var(--gold)">木·金</div></div>
+            <div class="dayun-item"><div class="dayun-age">30-39岁</div><div class="dayun-ganzhi">乙酉</div><div class="dayun-wx">木·金</div></div>
+            <div class="dayun-item"><div class="dayun-age">40-49岁</div><div class="dayun-ganzhi">丙戌</div><div class="dayun-wx">火·土</div></div>
+            <div class="dayun-item"><div class="dayun-age">50-59岁</div><div class="dayun-ganzhi">丁亥</div><div class="dayun-wx">火·水</div></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">格局节奏</div>
+          <div class="rhythm">
+            <div class="rhythm-row"><div class="rhythm-dot strong"></div><span class="rhythm-label">日主强弱</span><span class="rhythm-val">偏弱 · ${d.pillars[2].gan}${d.pillars[2].wx.split('·')[1]}泄气于${d.pillars[1].zhi}月</span></div>
+            <div class="rhythm-row"><div class="rhythm-dot"></div><span class="rhythm-label">用神</span><span class="rhythm-val">水（调候）· 木（帮扶）</span></div>
+            <div class="rhythm-row"><div class="rhythm-dot"></div><span class="rhythm-label">忌神</span><span class="rhythm-val">火 · 土 · 金</span></div>
+            <div class="rhythm-row"><div class="rhythm-dot strong"></div><span class="rhythm-label">当前大运</span><span class="rhythm-val">甲申 · 木金交战，需谨慎</span></div>
+            <div class="rhythm-row"><div class="rhythm-dot"></div><span class="rhythm-label">格局类型</span><span class="rhythm-val">食伤生财格 · 官印相随</span></div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+
+function getLiuyaoPage(){
+  return `
+    <div class="page-content">
+      <div class="main-header"><h2>六爻占卜</h2><span class="badge">计算耗时 0.03ms</span></div>
+      <div class="input-row">
+        <div class="input-group"><label>占事</label><input type="text" value="求财" style="width:200px"></div>
+        <div class="input-group"><label>起卦方式</label><select><option>手动摇卦</option><option>时间起卦</option><option>数字起卦</option></select></div>
+      </div>
+      <div class="cards">
+        <div class="card">
+          <div class="card-title">卦象</div>
+          <div style="display:flex;gap:20px;align-items:flex-start">
+            <div>
+              <div class="card-subtitle" style="margin-bottom:12px">本卦 · 风火家人</div>
+              <div class="liuyao-gua">
+                <div class="yao-line"><span class="yao-label">六爻</span><span class="yao-symbol yang">━━━</span><span>兄弟卯木</span></div>
+                <div class="yao-line"><span class="yao-label">五爻</span><span class="yao-symbol yang">━━━</span><span>子孙巳火</span></div>
+                <div class="yao-line"><span class="yao-label">四爻</span><span class="yao-symbol yin">━ ━</span><span>妻财未土</span></div>
+                <div class="yao-line"><span class="yao-label">三爻</span><span class="yao-symbol yang">━━━</span><span>父母亥水</span></div>
+                <div class="yao-line"><span class="yao-label">二爻</span><span class="yao-symbol yin">━ ━</span><span>妻财丑土</span></div>
+                <div class="yao-line"><span class="yao-label">初爻</span><span class="yao-symbol yang">━━━</span><span>兄弟卯木</span></div>
+              </div>
+            </div>
+            <div>
+              <div class="card-subtitle" style="margin-bottom:12px">变卦 · 天火同人</div>
+              <div class="liuyao-gua">
+                <div class="yao-line"><span class="yao-label"></span><span class="yao-symbol yang">━━━</span><span>兄弟卯木</span></div>
+                <div class="yao-line"><span class="yao-label"></span><span class="yao-symbol yang">━━━</span><span>子孙巳火</span></div>
+                <div class="yao-line"><span class="yao-label"></span><span class="yao-symbol yang">○→</span><span style="color:var(--gold)">妻财未土 → 子孙戌土</span></div>
+                <div class="yao-line"><span class="yao-label"></span><span class="yao-symbol yang">━━━</span><span>父母亥水</span></div>
+                <div class="yao-line"><span class="yao-label"></span><span class="yao-symbol yin">━ ━</span><span>妻财丑土</span></div>
+                <div class="yao-line"><span class="yao-label"></span><span class="yao-symbol yang">━━━</span><span>兄弟卯木</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">断卦分析</div>
+          <div class="rhythm">
+            <div class="rhythm-row"><div class="rhythm-dot strong"></div><span class="rhythm-label">世爻</span><span class="rhythm-val">二爻妻财丑土 · 持世</span></div>
+            <div class="rhythm-row"><div class="rhythm-dot"></div><span class="rhythm-label">应爻</span><span class="rhythm-val">五爻子孙巳火 · 生世</span></div>
+            <div class="rhythm-row"><div class="rhythm-dot strong"></div><span class="rhythm-label">动爻</span><span class="rhythm-val">四爻妻财未土化子孙戌土</span></div>
+            <div class="rhythm-row"><div class="rhythm-dot"></div><span class="rhythm-label">用神</span><span class="rhythm-val">妻财爻旺相 · 得月建生扶</span></div>
+            <div class="rhythm-row"><div class="rhythm-dot strong"></div><span class="rhythm-label">断语</span><span class="rhythm-val">财爻持世得应生，动爻化回头生，求财有望。</span></div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+
+function getMeihuaPage(){
+  return `
+    <div class="page-content">
+      <div class="main-header"><h2>梅花易数</h2><span class="badge">计算耗时 0.01ms</span></div>
+      <div class="input-row">
+        <div class="input-group"><label>上卦数</label><input type="number" value="3" min="1" max="8" style="width:60px"></div>
+        <div class="input-group"><label>下卦数</label><input type="number" value="5" min="1" max="8" style="width:60px"></div>
+        <div class="input-group"><label>动爻数</label><input type="number" value="2" min="1" max="6" style="width:60px"></div>
+      </div>
+      <div class="cards">
+        <div class="card">
+          <div class="card-title">得卦</div>
+          <div class="meihua-cards">
+            <div style="text-align:center;padding:20px">
+              <div class="card-subtitle">本卦</div>
+              <div class="meihua-num">䷿</div>
+              <div style="font-family:var(--font-display);font-size:16px;color:var(--text);margin-top:4px">火风鼎</div>
+              <div style="font-size:10px;color:var(--text3)">离上巽下</div>
+            </div>
+            <div style="text-align:center;padding:20px">
+              <div class="card-subtitle">变卦</div>
+              <div class="meihua-num">䷫</div>
+              <div style="font-family:var(--font-display);font-size:16px;color:var(--text);margin-top:4px">天风姤</div>
+              <div style="font-size:10px;color:var(--text3)">乾上巽下</div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">体用生克</div>
+          <div class="rhythm">
+            <div class="rhythm-row"><div class="rhythm-dot strong"></div><span class="rhythm-label">体卦</span><span class="rhythm-val">巽木（下卦）</span></div>
+            <div class="rhythm-row"><div class="rhythm-dot"></div><span class="rhythm-label">用卦</span><span class="rhythm-val">离火（上卦）</span></div>
+            <div class="rhythm-row"><div class="rhythm-dot strong"></div><span class="rhythm-label">生克</span><span class="rhythm-val">用生体 · 离火生巽木 · 大吉</span></div>
+            <div class="rhythm-row"><div class="rhythm-dot"></div><span class="rhythm-label">互卦</span><span class="rhythm-val">泽天夬 · 兑上乾下</span></div>
+            <div class="rhythm-row"><div class="rhythm-dot"></div><span class="rhythm-label">断语</span><span class="rhythm-val">火得风助，鼎新之象。所谋之事，渐入佳境。</span></div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+
+function getEmptyPage(icon,title,desc){
+  return `
+    <div class="page-content">
+      <div class="main-header"><h2>${title}</h2><span class="badge">计算耗时 0.01ms</span></div>
+      <div class="empty-page">
+        <div class="icon">${icon}</div>
+        <div class="title">${title}</div>
+        <div class="desc">${desc}</div>
+      </div>
+    </div>`;
+}
+
+const pages = {
+  bazi: getBaziPage,
+  liuyao: getLiuyaoPage,
+  meihua: getMeihuaPage,
+  qimen: ()=>getEmptyPage('🚪','奇门遁甲','天盘九星 · 地盘八卦 · 人盘八门 · 神盘八神 · 时空模型推演'),
+  taiyi: ()=>getEmptyPage('⭐','太乙神数','太乙积年 · 五元六纪 · 天地人三盘 · 定主客胜负'),
+  zhuge: ()=>getEmptyPage('🎋','诸葛神数','三百八十四签 · 字划取数 · 随机应象'),
+  jiemeng: ()=>getEmptyPage('🌙','周公解梦','梦象索引 · 吉凶判断 · 分类检索'),
+  daliuren: ()=>getEmptyPage('🌊','大六壬','天地盘 · 四课三传 · 十二天将 · 遁干贵人'),
+  ziwei: ()=>getEmptyPage('🔮','紫微斗数','十四主星 · 十二宫位 · 四化飞星 · 三方四正'),
+  fengshui: ()=>getEmptyPage('🏔️','风水格局','九宫飞星 · 玄空排盘 · 峦头理气 · 三元九运')
+};
+
+function switchPage(pageId){
+  document.querySelectorAll('.nav-link').forEach(el=>el.classList.remove('active'));
+  document.querySelector(`[data-page="${pageId}"]`).classList.add('active');
+  document.getElementById('mainContent').innerHTML=pages[pageId]();
+  document.getElementById('mainContent').scrollTop=0;
+}
+
+document.querySelector('.sidebar').addEventListener('click',function(e){
+  const link=e.target.closest('.nav-link'); if(!link)return;
+  switchPage(link.dataset.page);
+});
+
+// 初始加载
+switchPage('bazi');
 </script>
 </body>
 </html>

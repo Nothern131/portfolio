@@ -20,39 +20,27 @@
 html,body{height:100%;overflow:hidden;background:var(--paper)}
 body{font-family:var(--font-body);color:var(--ink);-webkit-font-smoothing:antialiased;
   background-image:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none'%3E%3Cg fill='%23d4c8b0' fill-opacity='.12'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")}
-
-/* 布局 */
 .layout{display:flex;flex-direction:column;height:100vh}
-
-/* 头部 */
 .header{display:flex;align-items:center;justify-content:space-between;padding:14px 32px;background:var(--ink);color:var(--paper);border-bottom:3px solid var(--gold);flex-shrink:0}
 .header .logo{display:flex;align-items:center;gap:12px}
 .header .logo-icon{font-size:28px}
 .header .logo h1{font-family:var(--font-display);font-size:22px;font-weight:600;letter-spacing:.08em}
 .header .logo .sub{font-size:10px;color:var(--gold-light);letter-spacing:.06em;margin-top:2px}
 .nav{display:flex;gap:4px}
-.nav-item{padding:6px 14px;border-radius:6px;font-size:12px;color:rgba(255,255,255,.5);text-decoration:none;transition:all .2s var(--ease)}
+.nav-item{padding:6px 14px;border-radius:6px;font-size:12px;color:rgba(255,255,255,.5);cursor:pointer;transition:all .2s var(--ease);user-select:none}
 .nav-item:hover{color:rgba(255,255,255,.8);background:rgba(255,255,255,.06)}
 .nav-item.active{color:var(--gold);background:rgba(184,148,92,.1)}
-
-/* 主内容 */
 .main{flex:1;overflow-y:auto;padding:28px 40px;max-width:960px;margin:0 auto;width:100%}
-
-/* 搜索区 */
 .search-area{display:flex;gap:10px;margin-bottom:24px}
 .search-input{flex:1;padding:10px 16px;border:1px solid var(--border);border-radius:var(--radius);font-size:14px;font-family:var(--font-body);background:white;outline:none;transition:border .2s;color:var(--ink)}
 .search-input:focus{border-color:var(--gold)}
 .search-btn{padding:10px 24px;background:var(--cinnabar);color:white;border:none;border-radius:var(--radius);font-size:13px;font-family:var(--font-body);cursor:pointer;transition:background .2s}
 .search-btn:hover{background:var(--cinnabar-light)}
-
-/* 方剂结果卡片 */
 .formula-card{background:white;border:1px solid var(--border);border-radius:var(--radius);padding:24px;box-shadow:var(--shadow);margin-bottom:16px}
 .formula-header{display:flex;align-items:baseline;gap:12px;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--border)}
 .formula-name{font-family:var(--font-display);font-size:24px;font-weight:700;color:var(--ink)}
 .formula-source{font-size:12px;color:var(--ink-muted)}
 .formula-category{font-size:10px;padding:3px 10px;border-radius:10px;background:rgba(194,59,34,.06);color:var(--cinnabar);margin-left:auto}
-
-/* 方剂组成 */
 .composition{margin-bottom:16px}
 .comp-title{font-size:12px;font-weight:600;color:var(--ink-light);margin-bottom:10px;letter-spacing:.04em}
 .comp-grid{display:flex;flex-wrap:wrap;gap:8px}
@@ -64,30 +52,41 @@ body{font-family:var(--font-body);color:var(--ink);-webkit-font-smoothing:antial
 .comp-role.shi{background:var(--ink-light)}
 .comp-name{font-weight:600;color:var(--ink)}
 .comp-dose{color:var(--ink-muted);font-family:monospace;font-size:11px}
-
-/* 功效分析 */
 .analysis-cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
 .analysis-card{background:var(--paper);border:1px solid var(--border);border-radius:var(--radius);padding:16px}
 .analysis-title{font-family:var(--font-display);font-size:13px;font-weight:600;color:var(--ink);margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border);letter-spacing:.04em}
 .analysis-text{font-size:12px;line-height:1.8;color:var(--ink-light)}
-
-/* 古籍条文 */
 .ancient-block{background:var(--paper-dark);border-left:3px solid var(--cinnabar);border-radius:0 var(--radius) var(--radius) 0;padding:14px 18px;margin-bottom:12px}
 .ancient-source{font-size:10px;color:var(--cinnabar);font-weight:600;margin-bottom:6px;letter-spacing:.04em}
 .ancient-body{font-family:var(--font-display);font-size:13px;line-height:1.9;color:var(--ink)}
-
-/* 配伍提示 */
 .warning{display:flex;align-items:center;gap:8px;padding:10px 14px;background:rgba(194,59,34,.04);border:1px solid rgba(194,59,34,.15);border-radius:var(--radius);font-size:11px;color:var(--cinnabar);margin-bottom:16px}
 .warning-icon{font-size:16px;flex-shrink:0}
-
-/* 底部 */
 .footer{text-align:center;padding:12px;border-top:1px solid var(--border);font-size:10px;color:var(--ink-muted);flex-shrink:0}
+
+/* 本草页 */
+.herb-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.herb-card{background:white;border:1px solid var(--border);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);cursor:pointer;transition:all .2s var(--ease)}
+.herb-card:hover{box-shadow:var(--shadow-lg);border-color:var(--border-gold)}
+.herb-card .herb-name{font-family:var(--font-display);font-size:16px;font-weight:700;color:var(--ink);margin-bottom:6px}
+.herb-card .herb-latin{font-size:10px;color:var(--ink-muted);font-style:italic;margin-bottom:8px}
+.herb-card .herb-tags{display:flex;flex-wrap:wrap;gap:4px}
+.herb-tag{font-size:9px;padding:2px 8px;border-radius:8px;background:rgba(90,122,74,.08);color:var(--herb)}
+
+/* 辨证页 */
+.bianzheng-card{background:white;border:1px solid var(--border);border-radius:var(--radius);padding:24px;box-shadow:var(--shadow);margin-bottom:14px}
+.bz-header{display:flex;align-items:center;gap:12px;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+.bz-syndrome{font-family:var(--font-display);font-size:18px;font-weight:700;color:var(--ink)}
+.bz-type{font-size:10px;padding:3px 10px;border-radius:10px;background:rgba(194,59,34,.06);color:var(--cinnabar);margin-left:auto}
+.bz-symptoms{font-size:12px;line-height:1.9;color:var(--ink-light);margin-bottom:12px}
+.bz-formula{display:flex;gap:8px;flex-wrap:wrap}
+.bz-f-item{padding:6px 12px;background:var(--paper);border:1px solid var(--border);border-radius:6px;font-size:11px;font-weight:600;color:var(--ink)}
+
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.page-content{animation:fadeIn .3s var(--ease)}
 </style>
 </head>
 <body>
-
 <div class="layout">
-  <!-- 头部 -->
   <div class="header">
     <div class="logo">
       <span class="logo-icon">☯</span>
@@ -97,93 +96,279 @@ body{font-family:var(--font-body);color:var(--ink);-webkit-font-smoothing:antial
       </div>
     </div>
     <div class="nav">
-      <a class="nav-item" href="#">首页</a>
-      <a class="nav-item active" href="#">方剂解析</a>
-      <a class="nav-item" href="#">本草查询</a>
-      <a class="nav-item" href="#">辨证体质</a>
-      <a class="nav-item" href="#">药膳食谱</a>
-      <a class="nav-item" href="#">配伍检查</a>
+      <div class="nav-item" data-page="home">首页</div>
+      <div class="nav-item active" data-page="formula">方剂解析</div>
+      <div class="nav-item" data-page="herb">本草查询</div>
+      <div class="nav-item" data-page="bianzheng">辨证体质</div>
+      <div class="nav-item" data-page="diet">药膳食谱</div>
+      <div class="nav-item" data-page="check">配伍检查</div>
     </div>
   </div>
-
-  <!-- 主内容 -->
-  <div class="main">
-    <!-- 搜索 -->
-    <div class="search-area">
-      <input class="search-input" type="text" placeholder="输入方剂名称，如：麻黄汤、桂枝汤、小柴胡汤..." value="麻黄汤">
-      <button class="search-btn">解析</button>
-    </div>
-
-    <!-- 方剂结果 -->
-    <div class="formula-card">
-      <div class="formula-header">
-        <span class="formula-name">麻黄汤</span>
-        <span class="formula-source">《伤寒论》· 太阳病篇</span>
-        <span class="formula-category">解表剂 · 辛温解表</span>
-      </div>
-
-      <div class="composition">
-        <div class="comp-title">方剂组成</div>
-        <div class="comp-grid">
-          <div class="comp-item">
-            <span class="comp-role jun">君</span>
-            <span class="comp-name">麻黄</span>
-            <span class="comp-dose">9g</span>
-          </div>
-          <div class="comp-item">
-            <span class="comp-role chen">臣</span>
-            <span class="comp-name">桂枝</span>
-            <span class="comp-dose">6g</span>
-          </div>
-          <div class="comp-item">
-            <span class="comp-role zuo">佐</span>
-            <span class="comp-name">杏仁</span>
-            <span class="comp-dose">6g</span>
-          </div>
-          <div class="comp-item">
-            <span class="comp-role shi">使</span>
-            <span class="comp-name">甘草</span>
-            <span class="comp-dose">3g</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="analysis-cards">
-        <div class="analysis-card">
-          <div class="analysis-title">功效主治</div>
-          <div class="analysis-text">
-            <strong>功效：</strong>发汗解表，宣肺平喘<br><br>
-            <strong>主治：</strong>外感风寒表实证。恶寒发热，头身疼痛，无汗而喘，舌苔薄白，脉浮紧。
-          </div>
-        </div>
-        <div class="analysis-card">
-          <div class="analysis-title">方解 · 君臣佐使</div>
-          <div class="analysis-text">
-            <strong>君 — 麻黄：</strong>发汗解表，宣肺平喘<br>
-            <strong>臣 — 桂枝：</strong>解肌发表，温通经脉<br>
-            <strong>佐 — 杏仁：</strong>降利肺气，止咳平喘<br>
-            <strong>使 — 甘草：</strong>调和诸药，缓和药性
-          </div>
-        </div>
-      </div>
-
-      <div class="ancient-block">
-        <div class="ancient-source">《伤寒论》第35条</div>
-        <div class="ancient-body">太阳病，头痛发热，身疼腰痛，骨节疼痛，恶风无汗而喘者，麻黄汤主之。</div>
-      </div>
-
-      <div class="warning">
-        <span class="warning-icon">⚠</span>
-        <span><strong>配伍禁忌提醒：</strong>麻黄与下列药物存在配伍禁忌：麻黄 + 乌头（十八反）</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- 底部 -->
+  <div class="main" id="mainContent"></div>
   <div class="footer">
     岐黄阁 · 中医药古籍知识推理系统 v1.0 · 仅供学习参考，不构成医疗建议
   </div>
 </div>
 
+<script>
+const formulas = {
+  '麻黄汤':{
+    name:'麻黄汤',source:'《伤寒论》· 太阳病篇',category:'解表剂 · 辛温解表',
+    herbs:[
+      {role:'jun',name:'麻黄',dose:'9g'},{role:'chen',name:'桂枝',dose:'6g'},
+      {role:'zuo',name:'杏仁',dose:'6g'},{role:'shi',name:'甘草',dose:'3g'}
+    ],
+    efficacy:'发汗解表，宣肺平喘',
+    indication:'外感风寒表实证。恶寒发热，头身疼痛，无汗而喘，舌苔薄白，脉浮紧。',
+    analysis:'君—麻黄：发汗解表，宣肺平喘\n臣—桂枝：解肌发表，温通经脉\n佐—杏仁：降利肺气，止咳平喘\n使—甘草：调和诸药，缓和药性',
+    classic:'太阳病，头痛发热，身疼腰痛，骨节疼痛，恶风无汗而喘者，麻黄汤主之。',
+    classicSrc:'《伤寒论》第35条',
+    warning:'麻黄与下列药物存在配伍禁忌：麻黄 + 乌头（十八反）'
+  },
+  '桂枝汤':{
+    name:'桂枝汤',source:'《伤寒论》· 太阳病篇',category:'解表剂 · 辛温解表',
+    herbs:[
+      {role:'jun',name:'桂枝',dose:'9g'},{role:'chen',name:'芍药',dose:'9g'},
+      {role:'zuo',name:'生姜',dose:'9g'},{role:'shi',name:'甘草',dose:'6g'},{role:'shi',name:'大枣',dose:'3枚'}
+    ],
+    efficacy:'解肌发表，调和营卫',
+    indication:'外感风寒表虚证。头痛发热，汗出恶风，鼻鸣干呕，舌苔薄白，脉浮缓。',
+    analysis:'君—桂枝：解肌发表，温通经脉\n臣—芍药：敛阴和营，缓急止痛\n佐—生姜：助桂枝解表散寒\n使—甘草、大枣：调和诸药，益气和中',
+    classic:'太阳中风，阳浮而阴弱，阳浮者热自发，阴弱者汗自出，啬啬恶寒，淅淅恶风，翕翕发热，鼻鸣干呕者，桂枝汤主之。',
+    classicSrc:'《伤寒论》第12条',
+    warning:'桂枝 + 赤石脂（十九畏）'
+  },
+  '小柴胡汤':{
+    name:'小柴胡汤',source:'《伤寒论》· 少阳病篇',category:'和解剂 · 和解少阳',
+    herbs:[
+      {role:'jun',name:'柴胡',dose:'12g'},{role:'chen',name:'黄芩',dose:'9g'},
+      {role:'zuo',name:'半夏',dose:'9g'},{role:'zuo',name:'人参',dose:'6g'},
+      {role:'shi',name:'甘草',dose:'6g'},{role:'shi',name:'生姜',dose:'9g'},{role:'shi',name:'大枣',dose:'4枚'}
+    ],
+    efficacy:'和解少阳，扶正祛邪',
+    indication:'少阳证。往来寒热，胸胁苦满，不欲饮食，心烦喜呕，口苦咽干，目眩，舌苔薄白，脉弦。',
+    analysis:'君—柴胡：透解少阳，疏利气机\n臣—黄芩：清泄少阳郁热\n佐—半夏、生姜：和胃降逆止呕\n佐—人参、大枣：益气扶正\n使—甘草：调和诸药',
+    classic:'伤寒五六日，中风，往来寒热，胸胁苦满，嘿嘿不欲饮食，心烦喜呕，或胸中烦而不呕，或渴，或腹中痛，或胁下痞硬，或心下悸，小便不利，或不渴，身有微热，或咳者，小柴胡汤主之。',
+    classicSrc:'《伤寒论》第96条',
+    warning:'柴胡 + 皂荚（十九畏）'
+  }
+};
+
+const herbData = {
+  '麻黄':{name:'麻黄',latin:'Ephedrae Herba',tags:['解表药','辛温','肺经','膀胱经'],desc:'发汗解表，宣肺平喘，利水消肿。'},
+  '桂枝':{name:'桂枝',latin:'Cinnamomi Ramulus',tags:['解表药','辛甘温','心经','肺经','膀胱经'],desc:'发汗解肌，温通经脉，助阳化气。'},
+  '杏仁':{name:'杏仁',latin:'Armeniacae Semen',tags:['化痰止咳','苦温','肺经','大肠经'],desc:'降气止咳平喘，润肠通便。'},
+  '甘草':{name:'甘草',latin:'Glycyrrhizae Radix',tags:['补气药','甘平','心经','脾经','肺经','胃经'],desc:'补脾益气，清热解毒，祛痰止咳，缓急止痛，调和诸药。'},
+  '柴胡':{name:'柴胡',latin:'Bupleuri Radix',tags:['解表药','苦辛微寒','肝经','胆经','肺经'],desc:'疏散退热，疏肝解郁，升举阳气。'},
+  '黄芩':{name:'黄芩',latin:'Scutellariae Radix',tags:['清热药','苦寒','肺经','胆经','脾经','大肠经','小肠经'],desc:'清热燥湿，泻火解毒，止血，安胎。'},
+  '半夏':{name:'半夏',latin:'Pinelliae Rhizoma',tags:['化痰止咳','辛温有毒','脾经','胃经','肺经'],desc:'燥湿化痰，降逆止呕，消痞散结。'},
+  '人参':{name:'人参',latin:'Ginseng Radix',tags:['补气药','甘微苦微温','脾经','肺经','心经','肾经'],desc:'大补元气，复脉固脱，补脾益肺，生津养血，安神益智。'},
+  '生姜':{name:'生姜',latin:'Zingiberis Rhizoma Recens',tags:['解表药','辛温','肺经','脾经','胃经'],desc:'解表散寒，温中止呕，化痰止咳。'},
+  '芍药':{name:'芍药',latin:'Paeoniae Radix Alba',tags:['补血药','苦酸微寒','肝经','脾经'],desc:'养血调经，敛阴止汗，柔肝止痛，平抑肝阳。'},
+  '大枣':{name:'大枣',latin:'Jujubae Fructus',tags:['补气药','甘温','脾经','胃经','心经'],desc:'补中益气，养血安神。'}
+};
+
+function getFormulaPage(formulaName){
+  const f = formulas[formulaName] || formulas['麻黄汤'];
+  const roleLabels = {jun:'君',chen:'臣',zuo:'佐',shi:'使'};
+  return `
+    <div class="page-content">
+      <div class="search-area">
+        <input class="search-input" id="searchInput" type="text" placeholder="输入方剂名称，如：麻黄汤、桂枝汤、小柴胡汤..." value="${formulaName}">
+        <button class="search-btn" id="searchBtn">解析</button>
+      </div>
+      <div class="formula-card">
+        <div class="formula-header">
+          <span class="formula-name">${f.name}</span>
+          <span class="formula-source">${f.source}</span>
+          <span class="formula-category">${f.category}</span>
+        </div>
+        <div class="composition">
+          <div class="comp-title">方剂组成</div>
+          <div class="comp-grid">
+            ${f.herbs.map(h=>`<div class="comp-item"><span class="comp-role ${h.role}">${roleLabels[h.role]}</span><span class="comp-name">${h.name}</span><span class="comp-dose">${h.dose}</span></div>`).join('')}
+          </div>
+        </div>
+        <div class="analysis-cards">
+          <div class="analysis-card">
+            <div class="analysis-title">功效主治</div>
+            <div class="analysis-text"><strong>功效：</strong>${f.efficacy}<br><br><strong>主治：</strong>${f.indication}</div>
+          </div>
+          <div class="analysis-card">
+            <div class="analysis-title">方解 · 君臣佐使</div>
+            <div class="analysis-text">${f.analysis.replace(/\n/g,'<br>')}</div>
+          </div>
+        </div>
+        <div class="ancient-block">
+          <div class="ancient-source">${f.classicSrc}</div>
+          <div class="ancient-body">${f.classic}</div>
+        </div>
+        <div class="warning"><span class="warning-icon">⚠</span><span><strong>配伍禁忌提醒：</strong>${f.warning}</span></div>
+      </div>
+    </div>`;
+}
+
+function getHerbPage(){
+  const herbs = Object.values(herbData);
+  return `
+    <div class="page-content">
+      <div class="search-area">
+        <input class="search-input" id="herbSearch" type="text" placeholder="输入药材名称，如：麻黄、桂枝、人参...">
+        <button class="search-btn" id="herbSearchBtn">查询</button>
+      </div>
+      <div class="herb-grid" id="herbGrid">
+        ${herbs.map(h=>`
+          <div class="herb-card" data-herb="${h.name}">
+            <div class="herb-name">${h.name}</div>
+            <div class="herb-latin">${h.latin}</div>
+            <div class="herb-tags">${h.tags.map(t=>`<span class="herb-tag">${t}</span>`).join('')}</div>
+            <div style="font-size:11px;color:var(--ink-light);margin-top:8px;line-height:1.6">${h.desc}</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>`;
+}
+
+function getBianzhengPage(){
+  return `
+    <div class="page-content">
+      <div class="search-area">
+        <input class="search-input" type="text" placeholder="输入症状，如：恶寒发热、头痛...">
+        <button class="search-btn">辨证</button>
+      </div>
+      <div class="bianzheng-card">
+        <div class="bz-header">
+          <span class="bz-syndrome">风寒表实证</span>
+          <span class="bz-type">八纲辨证 · 表实证</span>
+        </div>
+        <div class="bz-symptoms">
+          <strong>主症：</strong>恶寒发热，无汗，头身疼痛，咳喘，脉浮紧。<br>
+          <strong>病机：</strong>风寒束表，卫阳被遏，营阴郁滞，肺气失宣。
+        </div>
+        <div class="analysis-cards">
+          <div class="analysis-card">
+            <div class="analysis-title">八纲分析</div>
+            <div class="analysis-text">
+              <strong>表里：</strong>表证（病位在表，未入里）<br>
+              <strong>寒热：</strong>寒证（恶寒重，发热轻）<br>
+              <strong>虚实：</strong>实证（邪气盛而正气未衰）<br>
+              <strong>阴阳：</strong>阴证（寒性、沉静、抑制）
+            </div>
+          </div>
+          <div class="analysis-card">
+            <div class="analysis-title">推荐方剂</div>
+            <div class="analysis-text">
+              <strong>主方：</strong>麻黄汤<br>
+              <strong>临证加减：</strong>若喘甚，加苏子、白芥子；若项背强痛，加葛根；若兼湿邪，加苍术。
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="bianzheng-card">
+        <div class="bz-header">
+          <span class="bz-syndrome">少阳证</span>
+          <span class="bz-type">六经辨证 · 少阳病</span>
+        </div>
+        <div class="bz-symptoms">
+          <strong>主症：</strong>往来寒热，胸胁苦满，不欲饮食，心烦喜呕，口苦咽干，脉弦。<br>
+          <strong>病机：</strong>邪犯少阳，枢机不利，胆火内郁，胃气不和。
+        </div>
+        <div class="analysis-cards">
+          <div class="analysis-card">
+            <div class="analysis-title">病机分析</div>
+            <div class="analysis-text">
+              <strong>正邪分争：</strong>邪在半表半里，正胜则热，邪胜则寒<br>
+              <strong>胆火上炎：</strong>口苦咽干目眩<br>
+              <strong>胃气不和：</strong>不欲饮食，喜呕
+            </div>
+          </div>
+          <div class="analysis-card">
+            <div class="analysis-title">推荐方剂</div>
+            <div class="analysis-text">
+              <strong>主方：</strong>小柴胡汤<br>
+              <strong>临证加减：</strong>若胸中烦而不呕，去半夏、人参，加瓜蒌实；若渴，去半夏，加天花粉。
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+
+function getEmptyPage(title,icon,desc){
+  return `
+    <div class="page-content">
+      <div class="main-header" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:28px">
+        <h2 style="font-family:var(--font-display);font-size:22px;color:var(--ink);font-weight:700">${title}</h2>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 20px;text-align:center">
+        <div style="font-size:48px;margin-bottom:16px;opacity:.5">${icon}</div>
+        <div style="font-family:var(--font-display);font-size:18px;color:var(--ink);margin-bottom:8px">${title}</div>
+        <div style="font-size:12px;color:var(--ink-muted);max-width:300px">${desc}</div>
+      </div>
+    </div>`;
+}
+
+const pageContents={
+  home: ()=>getEmptyPage('岐黄阁','☯','中医药古籍知识推理系统 · 11大模块 · 纯本地计算'),
+  formula: ()=>getFormulaPage('麻黄汤'),
+  herb: getHerbPage,
+  bianzheng: getBianzhengPage,
+  diet: ()=>getEmptyPage('药膳食谱','🍲','四时养生 · 体质调理 · 药食同源'),
+  check: ()=>getEmptyPage('配伍检查','⚠','十八反 · 十九畏 · 妊娠禁忌 · 证候禁忌')
+};
+
+function switchPage(pageId){
+  document.querySelectorAll('.nav-item').forEach(el=>el.classList.remove('active'));
+  document.querySelector(`[data-page="${pageId}"]`).classList.add('active');
+  document.getElementById('mainContent').innerHTML=pageContents[pageId]();
+  document.getElementById('mainContent').scrollTop=0;
+
+  // 绑定搜索事件
+  if(pageId==='formula'){
+    setTimeout(function(){
+      const srch=document.getElementById('searchInput');
+      const btn=document.getElementById('searchBtn');
+      function doSearch(){
+        const val=srch.value.trim();
+        if(formulas[val]){document.getElementById('mainContent').innerHTML=getFormulaPage(val);bindFormulaSearch()}
+      }
+      btn.addEventListener('click',doSearch);
+      srch.addEventListener('keydown',function(e){if(e.key==='Enter')doSearch()});
+    },0);
+  }
+  if(pageId==='herb'){
+    setTimeout(function(){
+      const srch=document.getElementById('herbSearch');
+      const btn=document.getElementById('herbSearchBtn');
+      function doSearch(){
+        const val=srch.value.trim().toLowerCase();
+        document.querySelectorAll('#herbGrid .herb-card').forEach(card=>{
+          card.style.display=!val||card.dataset.herb.toLowerCase().includes(val)?'':'none';
+        });
+      }
+      btn.addEventListener('click',doSearch);
+      srch.addEventListener('keydown',function(e){if(e.key==='Enter')doSearch()});
+    },0);
+  }
+}
+
+function bindFormulaSearch(){
+  const srch=document.getElementById('searchInput');
+  const btn=document.getElementById('searchBtn');
+  function doSearch(){
+    const val=srch.value.trim();
+    if(formulas[val]){document.getElementById('mainContent').innerHTML=getFormulaPage(val);bindFormulaSearch()}
+  }
+  btn.addEventListener('click',doSearch);
+  srch.addEventListener('keydown',function(e){if(e.key==='Enter')doSearch()});
+}
+
+document.querySelector('.nav').addEventListener('click',function(e){
+  const item=e.target.closest('.nav-item'); if(!item)return;
+  switchPage(item.dataset.page);
+});
+
+switchPage('formula');
+</script>
 </body>
 </html>

@@ -17,22 +17,14 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;overflow:hidden;background:var(--bg-deep)}
 body{font-family:var(--font-body);color:var(--text2);-webkit-font-smoothing:antialiased}
-
-/* 背景 */
 .bg{position:fixed;inset:0;z-index:0;background:radial-gradient(ellipse at 60% 30%,rgba(240,185,88,.06) 0%,transparent 50%),radial-gradient(ellipse at 30% 70%,rgba(240,185,88,.03) 0%,transparent 40%)}
 .noise{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.02;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.7' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
-
-/* 主布局 */
 .layout{position:relative;z-index:1;display:flex;height:100vh;padding:24px;gap:0}
-
-/* 左侧面板：NPC列表 + 引擎状态 */
 .sidebar{width:240px;display:flex;flex-direction:column;gap:16px;flex-shrink:0}
 .panel{background:var(--bg-panel);border:1px solid var(--rule);border-radius:12px;padding:16px;backdrop-filter:blur(12px)}
 .panel-title{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px}
-
-/* NPC列表 */
 .npc-list{display:flex;flex-direction:column;gap:4px}
-.npc-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;cursor:pointer;transition:background .2s var(--ease);font-size:12px}
+.npc-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;cursor:pointer;transition:background .2s;font-size:12px;border:1px solid transparent}
 .npc-item:hover{background:rgba(255,255,255,.03)}
 .npc-item.active{background:rgba(240,185,88,.06);border:1px solid rgba(240,185,88,.15)}
 .npc-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
@@ -41,12 +33,8 @@ body{font-family:var(--font-body);color:var(--text2);-webkit-font-smoothing:anti
 .npc-dot.offline{background:#5a5040}
 .npc-name{color:var(--text);font-weight:500}
 .npc-status{font-size:10px;color:var(--text3);margin-left:auto}
-
-/* 引擎状态 */
 .engine-status{font-size:11px;color:var(--text3);line-height:1.8}
 .engine-status .val{color:var(--gold);font-family:monospace;font-weight:600}
-
-/* 中央：对话区 */
 .main{flex:1;display:flex;flex-direction:column;margin:0 24px;min-width:0}
 .chat-header{display:flex;align-items:center;gap:14px;padding:16px 20px;background:var(--bg-panel);border:1px solid var(--rule);border-radius:12px 12px 0 0;border-bottom:none}
 .chat-avatar{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,rgba(240,185,88,.2),rgba(240,144,74,.15));border:1.5px solid rgba(240,185,88,.3);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
@@ -54,27 +42,19 @@ body{font-family:var(--font-body);color:var(--text2);-webkit-font-smoothing:anti
 .chat-name{font-family:var(--font-display);font-size:17px;color:var(--text);font-weight:700}
 .chat-meta{font-size:11px;color:var(--text3);margin-top:2px}
 .chat-body{flex:1;background:var(--bg-panel);border:1px solid var(--rule);border-top:none;border-radius:0 0 12px 12px;padding:20px;overflow-y:auto;display:flex;flex-direction:column;gap:16px}
-
-/* 对话气泡 */
 .msg{max-width:75%;animation:fadeUp .4s var(--ease)}
 .msg.npc{align-self:flex-start}
 .msg.npc .bubble{background:rgba(255,255,255,.04);border:1px solid var(--rule-bright);border-radius:4px 14px 14px 14px;padding:14px 18px;font-size:14px;line-height:1.8;color:var(--text)}
 .msg.player{align-self:flex-end}
 .msg.player .bubble{background:rgba(240,185,88,.08);border:1px solid rgba(240,185,88,.15);border-radius:14px 4px 14px 14px;padding:12px 16px;font-size:14px;line-height:1.7;color:var(--text)}
 .msg .time{font-size:10px;color:var(--text3);margin-top:4px;padding:0 4px}
-
-/* 系统消息 */
 .sys-msg{text-align:center;font-size:10px;color:var(--text3);padding:4px 0}
 .sys-msg span{background:rgba(255,255,255,.03);padding:3px 10px;border-radius:10px}
-
-/* 输入区 */
 .chat-input-area{display:flex;gap:10px;padding:14px 20px;background:var(--bg-panel);border:1px solid var(--rule);border-radius:0 0 12px 12px;margin-top:1px}
 .chat-input{flex:1;background:rgba(255,255,255,.03);border:1px solid var(--rule);border-radius:8px;padding:10px 14px;color:var(--text);font-size:13px;font-family:var(--font-body);outline:none;transition:border .2s}
 .chat-input:focus{border-color:rgba(240,185,88,.3)}
 .chat-send{padding:8px 20px;background:rgba(240,185,88,.1);border:1px solid rgba(240,185,88,.2);border-radius:8px;color:var(--gold);font-size:13px;cursor:pointer;transition:all .2s;font-family:var(--font-body)}
 .chat-send:hover{background:rgba(240,185,88,.18)}
-
-/* 右侧面板：NPC状态 */
 .right-panel{width:220px;display:flex;flex-direction:column;gap:16px;flex-shrink:0}
 .stat-row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--rule);font-size:11px}
 .stat-row:last-child{border:none}
@@ -82,118 +62,186 @@ body{font-family:var(--font-body);color:var(--text2);-webkit-font-smoothing:anti
 .stat-val{color:var(--text);font-weight:500}
 .stat-val.good{color:#4ade80}
 .stat-bar{height:2px;background:var(--rule);border-radius:1px;margin-top:4px;overflow:hidden}
-.stat-bar-fill{height:100%;background:var(--gold);border-radius:1px;transition:width 1.5s var(--ease)}
-
+.stat-bar-fill{height:100%;background:var(--gold);border-radius:1px;transition:width .5s var(--ease)}
 .memory-tag{display:inline-block;font-size:10px;padding:2px 8px;border-radius:10px;background:rgba(240,185,88,.06);border:1px solid rgba(240,185,88,.1);color:var(--gold);margin:2px 3px 2px 0}
-
 @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-@keyframes blink{50%{opacity:0}}
-.cursor{animation:blink 1s step-end infinite}
 </style>
 </head>
 <body>
 <div class="bg"></div>
 <div class="noise"></div>
-
 <div class="layout">
-  <!-- 左侧：NPC在线列表 -->
   <div class="sidebar">
     <div class="panel" style="flex:1">
       <div class="panel-title">NPC</div>
-      <div class="npc-list">
-        <div class="npc-item active">
-          <div class="npc-dot online"></div>
-          <span class="npc-name">云溪</span>
-          <span class="npc-status">采药人</span>
-        </div>
-        <div class="npc-item">
-          <div class="npc-dot online"></div>
-          <span class="npc-name">铁锤</span>
-          <span class="npc-status">铁匠</span>
-        </div>
-        <div class="npc-item">
-          <div class="npc-dot away"></div>
-          <span class="npc-name">柳婆婆</span>
-          <span class="npc-status">茶贩</span>
-        </div>
-        <div class="npc-item">
-          <div class="npc-dot online"></div>
-          <span class="npc-name">阿九</span>
-          <span class="npc-status">孩童</span>
-        </div>
-        <div class="npc-item">
-          <div class="npc-dot offline"></div>
-          <span class="npc-name">墨先生</span>
-          <span class="npc-status">书生</span>
-        </div>
+      <div class="npc-list" id="npcList">
+        <div class="npc-item active" data-npc="yunxi"><div class="npc-dot online"></div><span class="npc-name">云溪</span><span class="npc-status">采药人</span></div>
+        <div class="npc-item" data-npc="tiechui"><div class="npc-dot online"></div><span class="npc-name">铁锤</span><span class="npc-status">铁匠</span></div>
+        <div class="npc-item" data-npc="liupopo"><div class="npc-dot away"></div><span class="npc-name">柳婆婆</span><span class="npc-status">茶贩</span></div>
+        <div class="npc-item" data-npc="ajiu"><div class="npc-dot online"></div><span class="npc-name">阿九</span><span class="npc-status">孩童</span></div>
+        <div class="npc-item" data-npc="moxiansheng"><div class="npc-dot offline"></div><span class="npc-name">墨先生</span><span class="npc-status">书生</span></div>
       </div>
     </div>
     <div class="panel">
       <div class="panel-title">引擎</div>
       <div class="engine-status">
         <div>Pipeline <span class="val">6层</span></div>
-        <div>延迟 <span class="val">0.54ms</span></div>
+        <div>延迟 <span class="val" id="engineLatency">0.54ms</span></div>
         <div>在线 <span class="val">200 NPC</span></div>
       </div>
     </div>
   </div>
-
-  <!-- 中央：对话 -->
   <div class="main">
     <div class="chat-header">
-      <div class="chat-avatar">🌿</div>
+      <div class="chat-avatar" id="chatAvatar">🌿</div>
       <div class="chat-info">
-        <div class="chat-name">云溪</div>
-        <div class="chat-meta">山间采药人 · 上次对话 6 小时前</div>
+        <div class="chat-name" id="chatName">云溪</div>
+        <div class="chat-meta" id="chatMeta">山间采药人 · 上次对话 6 小时前</div>
       </div>
     </div>
-    <div class="chat-body">
+    <div class="chat-body" id="chatBody">
       <div class="sys-msg"><span>6 小时前</span></div>
-      <div class="msg npc">
-        <div class="bubble">山里最近不太平，你要是想去找千年灵芝，最好多带几个人。我上次在断崖那边差点摔下去。</div>
-        <div class="time">18:32</div>
-      </div>
-      <div class="msg player">
-        <div class="bubble">那我明天去找你，你带路？</div>
-        <div class="time">18:33</div>
-      </div>
-      <div class="msg npc">
-        <div class="bubble">行，但你得答应我别一个人乱跑。上次那个采药的，就是不听劝，到现在还没回来。</div>
-        <div class="time">18:33</div>
-      </div>
+      <div class="msg npc"><div class="bubble">山里最近不太平，你要是想去找千年灵芝，最好多带几个人。我上次在断崖那边差点摔下去。</div><div class="time">18:32</div></div>
+      <div class="msg player"><div class="bubble">那我明天去找你，你带路？</div><div class="time">18:33</div></div>
+      <div class="msg npc"><div class="bubble">行，但你得答应我别一个人乱跑。上次那个采药的，就是不听劝，到现在还没回来。</div><div class="time">18:33</div></div>
       <div class="sys-msg"><span>现在</span></div>
-      <div class="msg npc">
-        <div class="bubble">哟，又是你啊。上次你说要去找千年灵芝，找到了吗？看你脸色不太好，是不是又熬夜了。我跟你说过多少次了，山里的东西急不得，该来的总会来。</div>
-        <div class="time">00:15</div>
-      </div>
+      <div class="msg npc"><div class="bubble">哟，又是你啊。上次你说要去找千年灵芝，找到了吗？看你脸色不太好，是不是又熬夜了。我跟你说过多少次了，山里的东西急不得，该来的总会来。</div><div class="time">00:15</div></div>
     </div>
     <div class="chat-input-area">
-      <input class="chat-input" type="text" placeholder="输入消息..." value="还没找到，最近太忙了。你那边有什么新发现吗？">
-      <button class="chat-send">发送</button>
+      <input class="chat-input" id="chatInput" type="text" placeholder="输入消息..." value="还没找到，最近太忙了。你那边有什么新发现吗？">
+      <button class="chat-send" id="sendBtn">发送</button>
     </div>
   </div>
-
-  <!-- 右侧：NPC状态 -->
   <div class="right-panel">
     <div class="panel">
-      <div class="panel-title">云溪 · 状态</div>
-      <div class="stat-row"><span class="stat-label">好感度</span><span class="stat-val good">+0.3</span></div>
-      <div class="stat-bar"><div class="stat-bar-fill" style="width:65%"></div></div>
-      <div class="stat-row"><span class="stat-label">记忆层</span><span class="stat-val">3/6</span></div>
-      <div class="stat-row"><span class="stat-label">情绪</span><span class="stat-val">友好</span></div>
-      <div class="stat-row"><span class="stat-label">口语化</span><span class="stat-val">85%</span></div>
+      <div class="panel-title" id="statTitle">云溪 · 状态</div>
+      <div class="stat-row"><span class="stat-label">好感度</span><span class="stat-val good" id="statFavor">+0.3</span></div>
+      <div class="stat-bar"><div class="stat-bar-fill" id="statFavorBar" style="width:65%"></div></div>
+      <div class="stat-row"><span class="stat-label">记忆层</span><span class="stat-val" id="statMemory">3/6</span></div>
+      <div class="stat-row"><span class="stat-label">情绪</span><span class="stat-val" id="statMood">友好</span></div>
+      <div class="stat-row"><span class="stat-label">口语化</span><span class="stat-val" id="statStyle">85%</span></div>
     </div>
     <div class="panel">
       <div class="panel-title">记忆片段</div>
-      <div style="display:flex;flex-wrap:wrap;gap:4px">
-        <span class="memory-tag">千年灵芝</span>
-        <span class="memory-tag">熬夜</span>
-        <span class="memory-tag">劝诫</span>
-        <span class="memory-tag">断崖</span>
-        <span class="memory-tag">采药人失踪</span>
+      <div style="display:flex;flex-wrap:wrap;gap:4px" id="memoryTags">
+        <span class="memory-tag">千年灵芝</span><span class="memory-tag">熬夜</span><span class="memory-tag">劝诫</span><span class="memory-tag">断崖</span><span class="memory-tag">采药人失踪</span>
       </div>
     </div>
   </div>
 </div>
+
+<script>
+const npcData = {
+  yunxi: {
+    avatar:'🌿', name:'云溪', meta:'山间采药人 · 上次对话 6 小时前',
+    favor:'+0.3', favorBar:'65%', memory:'3/6', mood:'友好', style:'85%',
+    memories:['千年灵芝','熬夜','劝诫','断崖','采药人失踪'],
+    history:[
+      {type:'sys',text:'6 小时前'},
+      {type:'npc',text:'山里最近不太平，你要是想去找千年灵芝，最好多带几个人。我上次在断崖那边差点摔下去。',time:'18:32'},
+      {type:'player',text:'那我明天去找你，你带路？',time:'18:33'},
+      {type:'npc',text:'行，但你得答应我别一个人乱跑。上次那个采药的，就是不听劝，到现在还没回来。',time:'18:33'},
+      {type:'sys',text:'现在'},
+      {type:'npc',text:'哟，又是你啊。上次你说要去找千年灵芝，找到了吗？看你脸色不太好，是不是又熬夜了。我跟你说过多少次了，山里的东西急不得，该来的总会来。',time:'00:15'}
+    ],
+    replies:['最近山里是有些变化，西边的药田被野猪拱了。','你上次说要帮我找的朱砂，有消息没？','别急，灵芝的事我有新线索，明天带你去看看。']
+  },
+  tiechui: {
+    avatar:'⚒', name:'铁锤', meta:'镇上铁匠铺 · 上次对话 2 天前',
+    favor:'+0.1', favorBar:'35%', memory:'1/6', mood:'平静', style:'60%',
+    memories:['打铁','武器订单'],
+    history:[
+      {type:'sys',text:'2 天前'},
+      {type:'npc',text:'你上次订的那把短剑打好了，放在铺子里，有空来拿。',time:'14:20'},
+      {type:'player',text:'好的，明天过去。',time:'14:21'},
+      {type:'sys',text:'现在'},
+      {type:'npc',text:'正好你来了，最近矿山的矿石涨价了，下次打东西可能要贵一点。不过老顾客了，给你留着原来的价。',time:'10:05'}
+    ],
+    replies:['那短剑用得顺手吗？不顺手拿回来我帮你调。','最近矿石涨价，你要是认识矿上的朋友，帮我打听打听。','听说西山那边有块好铁，你要是有兴趣一起去看看？']
+  },
+  liupopo: {
+    avatar:'🍵', name:'柳婆婆', meta:'茶馆老板娘 · 上次对话 1 天前',
+    favor:'+0.5', favorBar:'78%', memory:'4/6', mood:'慈祥', style:'72%',
+    memories:['普洱茶','下雨天','关节炎','药方'],
+    history:[
+      {type:'sys',text:'昨天'},
+      {type:'npc',text:'今天泡了新到的普洱，你闻闻这茶香。下雨天就该喝点暖的。',time:'15:30'},
+      {type:'player',text:'好香啊，婆婆的手艺越来越好了。',time:'15:31'},
+      {type:'sys',text:'现在'},
+      {type:'npc',text:'你这孩子，又熬夜了吧？眼圈都黑了。来，这杯茶加了枸杞，喝了去睡一觉，比什么都管用。',time:'09:40'}
+    ],
+    replies:['核桃酥给你留了一盘，刚出炉的，趁热吃。','你上次说的那个治关节痛的方子，我试了，还真管用。','今天天气不好，少在外面跑，来茶馆坐坐。']
+  },
+  ajiu: {
+    avatar:'🏮', name:'阿九', meta:'村口小孩 · 上次对话 3 小时前',
+    favor:'+0.8', favorBar:'90%', memory:'2/6', mood:'兴奋', style:'95%',
+    memories:['抓蝴蝶','糖果'],
+    history:[
+      {type:'sys',text:'3 小时前'},
+      {type:'npc',text:'哥哥哥哥！你看我抓到了一只蓝色的大蝴蝶！',time:'16:00'},
+      {type:'player',text:'真漂亮！在哪里抓到的？',time:'16:01'},
+      {type:'sys',text:'现在'},
+      {type:'npc',text:'你答应过要给我带糖的！上次说好的，不许耍赖！对了，村口大树下有个秘密，你想不想知道？',time:'19:12'}
+    ],
+    replies:['秘密就是大树下有个兔子洞，里面有五只小兔子！','糖呢？你答应过我的！','今天铁锤叔叔教我打铁了，他说我以后能当铁匠！']
+  },
+  moxiansheng: {avatar:'📜', name:'墨先生', meta:'村中书生 · 离线中', favor:'0', favorBar:'0%', memory:'0/6', mood:'—', style:'—', memories:[], history:[], replies:[]}
+};
+
+function switchNPC(npcId){
+  document.querySelectorAll('.npc-item').forEach(el=>el.classList.remove('active'));
+  document.querySelector('[data-npc="'+npcId+'"]').classList.add('active');
+  const d=npcData[npcId];
+  document.getElementById('chatAvatar').textContent=d.avatar;
+  document.getElementById('chatName').textContent=d.name;
+  document.getElementById('chatMeta').textContent=d.meta;
+  document.getElementById('statTitle').textContent=d.name+' · 状态';
+  document.getElementById('statFavor').textContent=d.favor;
+  document.getElementById('statFavorBar').style.width=d.favorBar;
+  document.getElementById('statMemory').textContent=d.memory;
+  document.getElementById('statMood').textContent=d.mood;
+  document.getElementById('statStyle').textContent=d.style;
+  const mt=document.getElementById('memoryTags');
+  mt.innerHTML=d.memories.map(m=>'<span class="memory-tag">'+m+'</span>').join('');
+
+  const cb=document.getElementById('chatBody');
+  cb.innerHTML='';
+  d.history.forEach(h=>{
+    if(h.type==='sys'){cb.innerHTML+='<div class="sys-msg"><span>'+h.text+'</span></div>'}
+    else if(h.type==='npc'){cb.innerHTML+='<div class="msg npc"><div class="bubble">'+h.text+'</div><div class="time">'+h.time+'</div></div>'}
+    else{cb.innerHTML+='<div class="msg player"><div class="bubble">'+h.text+'</div><div class="time">'+h.time+'</div></div>'}
+  });
+  cb.scrollTop=cb.scrollHeight;
+}
+
+document.getElementById('npcList').addEventListener('click',function(e){
+  const item=e.target.closest('.npc-item'); if(!item)return;
+  const id=item.dataset.npc; if(!npcData[id].history.length)return;
+  switchNPC(id);
+});
+
+document.getElementById('sendBtn').addEventListener('click',function(){
+  const input=document.getElementById('chatInput');
+  const text=input.value.trim(); if(!text)return;
+  const cb=document.getElementById('chatBody');
+  const now=new Date();
+  const t=now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0');
+  cb.innerHTML+='<div class="msg player"><div class="bubble">'+text+'</div><div class="time">'+t+'</div></div>';
+  input.value='';
+  cb.scrollTop=cb.scrollHeight;
+
+  const activeId=document.querySelector('.npc-item.active').dataset.npc;
+  const replies=npcData[activeId].replies;
+  setTimeout(function(){
+    const reply=replies[Math.floor(Math.random()*replies.length)];
+    cb.innerHTML+='<div class="msg npc"><div class="bubble">'+reply+'</div><div class="time">'+t+'</div></div>';
+    cb.scrollTop=cb.scrollHeight;
+  },600+Math.random()*800);
+});
+
+document.getElementById('chatInput').addEventListener('keydown',function(e){
+  if(e.key==='Enter')document.getElementById('sendBtn').click();
+});
+</script>
 </body>
 </html>
