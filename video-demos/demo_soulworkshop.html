@@ -188,6 +188,18 @@ const npcData = {
   moxiansheng: {avatar:'📜', name:'墨先生', meta:'村中书生 · 离线中', favor:'0', favorBar:'0%', memory:'0/6', mood:'—', style:'—', memories:[], history:[], replies:[]}
 };
 
+function addMsg(type,text,time){
+  const cb=document.getElementById('chatBody');
+  if(type==='sys'){
+    cb.insertAdjacentHTML('beforeend','<div class="sys-msg"><span>'+text+'</span></div>');
+  }else if(type==='npc'){
+    cb.insertAdjacentHTML('beforeend','<div class="msg npc"><div class="bubble">'+text+'</div><div class="time">'+time+'</div></div>');
+  }else{
+    cb.insertAdjacentHTML('beforeend','<div class="msg player"><div class="bubble">'+text+'</div><div class="time">'+time+'</div></div>');
+  }
+  cb.scrollTop=cb.scrollHeight;
+}
+
 function switchNPC(npcId){
   document.querySelectorAll('.npc-item').forEach(el=>el.classList.remove('active'));
   document.querySelector('[data-npc="'+npcId+'"]').classList.add('active');
@@ -201,17 +213,11 @@ function switchNPC(npcId){
   document.getElementById('statMemory').textContent=d.memory;
   document.getElementById('statMood').textContent=d.mood;
   document.getElementById('statStyle').textContent=d.style;
-  const mt=document.getElementById('memoryTags');
-  mt.innerHTML=d.memories.map(m=>'<span class="memory-tag">'+m+'</span>').join('');
+  document.getElementById('memoryTags').innerHTML=d.memories.map(m=>'<span class="memory-tag">'+m+'</span>').join('');
 
   const cb=document.getElementById('chatBody');
   cb.innerHTML='';
-  d.history.forEach(h=>{
-    if(h.type==='sys'){cb.innerHTML+='<div class="sys-msg"><span>'+h.text+'</span></div>'}
-    else if(h.type==='npc'){cb.innerHTML+='<div class="msg npc"><div class="bubble">'+h.text+'</div><div class="time">'+h.time+'</div></div>'}
-    else{cb.innerHTML+='<div class="msg player"><div class="bubble">'+h.text+'</div><div class="time">'+h.time+'</div></div>'}
-  });
-  cb.scrollTop=cb.scrollHeight;
+  d.history.forEach(h=>addMsg(h.type,h.text,h.time));
 }
 
 document.getElementById('npcList').addEventListener('click',function(e){
@@ -223,20 +229,22 @@ document.getElementById('npcList').addEventListener('click',function(e){
 document.getElementById('sendBtn').addEventListener('click',function(){
   const input=document.getElementById('chatInput');
   const text=input.value.trim(); if(!text)return;
-  const cb=document.getElementById('chatBody');
   const now=new Date();
   const t=now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0');
-  cb.innerHTML+='<div class="msg player"><div class="bubble">'+text+'</div><div class="time">'+t+'</div></div>';
+  addMsg('player',text,t);
   input.value='';
-  cb.scrollTop=cb.scrollHeight;
 
   const activeId=document.querySelector('.npc-item.active').dataset.npc;
   const replies=npcData[activeId].replies;
+  if(!replies.length)return;
+  // 显示"正在输入…"
+  addMsg('sys','对方正在输入…');
   setTimeout(function(){
+    const last=document.getElementById('chatBody').lastElementChild;
+    if(last&&last.classList.contains('sys-msg'))last.remove();
     const reply=replies[Math.floor(Math.random()*replies.length)];
-    cb.innerHTML+='<div class="msg npc"><div class="bubble">'+reply+'</div><div class="time">'+t+'</div></div>';
-    cb.scrollTop=cb.scrollHeight;
-  },600+Math.random()*800);
+    addMsg('npc',reply,t);
+  },800+Math.random()*1000);
 });
 
 document.getElementById('chatInput').addEventListener('keydown',function(e){
