@@ -3,61 +3,243 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Portfolio · 项目展示</title>
+<title>梁梓渤 · 作品集</title>
 <style>
+/* ═══════════ Hallmark Design System · OKLCH palette · warm-amber ═══════════ */
+:root{
+  --bg-deep:oklch(12% 0.008 45);--bg-surface:oklch(16% 0.010 45);
+  --bg-elevated:oklch(20% 0.010 45);--bg-card:oklch(18% 0.008 45);
+  --text-primary:oklch(94% 0.006 80);--text-secondary:oklch(78% 0.006 80);
+  --text-muted:oklch(56% 0.008 70);
+  --rule:oklch(30% 0.008 45);--rule-subtle:oklch(24% 0.006 45);
+  --gold:#f0b958;--gold-dim:#a0824a;
+  --jade:#4ade80;--azurite:#60a5fa;--crimson:#f87171;
+  --sans:'PingFang SC','Noto Sans SC','Microsoft YaHei',sans-serif;
+  --ease:cubic-bezier(.4,0,.2,1);
+  --radius:12px;--radius-sm:8px;
+}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{background:#0B0E14;color:#E8E6E3;font-family:"PingFang SC","Microsoft YaHei",sans-serif;min-height:100vh}
-.container{max-width:720px;margin:0 auto;padding:48px 24px}
-.header{margin-bottom:48px}
-.header h1{font-size:28px;color:#f0b958;font-weight:700;margin-bottom:8px}
-.header p{font-size:14px;color:#6B7280}
-.card{background:#11151D;border:1px solid #1E2430;border-radius:12px;padding:24px;margin-bottom:16px;transition:border-color .2s}
-.card:hover{border-color:#f0b958}
-.card h2{font-size:16px;color:#E8E6E3;margin-bottom:8px}
-.card .desc{font-size:13px;color:#6B7280;line-height:1.6;margin-bottom:16px}
-.card .tags{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
-.card .tag{font-size:10px;padding:3px 8px;border-radius:4px;background:rgba(240,185,88,.08);color:#f0b958}
-.card a{display:inline-block;font-size:13px;color:#60a5fa;text-decoration:none;padding:8px 16px;border:1px solid rgba(96,165,250,.3);border-radius:6px;transition:all .2s}
-.card a:hover{background:rgba(96,165,250,.08);border-color:#60a5fa}
-.card a+a{margin-left:8px}
-.footer{margin-top:48px;text-align:center;font-size:12px;color:#3D4450}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--sans);font-size:16px;line-height:1.7;
+  color:var(--text-secondary);background:var(--bg-deep);
+  -webkit-font-smoothing:antialiased;
+}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--rule);border-radius:2px}
+
+/* ═══════════ Layout ═══════════ */
+.container{max-width:820px;margin:0 auto;padding:0 24px}
+
+/* ═══════════ Hero ═══════════ */
+.hero{padding:100px 0 64px;text-align:center}
+.hero-tag{font-size:12px;letter-spacing:.2em;color:var(--gold-dim);text-transform:uppercase;margin-bottom:16px}
+.hero h1{font-size:40px;font-weight:700;color:var(--text-primary);letter-spacing:-.02em;margin-bottom:12px}
+.hero h1 span{color:var(--gold)}
+.hero .subtitle{font-size:16px;color:var(--text-muted);max-width:480px;margin:0 auto;line-height:1.8}
+
+/* ═══════════ Section ═══════════ */
+.section{padding:48px 0}
+.section-label{font-size:11px;letter-spacing:.2em;color:var(--gold-dim);text-transform:uppercase;margin-bottom:32px}
+
+/* ═══════════ About ═══════════ */
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.about-card{background:var(--bg-card);border:1px solid var(--rule-subtle);border-radius:var(--radius);padding:20px 24px}
+.about-card .num{font-size:28px;font-weight:700;color:var(--gold);margin-bottom:4px}
+.about-card .label{font-size:13px;color:var(--text-muted)}
+
+/* ═══════════ Project Cards ═══════════ */
+.project-card{
+  background:var(--bg-card);border:1px solid var(--rule-subtle);
+  border-radius:var(--radius);padding:28px;margin-bottom:16px;
+  transition:border-color .3s var(--ease),transform .3s var(--ease);
+  cursor:default;
+}
+.project-card:hover{border-color:var(--gold);transform:translateY(-2px)}
+.project-card .name{font-size:20px;font-weight:700;color:var(--text-primary);margin-bottom:4px}
+.project-card .name .emoji{font-size:24px;margin-right:8px}
+.project-card .oneliner{font-size:13px;color:var(--text-muted);margin-bottom:16px}
+.project-card .desc{font-size:14px;color:var(--text-secondary);line-height:1.8;margin-bottom:20px}
+.project-card .tags{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.project-card .tag{font-size:10px;padding:4px 10px;border-radius:4px;background:oklch(100% 0 0/.04);color:var(--text-muted);border:1px solid var(--rule-subtle)}
+.project-card .links{display:flex;gap:12px}
+.project-card .links a{
+  font-size:13px;color:var(--azurite);text-decoration:none;
+  padding:8px 18px;border:1px solid oklch(100% 0 0/.08);border-radius:6px;
+  transition:all .2s var(--ease);
+}
+.project-card .links a:hover{background:oklch(100% 0 0/.06);border-color:var(--azurite)}
+.project-card .links a.primary{color:var(--bg-deep);background:var(--gold);border-color:var(--gold);font-weight:600}
+.project-card .links a.primary:hover{background:oklch(75% 0.12 80);border-color:oklch(75% 0.12 80)}
+
+/* ═══════════ Skills ═══════════ */
+.skills-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.skill-card{background:var(--bg-card);border:1px solid var(--rule-subtle);border-radius:var(--radius);padding:24px;text-align:center}
+.skill-card .icon{font-size:28px;margin-bottom:12px}
+.skill-card .title{font-size:14px;font-weight:600;color:var(--text-primary);margin-bottom:6px}
+.skill-card .detail{font-size:12px;color:var(--text-muted);line-height:1.6}
+
+/* ═══════════ Contact ═══════════ */
+.contact{text-align:center;padding:64px 0 80px}
+.contact .cta{font-size:18px;color:var(--text-primary);margin-bottom:24px}
+.contact .links{display:flex;justify-content:center;gap:16px}
+.contact .links a{
+  font-size:14px;color:var(--text-secondary);text-decoration:none;
+  padding:10px 24px;border:1px solid var(--rule-subtle);border-radius:var(--radius);
+  transition:all .2s var(--ease);
+}
+.contact .links a:hover{border-color:var(--gold);color:var(--gold)}
+
+/* ═══════════ Footer ═══════════ */
+.footer{text-align:center;padding:24px 0 48px;font-size:12px;color:var(--rule)}
+
+/* ═══════════ Responsive ═══════════ */
+@media(max-width:640px){
+  .hero h1{font-size:28px}
+  .about-grid{grid-template-columns:1fr 1fr}
+  .skills-grid{grid-template-columns:1fr 1fr}
+  .project-card{padding:20px}
+}
 </style>
 </head>
 <body>
-<div class="container">
-  <div class="header">
-    <h1>Portfolio</h1>
-    <p>项目展示与在线体验</p>
-  </div>
 
-  <div class="card">
-    <h2>灵魂工坊 · Soul Workshop v4</h2>
-    <p class="desc">NPC 意识引擎完整系统。包含 10 维性格参数、语义理解管线、心口不一算法、冷热记忆系统、自主行为调度器。纯前端 4000+ 行 GDScript 逻辑全部在浏览器中运行。</p>
-    <div class="tags">
-      <span class="tag">AI Agent</span>
-      <span class="tag">意识引擎</span>
-      <span class="tag">NPC 系统</span>
-      <span class="tag">语义理解</span>
-      <span class="tag">纯前端</span>
+<!-- ═══════════ Hero ═══════════ -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-tag">Portfolio</div>
+    <h1>梁梓渤 · <span>系统架构师</span></h1>
+    <p class="subtitle">零代码基础，独立设计并交付 3 个纯前端智能系统。不调 API，全本地计算，每个系统从架构设计到视觉打磨全部自主完成。</p>
+  </div>
+</section>
+
+<!-- ═══════════ About ═══════════ -->
+<section class="section">
+  <div class="container">
+    <div class="section-label">About</div>
+    <div class="about-grid">
+      <div class="about-card">
+        <div class="num">3</div>
+        <div class="label">独立交付系统</div>
+      </div>
+      <div class="about-card">
+        <div class="num">20,000+</div>
+        <div class="label">总代码行数</div>
+      </div>
+      <div class="about-card">
+        <div class="num">21</div>
+        <div class="label">纯前端引擎</div>
+      </div>
+      <div class="about-card">
+        <div class="num">0</div>
+        <div class="label">外部 API 调用</div>
+      </div>
     </div>
-    <a href="soul-workshop/">在线体验</a>
   </div>
+</section>
 
-  <div class="card">
-    <h2>冷热记忆提炼 · 记忆漏斗系统</h2>
-    <p class="desc">从灵魂工坊拆解出的记忆子系统。展示 NPC 如何通过漏斗模型实现：原始事件 → 情感标签 → 抽象印象 → 记忆驱动行为。包含置信度衰减、自动遗忘清理、跨事件情景回忆，单 NPC 记忆控制在 5KB 以内。</p>
-    <div class="tags">
-      <span class="tag">记忆系统</span>
-      <span class="tag">漏斗模型</span>
-      <span class="tag">自动遗忘</span>
-      <span class="tag">抽象提炼</span>
+<!-- ═══════════ Projects ═══════════ -->
+<section class="section">
+  <div class="container">
+    <div class="section-label">Projects</div>
+
+    <!-- 灵魂工坊 -->
+    <div class="project-card">
+      <div class="name"><span class="emoji">🌿</span>灵魂工坊 · NPC 自主意识引擎</div>
+      <div class="oneliner">让 NPC 有性格、有记忆、有情绪——不是聊天机器人，是行为系统</div>
+      <div class="desc">
+        6 层 Pipeline 架构（输入感知→语义解析→人格透镜→情绪需求→关系引擎→行为输出），200+ 语义条目最长匹配，10 维人格参数加权，冷热记忆分层漏斗模型，涟漪式关系传播算法。200 个 NPC 同时在线，单次推理延迟 0.54ms。
+      </div>
+      <div class="tags">
+        <span class="tag">Pipeline 架构</span><span class="tag">语义解析</span><span class="tag">人格透镜</span>
+        <span class="tag">关系矩阵</span><span class="tag">记忆漏斗</span><span class="tag">纯前端</span>
+      </div>
+      <div class="links">
+        <a class="primary" href="soul-workshop/">在线体验</a>
+        <a href="memory-system/">记忆系统</a>
+      </div>
     </div>
-    <a href="memory-system/">在线体验</a>
-  </div>
 
-  <div class="footer">
-    <p>更多项目即将上线</p>
+    <!-- 天机阁 -->
+    <div class="project-card">
+      <div class="name"><span class="emoji">⚙</span>天机阁 · 传统术数智能系统</div>
+      <div class="oneliner">10 个独立引擎，纯前端本地计算，0.02ms 最小延迟</div>
+      <div class="desc">
+        引擎注册中心架构，10 个术数引擎独立部署（八字、六爻、梅花、奇门、太乙、诸葛、解梦、六壬、紫微、风水），34 位历史大师分析风格蒸馏，PWA 离线支持。引擎间零耦合，单一引擎可独立抽取复用。
+      </div>
+      <div class="tags">
+        <span class="tag">引擎注册中心</span><span class="tag">10 引擎</span><span class="tag">大师蒸馏</span>
+        <span class="tag">PWA</span><span class="tag">纯前端</span><span class="tag">零耦合</span>
+      </div>
+      <div class="links">
+        <a class="primary" href="video-demos/demo_tianjige.html">交互演示</a>
+        <a href="https://github.com/nothern131/tianjige" target="_blank">源码</a>
+      </div>
+    </div>
+
+    <!-- 岐黄阁 -->
+    <div class="project-card">
+      <div class="name"><span class="emoji">🌿</span>岐黄阁 · 中医药知识智能系统</div>
+      <div class="oneliner">11 个功能模块，辨证推理三路并行，古籍条文结构化引用</div>
+      <div class="desc">
+        11 模块覆盖方剂、本草、辨证、体质、食谱、配伍等中医药全场景。三路辨证并行推理（八纲→脏腑→六经），12 位医家风格蒸馏，古籍条文结构化引用与配伍禁忌自动检测，宣纸水墨设计语言。
+      </div>
+      <div class="tags">
+        <span class="tag">辨证推理</span><span class="tag">11 模块</span><span class="tag">古籍条文</span>
+        <span class="tag">配伍禁忌</span><span class="tag">医家蒸馏</span><span class="tag">纯前端</span>
+      </div>
+      <div class="links">
+        <a class="primary" href="video-demos/demo_qihuangge.html">交互演示</a>
+        <a href="https://github.com/nothern131/qihuangge" target="_blank">源码</a>
+      </div>
+    </div>
   </div>
+</section>
+
+<!-- ═══════════ Skills ═══════════ -->
+<section class="section">
+  <div class="container">
+    <div class="section-label">Capabilities</div>
+    <div class="skills-grid">
+      <div class="skill-card">
+        <div class="icon">🏗</div>
+        <div class="title">系统架构</div>
+        <div class="detail">分层 Pipeline<br>引擎注册中心<br>零耦合模块化</div>
+      </div>
+      <div class="skill-card">
+        <div class="icon">🎨</div>
+        <div class="title">产品设计</div>
+        <div class="detail">设计系统<br>OKLCH 调色板<br>反 AI 模板化</div>
+      </div>
+      <div class="skill-card">
+        <div class="icon">🧠</div>
+        <div class="title">业务理解</div>
+        <div class="detail">NPC 行为建模<br>辨证推理逻辑<br>古籍知识结构化</div>
+      </div>
+      <div class="skill-card">
+        <div class="icon">⚡</div>
+        <div class="title">快速迭代</div>
+        <div class="detail">文档先行<br>5 轮 EP 迭代<br>单次 0.54ms 延迟</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ Contact ═══════════ -->
+<section class="contact">
+  <div class="container">
+    <div class="cta">感兴趣？欢迎联系</div>
+    <div class="links">
+      <a href="https://github.com/nothern131" target="_blank">GitHub</a>
+      <a href="mailto:nothern131@gmail.com">Email</a>
+    </div>
+  </div>
+</section>
+
+<div class="footer">
+  <div class="container">梁梓渤 · 2026 · 纯前端架构 · 零 API 调用</div>
 </div>
+
 </body>
 </html>
