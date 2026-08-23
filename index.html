@@ -2,260 +2,929 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>梁梓渤 · 作品集</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>梁梓渤 · 炼金秘籍</title>
+<meta name="description" content="梁梓渤 · 以算法炼魂，以代码入道。零外部依赖的纯算法智能系统设计者。">
 <style>
-/* ═══════════ Hallmark Design System · OKLCH palette · warm-amber ═══════════ */
-:root{
-  --bg-deep:oklch(12% 0.008 45);--bg-surface:oklch(16% 0.010 45);
-  --bg-elevated:oklch(20% 0.010 45);--bg-card:oklch(18% 0.008 45);
-  --text-primary:oklch(94% 0.006 80);--text-secondary:oklch(78% 0.006 80);
-  --text-muted:oklch(56% 0.008 70);
-  --rule:oklch(30% 0.008 45);--rule-subtle:oklch(24% 0.006 45);
-  --gold:#f0b958;--gold-dim:#a0824a;
-  --jade:#4ade80;--azurite:#60a5fa;--crimson:#f87171;
-  --sans:'PingFang SC','Noto Sans SC','Microsoft YaHei',sans-serif;
-  --ease:cubic-bezier(.4,0,.2,1);
-  --radius:12px;--radius-sm:8px;
-}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{
-  font-family:var(--sans);font-size:16px;line-height:1.7;
-  color:var(--text-secondary);background:var(--bg-deep);
-  -webkit-font-smoothing:antialiased;
-}
-::-webkit-scrollbar{width:4px}
-::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:var(--rule);border-radius:2px}
+  :root {
+    /* ── 古卷色彩 ── */
+    --ink: #14100c;           /* 墨底 · 暖黑 */
+    --ink-2: #1c1712;         /* 浅墨 */
+    --ink-3: #241d15;         /* 更浅墨 · 卡片面 */
+    --parchment: #e8dcc4;     /* 宣纸暖白 */
+    --parchment-dim: #b8a88c; /* 暗宣纸 */
+    --parchment-mute: #8a7c63;/* 灰宣纸 */
+    --gold: #c9a25e;          /* 鎏金 */
+    --gold-bright: #e6c887;   /* 亮金 */
+    --gold-deep: #9a7a3e;     /* 深金 */
+    --cinnabar: #b5342f;      /* 朱砂红 */
+    --cinnabar-dim: #8e2b27;  /* 暗朱砂 */
+    --rule: rgba(201, 162, 94, 0.18);  /* 金线 */
+    --rule-strong: rgba(201, 162, 94, 0.38);
 
-/* ═══════════ Layout ═══════════ */
-.container{max-width:820px;margin:0 auto;padding:0 24px}
+    /* ── 字体 ── */
+    --brush: "STXingkai", "STKaiti", "KaiTi", "楷体", "华文行楷", serif;
+    --song: "STZhongsong", "SimSun", "Songti SC", "Noto Serif SC", serif;
+    --mono: "JetBrains Mono", "Consolas", "Cascadia Code", monospace;
 
-/* ═══════════ Hero ═══════════ */
-.hero{padding:100px 0 64px;text-align:center}
-.hero-tag{font-size:12px;letter-spacing:.2em;color:var(--gold-dim);text-transform:uppercase;margin-bottom:16px}
-.hero h1{font-size:40px;font-weight:700;color:var(--text-primary);letter-spacing:-.02em;margin-bottom:12px}
-.hero h1 span{color:var(--gold)}
-.hero .subtitle{font-size:16px;color:var(--text-muted);max-width:480px;margin:0 auto;line-height:1.8}
+    --ease: cubic-bezier(.22, .61, .36, 1);
+  }
 
-/* ═══════════ Section ═══════════ */
-.section{padding:48px 0}
-.section-label{font-size:11px;letter-spacing:.2em;color:var(--gold-dim);text-transform:uppercase;margin-bottom:32px}
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-/* ═══════════ About ═══════════ */
-.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.about-card{background:var(--bg-card);border:1px solid var(--rule-subtle);border-radius:var(--radius);padding:20px 24px}
-.about-card .num{font-size:28px;font-weight:700;color:var(--gold);margin-bottom:4px}
-.about-card .label{font-size:13px;color:var(--text-muted)}
+  html { scroll-behavior: smooth; }
 
-/* ═══════════ Project Cards ═══════════ */
-.project-card{
-  background:var(--bg-card);border:1px solid var(--rule-subtle);
-  border-radius:var(--radius);padding:28px;margin-bottom:16px;
-  transition:border-color .3s var(--ease),transform .3s var(--ease);
-  cursor:default;
-}
-.project-card:hover{border-color:var(--gold);transform:translateY(-2px)}
-.project-card .name{font-size:20px;font-weight:700;color:var(--text-primary);margin-bottom:4px}
-.project-card .name .emoji{font-size:24px;margin-right:8px}
-.project-card .oneliner{font-size:13px;color:var(--text-muted);margin-bottom:16px}
-.project-card .desc{font-size:14px;color:var(--text-secondary);line-height:1.8;margin-bottom:20px}
-.project-card .tags{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
-.project-card .tag{font-size:10px;padding:4px 10px;border-radius:4px;background:oklch(100% 0 0/.04);color:var(--text-muted);border:1px solid var(--rule-subtle)}
-.project-card .links{display:flex;gap:12px}
-.project-card .links a{
-  font-size:13px;color:var(--azurite);text-decoration:none;
-  padding:8px 18px;border:1px solid oklch(100% 0 0/.08);border-radius:6px;
-  transition:all .2s var(--ease);
-}
-.project-card .links a:hover{background:oklch(100% 0 0/.06);border-color:var(--azurite)}
-.project-card .links a.primary{color:var(--bg-deep);background:var(--gold);border-color:var(--gold);font-weight:600}
-.project-card .links a.primary:hover{background:oklch(75% 0.12 80);border-color:oklch(75% 0.12 80)}
+  body {
+    font-family: var(--song);
+    background: var(--ink);
+    color: var(--parchment-dim);
+    min-height: 100vh;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
 
-/* ═══════════ Skills ═══════════ */
-.skills-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
-.skill-card{background:var(--bg-card);border:1px solid var(--rule-subtle);border-radius:var(--radius);padding:24px;text-align:center}
-.skill-card .icon{font-size:28px;margin-bottom:12px}
-.skill-card .title{font-size:14px;font-weight:600;color:var(--text-primary);margin-bottom:6px}
-.skill-card .detail{font-size:12px;color:var(--text-muted);line-height:1.6}
+  /* ── 水墨纸纹 ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.035;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
 
-/* ═══════════ Contact ═══════════ */
-.contact{text-align:center;padding:64px 0 80px}
-.contact .cta{font-size:18px;color:var(--text-primary);margin-bottom:24px}
-.contact .links{display:flex;justify-content:center;gap:16px}
-.contact .links a{
-  font-size:14px;color:var(--text-secondary);text-decoration:none;
-  padding:10px 24px;border:1px solid var(--rule-subtle);border-radius:var(--radius);
-  transition:all .2s var(--ease);
-}
-.contact .links a:hover{border-color:var(--gold);color:var(--gold)}
+  /* ── 全局鎏金跟随光晕 ── */
+  .glow {
+    position: fixed;
+    top: 0; left: 0;
+    width: 560px; height: 560px;
+    border-radius: 50%;
+    z-index: 0;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(circle, rgba(201, 162, 94, 0.10) 0%, rgba(201, 162, 94, 0.04) 32%, transparent 68%);
+    mix-blend-mode: screen;
+    will-change: transform;
+  }
 
-/* ═══════════ Footer ═══════════ */
-.footer{text-align:center;padding:24px 0 48px;font-size:12px;color:var(--rule)}
+  /* ── 舞台布景 · 背景墨晕 ── */
+  .scene {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+  }
+  .scene .ink-blot {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(60px);
+    opacity: 0.5;
+  }
+  .scene .blot-a { width: 560px; height: 560px; top: -140px; right: -120px;
+    background: radial-gradient(circle, rgba(154, 122, 62, 0.14), transparent 70%); }
+  .scene .blot-b { width: 420px; height: 420px; bottom: 8%; left: -160px;
+    background: radial-gradient(circle, rgba(181, 52, 47, 0.08), transparent 70%); }
 
-/* ═══════════ Responsive ═══════════ */
-@media(max-width:640px){
-  .hero h1{font-size:28px}
-  .about-grid{grid-template-columns:1fr 1fr}
-  .skills-grid{grid-template-columns:1fr 1fr}
-  .project-card{padding:20px}
-}
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 96px 32px 80px;
+  }
+
+  /* ── 顶部卷轴装饰线 ── */
+  .scroll-top {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 72px;
+    opacity: 0;
+    animation: fadeDown .8s var(--ease) forwards;
+  }
+  .scroll-top .rod {
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold-deep), transparent);
+    flex: 1;
+  }
+  .scroll-top .rod.left { background: linear-gradient(90deg, var(--gold-deep), transparent); }
+  .scroll-top .rod.right { background: linear-gradient(90deg, transparent, var(--gold-deep)); }
+  .scroll-top .mark {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: var(--gold-deep);
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  /* ── 首屏 · 首页 ── */
+  .hero {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 40px;
+    align-items: center;
+    margin-bottom: 80px;
+  }
+  .hero-name {
+    opacity: 0;
+    animation: fadeUp .9s var(--ease) .1s forwards;
+  }
+  .hero-name .seal-mini {
+    display: none;
+  }
+  .hero-title {
+    font-family: var(--brush);
+    font-size: clamp(52px, 9vw, 92px);
+    font-weight: 400;
+    line-height: 1.06;
+    color: var(--parchment);
+    letter-spacing: 0.02em;
+    margin-bottom: 8px;
+    transform: translateZ(0);
+  }
+  .hero-title .gold {
+    background: linear-gradient(120deg, #d9b877 0%, #f0d9a4 42%, #c9a25e 72%, #a8833f 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
+  .hero-sub {
+    font-family: var(--brush);
+    font-size: clamp(17px, 2.6vw, 22px);
+    color: var(--gold-deep);
+    letter-spacing: 0.12em;
+    margin-bottom: 20px;
+  }
+  .hero-desc {
+    font-size: 14.5px;
+    line-height: 1.9;
+    color: var(--parchment-mute);
+    max-width: 460px;
+  }
+  .hero-desc strong { color: var(--parchment-dim); font-weight: 600; }
+
+  /* ── 朱砂印章 ── */
+  .seal {
+    width: 108px;
+    height: 108px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    align-items: center;
+    justify-items: center;
+    background: var(--cinnabar);
+    border: 2px solid rgba(0,0,0,0.12);
+    outline: 2px solid var(--cinnabar);
+    outline-offset: 3px;
+    box-shadow: 0 8px 30px rgba(181, 52, 47, 0.25), inset 0 0 24px rgba(0,0,0,0.18);
+    border-radius: 6px;
+    position: relative;
+    opacity: 0;
+    animation: sealIn .9s var(--ease) .35s forwards;
+    transform-origin: center;
+  }
+  .seal span {
+    font-family: var(--brush);
+    font-size: 34px;
+    color: #f7e7d0;
+    line-height: 1;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+  }
+  .seal::after {
+    content: '';
+    position: absolute;
+    inset: 4px;
+    border: 1.5px solid rgba(247, 231, 208, 0.55);
+    border-radius: 3px;
+    pointer-events: none;
+  }
+
+  @keyframes sealIn {
+    0% { opacity: 0; transform: scale(.6) rotate(-8deg); }
+    70% { opacity: 1; transform: scale(1.06) rotate(2deg); }
+    100% { opacity: 1; transform: scale(1) rotate(0); }
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-14px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── 简历 & 联系 卷首 ── */
+  .resume-band {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    padding: 18px 22px;
+    border: 1px solid var(--rule);
+    border-radius: 12px;
+    background: linear-gradient(120deg, rgba(201,162,94,0.05), rgba(201,162,94,0.015));
+    margin-bottom: 72px;
+    opacity: 0;
+    animation: fadeUp .8s var(--ease) .4s forwards;
+  }
+  .resume-band .label {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    color: var(--gold-deep);
+    text-transform: uppercase;
+  }
+  .resume-band .label em {
+    font-style: normal;
+    color: var(--cinnabar);
+  }
+  .resume-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 10px 20px;
+    border-radius: 9px;
+    border: 1px solid var(--gold-deep);
+    background: rgba(201, 162, 94, 0.08);
+    color: var(--gold-bright);
+    text-decoration: none;
+    font-family: var(--song);
+    font-size: 14px;
+    letter-spacing: 0.04em;
+    transition: all .28s var(--ease);
+  }
+  .resume-btn:hover {
+    background: rgba(201, 162, 94, 0.16);
+    border-color: var(--gold-bright);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(201, 162, 94, 0.18);
+  }
+  .resume-btn svg { flex-shrink: 0; }
+  .resume-band .contact {
+    margin-left: auto;
+    display: flex;
+    gap: 18px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--parchment-mute);
+    align-items: center;
+  }
+  .resume-band .contact a {
+    color: var(--parchment-dim);
+    text-decoration: none;
+    transition: color .2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .resume-band .contact a:hover { color: var(--gold-bright); }
+
+  /* ── 章节标题 · 卷 ── */
+  .chapter {
+    display: flex;
+    align-items: baseline;
+    gap: 18px;
+    margin-bottom: 32px;
+  }
+  .chapter .vol {
+    font-family: var(--brush);
+    font-size: 30px;
+    color: var(--gold);
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+  }
+  .chapter .line { flex: 1; height: 1px; background: linear-gradient(90deg, var(--rule-strong), transparent); }
+  .chapter .en {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    color: var(--parchment-mute);
+    text-transform: uppercase;
+  }
+
+  /* ── 技术成果 · 四证 ── */
+  .proofs {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-bottom: 84px;
+  }
+  .proof {
+    position: relative;
+    padding: 24px 20px;
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    background: linear-gradient(160deg, var(--ink-2), var(--ink));
+    overflow: hidden;
+    transition: border-color .3s var(--ease), transform .3s var(--ease);
+  }
+  .proof::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 2px;
+    background: linear-gradient(90deg, var(--cinnabar), var(--gold));
+    opacity: 0.75;
+  }
+  .proof:hover { border-color: var(--rule-strong); transform: translateY(-3px); }
+  .proof .num {
+    font-family: var(--mono);
+    font-size: 30px;
+    font-weight: 700;
+    color: var(--gold-bright);
+    line-height: 1;
+    margin-bottom: 10px;
+    letter-spacing: -0.02em;
+  }
+  .proof .num .unit { font-size: 14px; color: var(--gold-deep); font-weight: 400; }
+  .proof .t {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--parchment);
+    margin-bottom: 6px;
+  }
+  .proof .d {
+    font-size: 11.5px;
+    color: var(--parchment-mute);
+    line-height: 1.7;
+  }
+
+  /* ── 项目 · 卷轴卡 ── */
+  .volumes { display: flex; flex-direction: column; gap: 22px; margin-bottom: 84px; }
+
+  .volume {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+    border: 1px solid var(--rule);
+    border-radius: 14px;
+    background: linear-gradient(165deg, var(--ink-2), var(--ink));
+    text-decoration: none;
+    color: inherit;
+    overflow: hidden;
+    transition: border-color .35s var(--ease), transform .35s var(--ease), box-shadow .35s var(--ease);
+  }
+  .volume:hover {
+    border-color: var(--rule-strong);
+    transform: translateY(-3px);
+    box-shadow: 0 18px 50px rgba(0,0,0,0.45), 0 0 0 1px var(--rule-strong);
+  }
+
+  /* 卡内跟随高光 */
+  .volume .spotlight {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity .35s var(--ease);
+    background: radial-gradient(480px circle at var(--mx, 50%) var(--my, 50%), rgba(201,162,94,0.08), transparent 55%);
+  }
+  .volume:hover .spotlight { opacity: 1; }
+
+  .volume-inner {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 22px;
+    padding: 30px 32px;
+  }
+  @media (min-width: 720px) {
+    .volume-inner { grid-template-columns: 1.15fr 0.85fr; gap: 34px; align-items: center; }
+  }
+
+  .vol-head .vol-no {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: var(--cinnabar);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .vol-head .vol-no::before {
+    content: '';
+    width: 16px; height: 1px;
+    background: var(--cinnabar);
+  }
+  .vol-title {
+    font-family: var(--brush);
+    font-size: 27px;
+    font-weight: 400;
+    color: var(--parchment);
+    letter-spacing: 0.03em;
+    margin-bottom: 10px;
+  }
+  .vol-title .en {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--gold-deep);
+    letter-spacing: 0.08em;
+    margin-left: 6px;
+  }
+  .vol-desc {
+    font-size: 13.5px;
+    line-height: 1.85;
+    color: var(--parchment-mute);
+  }
+  .vol-desc strong { color: var(--parchment-dim); font-weight: 600; }
+
+  .vol-metrics {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-top: 16px;
+  }
+  .vol-metrics .m {
+    background: rgba(201,162,94,0.05);
+    border: 1px solid var(--rule);
+    border-radius: 7px;
+    padding: 8px 10px;
+  }
+  .vol-metrics .mv {
+    font-family: var(--mono);
+    font-size: 14.5px;
+    font-weight: 700;
+    color: var(--gold-bright);
+    line-height: 1.2;
+  }
+  .vol-metrics .ml {
+    font-size: 10px;
+    color: var(--parchment-mute);
+    margin-top: 3px;
+    line-height: 1.4;
+  }
+
+  .vol-problem {
+    margin-top: 14px;
+    padding: 10px 13px;
+    border-left: 2px solid var(--cinnabar);
+    background: rgba(181,52,47,0.05);
+    font-size: 12px;
+    color: var(--parchment-mute);
+    line-height: 1.7;
+  }
+  .vol-problem strong { color: var(--parchment-dim); }
+
+  .vol-links {
+    display: flex;
+    gap: 8px;
+    margin-top: 16px;
+    flex-wrap: wrap;
+  }
+  .vol-link {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--gold-deep);
+    text-decoration: none;
+    padding: 5px 11px;
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    transition: all .2s;
+  }
+  .vol-link:hover { border-color: var(--gold); color: var(--gold-bright); background: rgba(201,162,94,0.08); }
+
+  /* 媒体窗 */
+  .vol-media {
+    position: relative;
+    border-radius: 11px;
+    overflow: hidden;
+    border: 1px solid var(--rule);
+    background: #0b0806;
+    aspect-ratio: 16 / 10;
+  }
+  .vol-media video {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .vol-media .frame {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border: 1px solid rgba(201,162,94,0.25);
+    border-radius: 11px;
+  }
+  .vol-media .cap {
+    position: absolute;
+    left: 12px; bottom: 10px;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    color: rgba(232,220,196,0.75);
+    background: rgba(20,16,12,0.6);
+    padding: 4px 9px;
+    border-radius: 5px;
+    backdrop-filter: blur(3px);
+  }
+  .vol-media .play-tag {
+    position: absolute;
+    top: 12px; right: 12px;
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    border: 1px solid rgba(201,162,94,0.4);
+    background: rgba(20,16,12,0.55);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--gold-bright);
+    pointer-events: none;
+  }
+
+  /* ── 落款 Footer ── */
+  .footer {
+    border-top: 1px solid var(--rule);
+    padding-top: 36px;
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .footer .sig {
+    font-family: var(--brush);
+    font-size: 20px;
+    color: var(--parchment);
+    letter-spacing: 0.06em;
+  }
+  .footer .sig small {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--parchment-mute);
+    letter-spacing: 0.1em;
+    margin-left: 8px;
+  }
+  .footer .links {
+    display: flex;
+    gap: 20px;
+  }
+  .footer .links a {
+    color: var(--parchment-mute);
+    text-decoration: none;
+    font-family: var(--mono);
+    font-size: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: color .2s;
+  }
+  .footer .links a:hover { color: var(--gold-bright); }
+
+  /* ── 滚动显现 ── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity .8s var(--ease), transform .8s var(--ease);
+  }
+  .reveal.on { opacity: 1; transform: translateY(0); }
+
+  /* ── 响应式 ── */
+  @media (max-width: 720px) {
+    .container { padding: 56px 20px 60px; }
+    .hero { grid-template-columns: 1fr; gap: 32px; }
+    .seal { width: 84px; height: 84px; order: -1; }
+    .seal span { font-size: 26px; }
+    .proofs { grid-template-columns: repeat(2, 1fr); }
+    .resume-band .contact { margin-left: 0; width: 100%; }
+  }
+  @media (max-width: 420px) {
+    .proofs { grid-template-columns: 1fr; }
+  }
 </style>
 </head>
 <body>
 
-<!-- ═══════════ Hero ═══════════ -->
-<section class="hero">
-  <div class="container">
-    <div class="hero-tag">Portfolio</div>
-    <h1>梁梓渤 · <span>系统架构师</span></h1>
-    <p class="subtitle">零代码基础，独立设计并交付 3 个纯前端智能系统。不调 API，全本地计算，每个系统从架构设计到视觉打磨全部自主完成。</p>
-  </div>
-</section>
+<div class="glow" id="glow"></div>
+<div class="scene">
+  <div class="ink-blot blot-a"></div>
+  <div class="ink-blot blot-b"></div>
+</div>
 
-<!-- ═══════════ About ═══════════ -->
-<section class="section">
-  <div class="container">
-    <div class="section-label">About</div>
-    <div class="about-grid">
-      <div class="about-card">
-        <div class="num">3</div>
-        <div class="label">独立交付系统</div>
-      </div>
-      <div class="about-card">
-        <div class="num">20,000+</div>
-        <div class="label">总代码行数</div>
-      </div>
-      <div class="about-card">
-        <div class="num">21</div>
-        <div class="label">纯前端引擎</div>
-      </div>
-      <div class="about-card">
-        <div class="num">0</div>
-        <div class="label">外部 API 调用</div>
-      </div>
+<div class="container">
+
+  <!-- 顶部卷轴 -->
+  <div class="scroll-top">
+    <div class="rod left"></div>
+    <div class="mark">炼金手卷 · PORTFOLIO</div>
+    <div class="rod right"></div>
+  </div>
+
+  <!-- 首页 -->
+  <header class="hero">
+    <div class="hero-name">
+      <div class="hero-title">梁<span class="gold">梓</span>渤</div>
+      <div class="hero-sub">以算法炼魂 · 以代码入道</div>
+      <p class="hero-desc">
+        <strong>纯算法智能系统设计者。</strong>不依赖大模型 API，不依赖外部服务，
+        从架构到算法到视觉一手完成。四卷系统，皆可本地运行，
+        每一行代码都在「赋予系统以灵魂」。
+      </p>
+    </div>
+    <div class="seal" aria-label="梁梓渤印">
+      <span>梁</span><span>梓</span><span>渤</span><span>印</span>
+    </div>
+  </header>
+
+  <!-- 简历 & 联系 -->
+  <div class="resume-band">
+    <span class="label">求<em>职</em> · 简历与联系方式</span>
+    <a href="assets/resume.pdf" class="resume-btn" download>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-4-4m4 4l4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+      下载简历（PDF）
+    </a>
+    <div class="contact">
+      <a href="mailto:lzb17333426201@163.com">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+        邮件
+      </a>
+      <a href="https://github.com/Nothern131" target="_blank" rel="noopener">GitHub</a>
     </div>
   </div>
-</section>
 
-<!-- ═══════════ Projects ═══════════ -->
-<section class="section">
-  <div class="container">
-    <div class="section-label">Projects</div>
+  <!-- 卷一 · 四证 -->
+  <div class="chapter reveal">
+    <span class="vol">卷一 · 四证</span>
+    <span class="line"></span>
+    <span class="en">Concrete Proof</span>
+  </div>
+
+  <div class="proofs reveal">
+    <div class="proof">
+      <div class="num">0</div>
+      <div class="t">外部依赖</div>
+      <div class="d">四卷系统全部零 API 调用，零服务器成本，纯本地计算。</div>
+    </div>
+    <div class="proof">
+      <div class="num">0.02<span class="unit">ms</span></div>
+      <div class="t">单次响应延迟</div>
+      <div class="d">天机阁 O(1) 查表法，千次并发 P99 ≤ 4.5ms。</div>
+    </div>
+    <div class="proof">
+      <div class="num">200<span class="unit">+</span></div>
+      <div class="t">NPC 同时在线</div>
+      <div class="d">灵魂工坊 LOD 分级调度，计算开销降低 70%+。</div>
+    </div>
+    <div class="proof">
+      <div class="num">18<span class="unit">天</span></div>
+      <div class="t">四卷成书</div>
+      <div class="d">从零到一交付四套完整系统，非科班快速工程化。</div>
+    </div>
+  </div>
+
+  <!-- 卷二 · 精选项目 -->
+  <div class="chapter reveal">
+    <span class="vol">卷二 · 四卷秘籍</span>
+    <span class="line"></span>
+    <span class="en">Selected Works</span>
+  </div>
+
+  <div class="volumes">
 
     <!-- 灵魂工坊 -->
-    <div class="project-card">
-      <div class="name"><span class="emoji">🌿</span>灵魂工坊 · NPC 自主意识引擎</div>
-      <div class="oneliner">让 NPC 有性格、有记忆、有情绪——不是聊天机器人，是行为系统</div>
-      <div class="desc">
-        6 层 Pipeline 架构（输入感知→语义解析→人格透镜→情绪需求→关系引擎→行为输出），200+ 语义条目最长匹配，10 维人格参数加权，冷热记忆分层漏斗模型，涟漪式关系传播算法。200 个 NPC 同时在线，单次推理延迟 0.54ms。
+    <a class="volume reveal" href="https://nothern131.github.io/portfolio/soul-workshop/" target="_blank" rel="noopener" data-tilt>
+      <span class="spotlight"></span>
+      <div class="volume-inner">
+        <div>
+          <div class="vol-head">
+            <div class="vol-no">卷一 · 灵魂工坊</div>
+            <h2 class="vol-title">NPC 自主意识引擎 <span class="en">Soul Workshop</span></h2>
+            <p class="vol-desc">
+              为游戏 NPC 设计的<strong>零成本自主意识引擎</strong>。不依赖大模型，
+              NPC 能记住玩家说过的话、产生情绪变化、做出符合性格的反应，
+              让游戏 NPC 有「活人感」。
+            </p>
+          </div>
+          <div class="vol-metrics">
+            <div class="m"><div class="mv">6 层</div><div class="ml">Pipeline 架构</div></div>
+            <div class="m"><div class="mv">70%+</div><div class="ml">计算开销降低</div></div>
+            <div class="m"><div class="mv">40+</div><div class="ml">版本迭代</div></div>
+          </div>
+          <div class="vol-problem">
+            <strong>所解之惑：</strong>传统 NPC 只有预设对话树，没有记忆与情绪，玩家觉其「假」。
+            本作以本地规则推理替代大模型 API，实现低成本高沉浸。
+          </div>
+          <div class="vol-links">
+            <a class="vol-link" href="https://github.com/Nothern131/soul-workshop" target="_blank" rel="noopener">GitHub ↗</a>
+            <a class="vol-link" href="https://nothern131.github.io/portfolio/soul-workshop/" target="_blank" rel="noopener">在线体验 ↗</a>
+          </div>
+        </div>
+        <div class="vol-media">
+          <video src="videos/soul-workshop-demo.mp4" muted loop autoplay playsinline preload="metadata"></video>
+          <div class="frame"></div>
+          <div class="cap">DEMO · 灵魂工坊</div>
+          <div class="play-tag">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+          </div>
+        </div>
       </div>
-      <div class="tags">
-        <span class="tag">Pipeline 架构</span><span class="tag">语义解析</span><span class="tag">人格透镜</span>
-        <span class="tag">关系矩阵</span><span class="tag">记忆漏斗</span><span class="tag">纯前端</span>
-      </div>
-      <div class="links">
-        <a class="primary" href="soul-workshop/">在线体验</a>
-        <a href="https://github.com/nothern131/portfolio" target="_blank">源码</a>
-      </div>
-    </div>
+    </a>
 
     <!-- 天机阁 -->
-    <div class="project-card">
-      <div class="name"><span class="emoji">⚙</span>天机阁 · 传统术数智能系统</div>
-      <div class="oneliner">10 个独立引擎，纯前端本地计算，0.02ms 最小延迟</div>
-      <div class="desc">
-        引擎注册中心架构，10 个术数引擎独立部署（八字、六爻、梅花、奇门、太乙、诸葛、解梦、六壬、紫微、风水），34 位历史大师分析风格蒸馏，PWA 离线支持。引擎间零耦合，单一引擎可独立抽取复用。
+    <a class="volume reveal" href="https://nothern131.github.io/tianjige/" target="_blank" rel="noopener">
+      <span class="spotlight"></span>
+      <div class="volume-inner">
+        <div>
+          <div class="vol-head">
+            <div class="vol-no">卷二 · 天机阁</div>
+            <h2 class="vol-title">古籍算法推理系统 <span class="en">Tianji Ge</span></h2>
+            <p class="vol-desc">
+              把中国传统历法算法（干支转换、卦象推演、五行生克）<strong>纯代码实现</strong>。
+              十一个独立引擎，O(1) 查表法，毫秒级响应，支持 PWA 离线。
+            </p>
+          </div>
+          <div class="vol-metrics">
+            <div class="m"><div class="mv">O(1)</div><div class="ml">查表法</div></div>
+            <div class="m"><div class="mv">0.02ms</div><div class="ml">响应延迟</div></div>
+            <div class="m"><div class="mv">11 引擎</div><div class="ml">零耦合注册</div></div>
+          </div>
+          <div class="vol-problem">
+            <strong>所解之惑：</strong>大模型 API 响应不稳、成本高、输出不确定。
+            本作以位运算 + 查表法实现确定性推理，同入恒同出。
+          </div>
+          <div class="vol-links">
+            <a class="vol-link" href="https://github.com/Nothern131/tianjige" target="_blank" rel="noopener">GitHub ↗</a>
+            <a class="vol-link" href="https://nothern131.github.io/tianjige/" target="_blank" rel="noopener">在线体验 ↗</a>
+          </div>
+        </div>
+        <div class="vol-media">
+          <video src="videos/tianjige-video.mp4" muted loop autoplay playsinline preload="metadata"></video>
+          <div class="frame"></div>
+          <div class="cap">ARCH · 天机阁</div>
+          <div class="play-tag">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+          </div>
+        </div>
       </div>
-      <div class="tags">
-        <span class="tag">引擎注册中心</span><span class="tag">10 引擎</span><span class="tag">大师蒸馏</span>
-        <span class="tag">PWA</span><span class="tag">纯前端</span><span class="tag">零耦合</span>
-      </div>
-      <div class="links">
-        <a class="primary" href="video-demos/demo_tianjige.html">交互演示</a>
-        <a href="https://github.com/nothern131/tianjige" target="_blank">源码</a>
-      </div>
-    </div>
+    </a>
 
     <!-- 岐黄阁 -->
-    <div class="project-card">
-      <div class="name"><span class="emoji">🌿</span>岐黄阁 · 中医药知识智能系统</div>
-      <div class="oneliner">11 个功能模块，辨证推理三路并行，古籍条文结构化引用</div>
-      <div class="desc">
-        11 模块覆盖方剂、本草、辨证、体质、食谱、配伍等中医药全场景。三路辨证并行推理（八纲→脏腑→六经），12 位医家风格蒸馏，古籍条文结构化引用与配伍禁忌自动检测，宣纸水墨设计语言。
+    <a class="volume reveal" href="https://nothern131.github.io/qihuangge/" target="_blank" rel="noopener">
+      <span class="spotlight"></span>
+      <div class="volume-inner">
+        <div>
+          <div class="vol-head">
+            <div class="vol-no">卷三 · 岐黄阁</div>
+            <h2 class="vol-title">中医药古籍推理系统 <span class="en">Qihuang Ge</span></h2>
+            <p class="vol-desc">
+              纯前端中医药古籍知识推理系统。JSON 表驱动建模，
+              辨证推导、配伍验证、古籍条文全链路输出，<strong>零服务器成本部署</strong>。
+            </p>
+          </div>
+          <div class="vol-metrics">
+            <div class="m"><div class="mv">0</div><div class="ml">服务器成本</div></div>
+            <div class="m"><div class="mv">11 模块</div><div class="ml">功能引擎</div></div>
+            <div class="m"><div class="mv">全链</div><div class="ml">可解释推理</div></div>
+          </div>
+          <div class="vol-problem">
+            <strong>所解之惑：</strong>中医药知识查询需专业背景，普通人不得其门。
+            本作把古籍知识结构化，无医学背景亦可做功效推理与配伍验证。
+          </div>
+          <div class="vol-links">
+            <a class="vol-link" href="https://github.com/Nothern131/qihuangge" target="_blank" rel="noopener">GitHub ↗</a>
+            <a class="vol-link" href="https://nothern131.github.io/qihuangge/" target="_blank" rel="noopener">在线体验 ↗</a>
+          </div>
+        </div>
+        <div class="vol-media">
+          <video src="videos/pipeline.mp4" muted loop autoplay playsinline preload="metadata"></video>
+          <div class="frame"></div>
+          <div class="cap">RULE · 岐黄阁</div>
+          <div class="play-tag">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+          </div>
+        </div>
       </div>
-      <div class="tags">
-        <span class="tag">辨证推理</span><span class="tag">11 模块</span><span class="tag">古籍条文</span>
-        <span class="tag">配伍禁忌</span><span class="tag">医家蒸馏</span><span class="tag">纯前端</span>
-      </div>
-      <div class="links">
-        <a class="primary" href="video-demos/demo_qihuangge.html">交互演示</a>
-        <a href="https://github.com/nothern131/qihuangge" target="_blank">源码</a>
-      </div>
-    </div>
+    </a>
 
     <!-- CodeGuard -->
-    <div class="project-card">
-      <div class="name"><span class="emoji">🛡</span>CodeGuard · 代码质量守卫系统</div>
-      <div class="oneliner">8 维度 80 条规则，自动扫描 + 评分 + 修复建议的代码质量闭环</div>
-      <div class="desc">
-        覆盖错误处理、权限安全、数据库保护、问题诊断、韧性设计、内存安全、并发安全、资源管理 8 大维度。Critical/High/Medium/Low 四级评分，自动生成修复方案。支持 Python/JS/TS/Go/C++/GDScript 多语言，已集成到所有项目的开发流程中。
+    <a class="volume reveal" href="https://github.com/Nothern131/agent-skills" target="_blank" rel="noopener">
+      <span class="spotlight"></span>
+      <div class="volume-inner">
+        <div>
+          <div class="vol-head">
+            <div class="vol-no">卷四 · 守则</div>
+            <h2 class="vol-title">CodeGuard 代码质量守卫 <span class="en">CodeGuard</span></h2>
+            <p class="vol-desc">
+              八维度八十条代码质量检查规则，量化评分体系，
+              可直接作为 Agent Skill 调用，让 AI 生成的代码达到<strong>生产级质量</strong>。
+            </p>
+          </div>
+          <div class="vol-metrics">
+            <div class="m"><div class="mv">8 维</div><div class="ml">检查维度</div></div>
+            <div class="m"><div class="mv">80 规则</div><div class="ml">量化标准</div></div>
+            <div class="m"><div class="mv">Agent</div><div class="ml">Skill 可调用</div></div>
+          </div>
+          <div class="vol-problem">
+            <strong>所解之惑：</strong>AI 生成代码质量不稳，缺系统化检查标准。
+            本作把工程最佳实践量化为规则体系，让代码质量可评估、可追溯。
+          </div>
+          <div class="vol-links">
+            <a class="vol-link" href="https://github.com/Nothern131/agent-skills" target="_blank" rel="noopener">GitHub ↗</a>
+          </div>
+        </div>
+        <div class="vol-media">
+          <video src="videos/codeguard-video.mp4" muted loop autoplay playsinline preload="metadata"></video>
+          <div class="frame"></div>
+          <div class="cap">RULE · CodeGuard</div>
+          <div class="play-tag">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+          </div>
+        </div>
       </div>
-      <div class="tags">
-        <span class="tag">8 维度</span><span class="tag">80 规则</span><span class="tag">自动扫描</span>
-        <span class="tag">多语言</span><span class="tag">修复闭环</span><span class="tag">质量工程</span>
-      </div>
-      <div class="links">
-        <a class="primary" href="https://github.com/nothern131/portfolio" target="_blank">项目仓库</a>
-      </div>
-    </div>
-  </div>
-</section>
+    </a>
 
-<!-- ═══════════ Skills ═══════════ -->
-<section class="section">
-  <div class="container">
-    <div class="section-label">Capabilities</div>
-    <div class="skills-grid">
-      <div class="skill-card">
-        <div class="icon">🏗</div>
-        <div class="title">系统架构</div>
-        <div class="detail">分层 Pipeline<br>引擎注册中心<br>零耦合模块化</div>
-      </div>
-      <div class="skill-card">
-        <div class="icon">🎨</div>
-        <div class="title">产品设计</div>
-        <div class="detail">设计系统<br>OKLCH 调色板<br>反 AI 模板化</div>
-      </div>
-      <div class="skill-card">
-        <div class="icon">🧠</div>
-        <div class="title">业务理解</div>
-        <div class="detail">NPC 行为建模<br>辨证推理逻辑<br>古籍知识结构化</div>
-      </div>
-      <div class="skill-card">
-        <div class="icon">⚡</div>
-        <div class="title">快速迭代</div>
-        <div class="detail">文档先行<br>5 轮 EP 迭代<br>单次 0.54ms 延迟</div>
-      </div>
-    </div>
   </div>
-</section>
 
-<!-- ═══════════ Contact ═══════════ -->
-<section class="contact">
-  <div class="container">
-    <div class="cta">感兴趣？欢迎联系</div>
+  <!-- 落款 -->
+  <footer class="footer reveal">
+    <div class="sig">
+      梁梓渤 <small>LIANG ZIBO · 2026</small>
+    </div>
     <div class="links">
-      <a href="https://github.com/nothern131" target="_blank">GitHub</a>
-      <a href="mailto:nothern131@gmail.com">Email</a>
+      <a href="https://github.com/Nothern131" target="_blank" rel="noopener">GitHub</a>
+      <a href="mailto:lzb17333426201@163.com">邮件</a>
     </div>
-  </div>
-</section>
+  </footer>
 
-<div class="footer">
-  <div class="container">梁梓渤 · 2026 · 纯前端架构 · 零 API 调用</div>
 </div>
+
+<script>
+(function () {
+  'use strict';
+
+  // ── 全局鎏金光晕跟随（缓动） ──
+  var glow = document.getElementById('glow');
+  var gx = window.innerWidth / 2, gy = window.innerHeight / 2;
+  var tx = gx, ty = gy;
+
+  window.addEventListener('mousemove', function (e) {
+    tx = e.clientX; ty = e.clientY;
+  });
+
+  (function renderGlow() {
+    gx += (tx - gx) * 0.08;
+    gy += (ty - gy) * 0.08;
+    glow.style.left = gx + 'px';
+    glow.style.top = gy + 'px';
+    requestAnimationFrame(renderGlow);
+  })();
+
+  // ── 首屏标题轻微视差（名字跟随鼠标） ──
+  var heroTitle = document.querySelector('.hero-title');
+  var heroName = document.querySelector('.hero-name');
+  var hx = 0, hy = 0;
+
+  window.addEventListener('mousemove', function (e) {
+    var nx = (e.clientX / window.innerWidth - 0.5);
+    var ny = (e.clientY / window.innerHeight - 0.5);
+    hx = nx * 18;
+    hy = ny * 12;
+  });
+
+  (function renderHero() {
+    if (heroTitle) {
+      heroTitle.style.transform = 'translate(' + hx.toFixed(1) + 'px,' + hy.toFixed(1) + 'px)';
+    }
+    requestAnimationFrame(renderHero);
+  })();
+
+  // ── 卷轴卡内跟随高光 ──
+  var volumes = document.querySelectorAll('.volume');
+  volumes.forEach(function (v) {
+    var spot = v.querySelector('.spotlight');
+    v.addEventListener('mousemove', function (e) {
+      var r = v.getBoundingClientRect();
+      var mx = e.clientX - r.left;
+      var my = e.clientY - r.top;
+      v.style.setProperty('--mx', mx + 'px');
+      v.style.setProperty('--my', my + 'px');
+    });
+  });
+
+  // ── 滚动显现 ──
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (en.isIntersecting) {
+          en.target.classList.add('on');
+          io.unobserve(en.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.reveal').forEach(function (el) { io.observe(el); });
+  } else {
+    document.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('on'); });
+  }
+})();
+</script>
 
 </body>
 </html>
