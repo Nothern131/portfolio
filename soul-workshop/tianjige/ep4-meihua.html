@@ -1,0 +1,872 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>天机阁 EP4 · 梅花易数</title>
+    <meta name="description" content="天机阁EP4——梅花易数。以邵雍先天易学为骨，时间/数字/字数起卦，体用生克断吉凶。古籍为经，算法为纬，纯前端实现。">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=Ma+Shan+Zheng&display=swap" rel="stylesheet" />
+    <style>
+      /* ===== Reset & Base ===== */
+      *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+      :root {
+        --ink: #0a0806;
+        --parchment: #1a1612;
+        --surface: rgba(20,16,12,0.94);
+        --card: rgba(24,20,14,0.82);
+        --gold: #b89a5c;
+        --gold-light: #d4bb7c;
+        --gold-dim: #8a7040;
+        --gold-glow: rgba(184,154,92,0.15);
+        --red: #c04040;
+        --red-light: #e06060;
+        --green: #5a8a5a;
+        --green-light: #7aaa7a;
+        --text: #e0dcd0;
+        --text2: #8a8576;
+        --text3: #4a4640;
+        --border: rgba(255,255,255,0.05);
+        --border-gold: rgba(184,154,92,0.18);
+        --font-serif: 'Noto Serif SC','SimSun','KaiTi',serif;
+        --font-sans: 'Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;
+        --radius: 14px;
+        --radius-sm: 8px;
+      }
+      html {
+        background: var(--ink);
+        color: var(--text);
+        font-family: var(--font-sans);
+        overflow-x: hidden;
+        scroll-behavior: smooth;
+      }
+      body {
+        min-height: 100vh;
+        user-select: none;
+        -webkit-user-select: none;
+      }
+
+      /* ===== Ink Canvas ===== */
+      #inkCanvas {
+        position: fixed; top:0; left:0; width:100%; height:100%;
+        z-index: 0; pointer-events: none;
+      }
+      .watermark {
+        position: fixed; top:50%; left:50%; transform:translate(-50%,-50%);
+        font-family:'Ma Shan Zheng',cursive; font-size:18vw;
+        color:rgba(184,154,92,0.03); pointer-events:none; z-index:0; user-select:none;
+      }
+
+      /* ===== Layout ===== */
+      .wrap {
+        position: relative; z-index: 1;
+        max-width: 960px; margin: 0 auto;
+        padding: 0 20px 80px;
+      }
+
+      /* ===== Hero ===== */
+      .hero {
+        text-align: center; padding: 60px 0 32px; position: relative;
+      }
+      .hero .ep-tag {
+        display: inline-block;
+        font-size: 0.7rem; color: var(--gold-dim);
+        letter-spacing: 0.2em; padding: 4px 14px;
+        border: 1px solid var(--border-gold); border-radius: 20px;
+        margin-bottom: 16px;
+      }
+      .hero h1 {
+        font-family: var(--font-serif);
+        font-size: clamp(2rem,5vw,2.8rem);
+        color: var(--gold-light); letter-spacing: 0.12em;
+        font-weight: 700; line-height: 1.2;
+      }
+      .hero .subtitle {
+        font-size: 0.88rem; color: var(--text2);
+        margin-top: 10px; letter-spacing: 0.08em;
+      }
+      .hero .hero-divider {
+        display: flex; align-items: center; justify-content: center;
+        gap: 10px; margin-top: 18px;
+      }
+      .hero .hero-divider span { width: 40px; height: 1px; background: var(--border-gold); }
+      .hero .hero-divider .diamond {
+        width: 6px; height: 6px; background: var(--gold);
+        transform: rotate(45deg); opacity: 0.6;
+      }
+
+      /* ===== Section Title ===== */
+      .section-title {
+        font-family: var(--font-serif); font-size: 1.1rem;
+        color: var(--gold); letter-spacing: 0.06em;
+        margin-bottom: 16px; display: flex; align-items: center; gap: 10px;
+      }
+      .section-title::before {
+        content: ''; width: 3px; height: 16px;
+        background: var(--gold); border-radius: 1px; opacity: 0.5;
+      }
+      .section-title .num {
+        font-size: 0.7rem; color: var(--text3);
+        letter-spacing: 0.1em; margin-left: auto;
+      }
+
+      /* ===== Cards ===== */
+      .card {
+        background: var(--card); border: 1px solid var(--border);
+        border-radius: var(--radius); padding: 28px;
+        margin-bottom: 24px; transition: border-color 0.4s, box-shadow 0.4s;
+        position: relative; overflow: hidden;
+      }
+      .card::before {
+        content: ''; position: absolute; top:0; left:0; right:0;
+        height: 1px; background: linear-gradient(90deg,transparent,var(--border-gold),transparent);
+        opacity: 0; transition: opacity 0.4s;
+      }
+      .card:hover { border-color: var(--border-gold); }
+      .card:hover::before { opacity: 1; }
+
+      /* ===== Form ===== */
+      .form-row {
+        display: grid; grid-template-columns: repeat(auto-fit,minmax(140px,1fr));
+        gap: 14px;
+      }
+      .form-group label {
+        display: block; font-size: 0.72rem; color: var(--text2);
+        margin-bottom: 6px; letter-spacing: 0.05em; text-transform: uppercase;
+      }
+      .form-group input, .form-group select {
+        width: 100%; padding: 11px 14px;
+        background: rgba(0,0,0,0.35); border: 1px solid var(--border);
+        border-radius: var(--radius-sm); color: var(--text); font-size: 0.88rem;
+        outline: none; font-family: var(--font-sans);
+        transition: border-color 0.3s, box-shadow 0.3s;
+      }
+      .form-group input:focus, .form-group select:focus {
+        border-color: var(--border-gold); box-shadow: 0 0 0 3px var(--gold-glow);
+      }
+      .form-group select {
+        cursor: pointer; appearance: none; -webkit-appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238a8576' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'%3E%3C/path%3E%3C/svg%3E");
+        background-repeat: no-repeat; background-position: right 10px center;
+        padding-right: 32px;
+      }
+
+      /* ===== Buttons ===== */
+      .btn {
+        display: inline-flex; align-items: center; gap: 8px;
+        padding: 12px 32px; background: rgba(184,154,92,0.1);
+        border: 1px solid var(--border-gold); border-radius: 24px;
+        color: var(--gold-light); font-family: var(--font-serif);
+        font-size: 0.9rem; cursor: pointer; transition: all 0.35s;
+        letter-spacing: 0.06em; position: relative; overflow: hidden;
+      }
+      .btn::after {
+        content: ''; position: absolute; inset: 0;
+        background: radial-gradient(circle at center, var(--gold-glow), transparent);
+        opacity: 0; transition: opacity 0.35s;
+      }
+      .btn:hover {
+        background: rgba(184,154,92,0.18); box-shadow: 0 0 24px var(--gold-glow);
+        transform: translateY(-1px);
+      }
+      .btn:hover::after { opacity: 1; }
+      .btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
+      .btn-row { display: flex; gap: 12px; justify-content: center; margin-top: 18px; flex-wrap: wrap; }
+
+      /* ===== Question Input ===== */
+      .question-input {
+        width: 100%; padding: 11px 14px;
+        background: rgba(0,0,0,0.35); border: 1px solid var(--border);
+        border-radius: var(--radius-sm); color: var(--text); font-size: 0.88rem;
+        outline: none; font-family: var(--font-sans);
+        transition: border-color 0.3s, box-shadow 0.3s; margin-bottom: 16px;
+      }
+      .question-input:focus {
+        border-color: var(--border-gold); box-shadow: 0 0 0 3px var(--gold-glow);
+      }
+
+      /* ===== Tab Bar ===== */
+      .tab-bar { display: flex; gap: 8px; margin-bottom: 20px; justify-content: center; flex-wrap: wrap; }
+      .tab-btn {
+        padding: 10px 22px; border-radius: 24px; border: 1px solid var(--border);
+        background: transparent; color: var(--text2); cursor: pointer;
+        font-family: var(--font-sans); font-size: 0.82rem; transition: all 0.3s;
+        letter-spacing: 0.04em;
+      }
+      .tab-btn:hover { border-color: var(--border-gold); color: var(--gold-light); background: rgba(184,154,92,0.06); }
+      .tab-btn.active {
+        border-color: var(--border-gold); color: var(--gold-light);
+        background: rgba(184,154,92,0.12); box-shadow: 0 0 12px var(--gold-glow);
+      }
+      .tab-panel { min-height: 120px; }
+
+      /* ===== Gua Display ===== */
+      .gua-display {
+        display: flex; justify-content: center; align-items: center;
+        gap: 32px; padding: 28px 0; margin: 16px 0;
+      }
+      .gua-box { text-align: center; }
+      .gua-box .gua-name { font-size: 0.95rem; color: var(--gold-light); margin-top: 12px; font-family: var(--font-serif); letter-spacing: 0.04em; }
+      .gua-label { font-size: 0.72rem; color: var(--text3); margin-top: 6px; }
+      .gua-lines { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 18px; background: rgba(10,8,6,0.5); border: 1px solid var(--border); border-radius: var(--radius-sm); }
+      .gua-line { width: 72px; height: 10px; border-radius: 2px; }
+      .gua-line.yang { background: linear-gradient(90deg, var(--gold), var(--gold-light)); }
+      .gua-line.yin { display: flex; gap: 10px; align-items: center; }
+      .gua-line.yin::before, .gua-line.yin::after { content: ''; flex: 1; height: 10px; background: linear-gradient(90deg, var(--gold), var(--gold-light)); border-radius: 2px; }
+      .gua-divider { width: 1px; height: 100px; background: linear-gradient(180deg,transparent,var(--border-gold),transparent); }
+
+      /* ===== Result Items ===== */
+      .result-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(200px,1fr)); gap: 12px; margin-top: 16px; }
+      .result-item {
+        padding: 14px 16px; background: rgba(10,8,6,0.5);
+        border: 1px solid var(--border); border-radius: var(--radius-sm);
+        border-left: 3px solid var(--gold);
+      }
+      .result-item .label { font-size: 0.72rem; color: var(--text3); margin-bottom: 4px; letter-spacing: 0.05em; }
+      .result-item .value { font-size: 0.92rem; color: var(--text); font-family: var(--font-serif); }
+
+      /* ===== Ti Yong ===== */
+      .tiyong-box { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 20px 0; }
+      .tiyong-card {
+        padding: 20px; background: rgba(10,8,6,0.5); border-radius: var(--radius-sm);
+        border: 1px solid var(--border); text-align: center;
+      }
+      .tiyong-card.ti-card { border-color: var(--border-gold); }
+      .tiyong-card.yong-card { border-color: rgba(100,140,180,0.3); }
+      .tiyong-label { font-size: 0.75rem; color: var(--text3); margin-bottom: 8px; letter-spacing: 0.08em; }
+      .tiyong-gua { font-size: 1.4rem; color: var(--gold-light); font-family: var(--font-serif); }
+      .tiyong-desc { font-size: 0.72rem; color: var(--text3); margin-top: 8px; }
+
+      .sheng-ke-box {
+        padding: 20px; background: rgba(10,8,6,0.5); border-radius: var(--radius-sm);
+        margin: 16px 0; border: 1px solid var(--border);
+      }
+      .sheng-ke-box .relation { font-size: 1.4rem; text-align: center; margin-bottom: 10px; }
+      .sheng-ke-box .relation.good { color: var(--green-light); }
+      .sheng-ke-box .relation.warn { color: var(--gold); }
+      .sheng-ke-box .relation.bad { color: var(--red-light); }
+      .sheng-ke-box .desc { font-size: 0.85rem; color: var(--text2); text-align: center; line-height: 1.8; }
+
+      /* ===== Interpretation ===== */
+      .interp-block {
+        padding: 16px 20px; background: rgba(10,8,6,0.4); border-radius: var(--radius-sm);
+        border-left: 3px solid var(--gold); margin: 12px 0;
+      }
+      .interp-block .block-label { font-size: 0.72rem; color: var(--gold); margin-bottom: 8px; letter-spacing: 0.08em; }
+      .interp-block .block-content { font-size: 0.88rem; color: var(--text); line-height: 1.9; }
+      .interp-block .block-content p { margin-bottom: 8px; text-indent: 2em; }
+      .interp-block .block-content p:last-child { margin-bottom: 0; }
+      .interp-block .block-content strong { color: var(--gold-light); }
+
+      /* ===== Disclaimer ===== */
+      .disclaimer {
+        background: rgba(184,154,92,0.04); border: 1px solid var(--border);
+        border-radius: var(--radius-sm); padding: 14px 20px; margin-top: 32px;
+        font-size: 0.75rem; color: var(--text3); text-align: center; line-height: 1.8;
+      }
+      .disclaimer strong { color: var(--gold-dim); }
+
+      /* ===== Loading ===== */
+      .spinner {
+        width: 36px; height: 36px; border: 3px solid var(--border);
+        border-top-color: var(--gold); border-radius: 50%;
+        animation: spin 0.8s linear infinite; margin: 36px auto;
+      }
+      @keyframes spin { to { transform: rotate(360deg); } }
+
+      /* ===== Glass Card (Masters) ===== */
+      .glass-card {
+        background: var(--card); border: 1px solid var(--border);
+        border-radius: var(--radius); padding: 28px;
+        transition: border-color 0.4s, box-shadow 0.4s; position: relative; overflow: hidden;
+      }
+      .glass-card:hover { border-color: var(--border-gold); box-shadow: 0 4px 28px rgba(0,0,0,0.3), 0 0 20px var(--gold-glow); }
+      .section-header { margin-bottom: 24px; }
+      .page-title { font-family: var(--font-serif); font-size: 1.55rem; font-weight: 700; color: var(--gold); margin-bottom: 8px; letter-spacing: 0.08em; }
+      .page-subtitle { font-size: 0.85rem; color: var(--text2); line-height: 1.7; }
+      .btn-gold {
+        display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+        padding: 10px 28px; background: linear-gradient(135deg,rgba(138,109,52,0.82),rgba(184,154,92,0.9));
+        color: #0a080f; font-weight: 600; font-size: 0.84rem; border-radius: var(--radius-sm);
+        border: 1px solid rgba(184,154,92,0.28); transition: all 0.25s; cursor: pointer;
+        letter-spacing: 0.05em; font-family: var(--font-sans);
+      }
+      .btn-gold:hover { background: linear-gradient(135deg,var(--gold),var(--gold-light)); box-shadow: 0 0 20px var(--gold-glow); transform: translateY(-1px) scale(1.02); }
+      .btn-gold.lg { padding: 14px 40px; font-size: 0.96rem; }
+      .btn-gold:disabled { opacity: 0.4; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
+      .mt-8 { margin-top: 8px; }
+      .mb-24 { margin-bottom: 24px; }
+      .hidden { display: none !important; }
+      .master-cat-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(148px,1fr)); gap: 10px; }
+      .master-card {
+        display: flex; flex-direction: column; align-items: center; gap: 4px;
+        padding: 14px 10px; background: rgba(10,8,6,0.6); border: 1px solid var(--border);
+        border-radius: var(--radius); cursor: pointer; transition: all 0.25s; position: relative;
+      }
+      .master-card:hover { background: rgba(20,16,12,0.9); border-color: var(--border-gold); box-shadow: 0 0 16px var(--gold-glow); transform: translateY(-2px); }
+      .master-card.selected { background: rgba(184,154,92,0.08); border-color: rgba(184,154,92,0.4); box-shadow: 0 0 20px var(--gold-glow),inset 0 0 20px rgba(184,154,92,0.04); }
+      .master-card.selected::after { content:'✓'; position:absolute; top:6px; right:8px; font-size:0.7rem; color:var(--gold); font-weight:700; }
+      .master-avatar { font-size: 1.8rem; transition: transform 0.3s; }
+      .master-card:hover .master-avatar { transform: scale(1.1); }
+      .master-name { font-family: var(--font-serif); font-size: 0.84rem; font-weight: 600; color: var(--text); transition: color 0.25s; }
+      .master-card:hover .master-name { color: var(--gold-light); }
+      .master-title { font-size: 0.68rem; color: var(--text3); text-align: center; line-height: 1.4; max-width: 130px; }
+      .master-era { font-size: 0.62rem; color: var(--text3); padding: 1px 8px; border-radius: 8px; background: rgba(184,154,92,0.04); border: 1px solid var(--border); }
+      .master-result-header { display: flex; align-items: center; gap: 20px; padding: 8px 0 20px; }
+      .master-result-avatar-wrap { flex-shrink: 0; width: 64px; height: 64px; display: flex; align-items: center; justify-content: center; background: rgba(184,154,92,0.06); border: 1px solid var(--border-gold); border-radius: 50%; }
+      .master-result-avatar { font-size: 2rem; }
+      .master-result-info { flex: 1; min-width: 0; }
+      .master-result-name { font-family: var(--font-serif); font-size: 1.2rem; color: var(--gold-light); font-weight: 700; margin: 0 0 4px; display: flex; align-items: baseline; gap: 10px; }
+      .master-result-era { font-size: 0.7rem; color: var(--text3); font-weight: 400; font-family: var(--font-sans); }
+      .master-result-title { font-size: 0.8rem; color: var(--text2); margin: 0 0 8px; }
+      .master-result-tags { display: flex; gap: 8px; flex-wrap: wrap; }
+      .master-result-tag { font-size: 0.65rem; padding: 2px 10px; border: 1px solid var(--border); border-radius: 10px; color: var(--text3); white-space: nowrap; }
+      .master-result-divider { height: 1px; background: linear-gradient(90deg,transparent,var(--border-gold),transparent); margin-bottom: 24px; }
+      .master-result-body { display: flex; flex-direction: column; gap: 0; }
+      .master-result-section { padding: 20px 0; border-bottom: 1px solid var(--border); animation: sectionFadeIn 0.5s ease both; animation-delay: var(--delay,0s); }
+      .master-result-section:last-child { border-bottom: none; }
+      @keyframes sectionFadeIn { from{opacity:0;transform:translateY(8px);} to{opacity:1;transform:translateY(0);} }
+      .master-section-header { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+      .master-section-icon { font-size: 1.1rem; flex-shrink: 0; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: rgba(184,154,92,0.04); border: 1px solid var(--border); border-radius: var(--radius-sm); }
+      .master-section-title-wrap { flex: 1; min-width: 0; }
+      .master-section-title { font-family: var(--font-serif); font-size: 0.95rem; color: var(--gold); font-weight: 600; display: block; }
+      .master-section-desc { font-size: 0.7rem; color: var(--text3); display: block; margin-top: 2px; }
+      .master-section-num { font-family: var(--font-serif); font-size: 1.4rem; color: var(--text3); opacity: 0.5; letter-spacing: 0.04em; }
+      .master-section-content { font-size: 0.88rem; color: var(--text2); line-height: 1.95; }
+      .master-section-content p { margin-bottom: 10px; text-indent: 2em; }
+      .master-section-content p:last-child { margin-bottom: 0; }
+      .master-section-content strong { color: var(--gold); }
+
+      /* ===== Fade In ===== */
+      .fade-up { animation: fadeUp 0.6s ease-out both; }
+      @keyframes fadeUp { from{opacity:0;transform:translateY(20px);} to{opacity:1;transform:translateY(0);} }
+
+      /* ===== Footer ===== */
+      .footer { text-align: center; padding: 40px 0 0; color: var(--text3); font-size: 0.7rem; letter-spacing: 0.06em; }
+      .footer .footer-line { width: 60px; height: 1px; background: var(--border-gold); margin: 12px auto; }
+
+      /* ===== Responsive ===== */
+      @media(max-width:600px){
+        .wrap { padding: 0 12px 60px; }
+        .card, .glass-card { padding: 20px; }
+        .gua-display { gap: 16px; }
+        .gua-line { width: 56px; height: 8px; }
+        .gua-line.yin::before, .gua-line.yin::after { height: 8px; }
+        .tiyong-box { grid-template-columns: 1fr; }
+        .result-grid { grid-template-columns: 1fr; }
+        .master-cat-grid { grid-template-columns: repeat(auto-fill,minmax(110px,1fr)); }
+      }
+    </style>
+    <link rel="stylesheet" crossorigin href="./assets/style-CkcVZCYg.css">
+  </head>
+<body>
+<canvas id="inkCanvas"></canvas>
+<div class="watermark">天机阁</div>
+<div class="wrap">
+
+  <!-- Hero -->
+  <div class="hero fade-up">
+    <div class="ep-tag">EPISODE 4</div>
+    <h1>梅花易数</h1>
+    <p class="subtitle">邵雍心易 · 时间起卦 · 体用生克</p>
+    <div class="hero-divider">
+      <span></span><div class="diamond"></div><span></span>
+    </div>
+  </div>
+
+  <!-- 起卦卡片 -->
+  <div class="card fade-up" id="castCard">
+    <div class="section-title">起卦信息<span class="num">01</span></div>
+
+    <input type="text" class="question-input" id="question" placeholder="心中所问之事，例如：近日财运如何？" />
+
+    <!-- 起卦方式选择 -->
+    <div class="tab-bar">
+      <button class="tab-btn active" data-tab="time">🕐 时间起卦</button>
+      <button class="tab-btn" data-tab="number">🔢 数字起卦</button>
+      <button class="tab-btn" data-tab="word">📝 字数起卦</button>
+    </div>
+
+    <!-- 时间起卦面板 -->
+    <div class="tab-panel active" id="panel-time">
+      <div class="form-row">
+        <div class="form-group">
+          <label>年份</label>
+          <input type="number" id="timeYear" value="2026" min="1900" max="2100" />
+        </div>
+        <div class="form-group">
+          <label>月份</label>
+          <input type="number" id="timeMonth" value="8" min="1" max="12" />
+        </div>
+        <div class="form-group">
+          <label>日期</label>
+          <input type="number" id="timeDay" value="11" min="1" max="31" />
+        </div>
+      </div>
+      <div class="form-row" style="margin-top:12px;">
+        <div class="form-group">
+          <label>时辰（24小时制）</label>
+          <input type="number" id="timeHour" value="12" min="0" max="23" />
+        </div>
+        <div class="form-group">
+          <label>分钟</label>
+          <input type="number" id="timeMinute" value="0" min="0" max="59" />
+        </div>
+        <div class="form-group">
+          <label>&nbsp;</label>
+          <button class="btn" onclick="setNowTime()" style="width:100%;margin-top:20px;">🕐 使用当前时间</button>
+        </div>
+      </div>
+      <p style="font-size:0.75rem;color:var(--text3);margin-top:12px;text-align:center;">
+        以年支数+月数+日数÷8取上卦，加时数÷8取下卦，总和÷6取动爻
+      </p>
+    </div>
+
+    <!-- 数字起卦面板 -->
+    <div class="tab-panel" id="panel-number">
+      <p style="font-size:0.82rem;color:var(--text2);margin-bottom:16px;text-align:center;">
+        心中默念所问之事，随机想出两个数字（1-999）
+      </p>
+      <div class="form-row">
+        <div class="form-group">
+          <label>第一数字（上卦）</label>
+          <input type="number" class="number-input" id="num1" min="1" max="999" placeholder="例如：3" />
+        </div>
+        <div class="form-group">
+          <label>第二数字（下卦）</label>
+          <input type="number" class="number-input" id="num2" min="1" max="999" placeholder="例如：7" />
+        </div>
+        <div class="form-group">
+          <label>&nbsp;</label>
+          <button class="btn" onclick="randomNumbers()" style="width:100%;margin-top:20px;">🎲 随机生成</button>
+        </div>
+      </div>
+      <p style="font-size:0.75rem;color:var(--text3);margin-top:12px;text-align:center;">
+        上卦 = 第一数字 ÷ 8 取余，下卦 = 第二数字 ÷ 8 取余，动爻 = 两数之和 ÷ 6 取余
+      </p>
+    </div>
+
+    <!-- 字数起卦面板 -->
+    <div class="tab-panel" id="panel-word">
+      <p style="font-size:0.82rem;color:var(--text2);margin-bottom:16px;text-align:center;">
+        输入与所问之事相关的文字（如事物名称、问题关键词）
+      </p>
+      <textarea class="question-input" id="wordInput" rows="3" placeholder="例如：今日财运" style="resize:none;"></textarea>
+      <div class="char-count" id="charCount" style="display:none;">
+        字数：<strong id="charNum">0</strong> 字
+      </div>
+      <p style="font-size:0.75rem;color:var(--text3);margin-top:12px;text-align:center;">
+        字数 ÷ 8 取余为上卦，字数 ÷ 8 取余为下卦，字数 ÷ 6 取余为动爻
+      </p>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn" id="castBtn">🌸 起卦推演</button>
+    </div>
+  </div>
+
+  <!-- 卦象展示 -->
+  <div class="card fade-up hidden" id="guaCard">
+    <div class="section-title">卦象展示<span class="num">02</span></div>
+    <div class="gua-display" id="guaDisplay"></div>
+    <div id="guaInfo" class="result-grid"></div>
+  </div>
+
+  <!-- 体用分析 -->
+  <div class="card fade-up hidden" id="tiyongCard">
+    <div class="section-title">体用生克<span class="num">03</span></div>
+    <div class="tiyong-box" id="tiyongBox"></div>
+    <div class="sheng-ke-box" id="shengKeBox"></div>
+  </div>
+
+  <!-- 断卦结果 -->
+  <div class="card fade-up hidden" id="resultCard">
+    <div class="section-title">断卦结果<span class="num">04</span></div>
+    <div id="resultContent"></div>
+  </div>
+
+  <!-- 大师点评 -->
+  <div class="glass-card fade-up hidden" id="mastersCard">
+    <div id="mastersContent"></div>
+  </div>
+
+  <!-- 免责声明 -->
+  <div class="disclaimer">
+    <strong>声明：</strong>梅花易数是中国传统文化的一部分，属于古典哲学和文化遗产范畴。<br>
+    本系统仅供文化研究和娱乐参考，不构成任何人生决策建议。请相信科学，理性看待命运。
+  </div>
+</div>
+
+<script src="static/js/meihua-engine.js"></script>
+<script src="static/js/masters-engine.js"></script>
+<script src="static/js/components/masters.js"></script>
+<script src="static/js/components/profile.js?v=20260811"></script>
+<script>
+(function(){
+  'use strict';
+
+  var currentGua = null;
+  var currentQuestion = '';
+
+  // ===== 工具函数 =====
+  function escHtml(s){
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  // ===== 标签页切换 =====
+  var tabBtns = document.querySelectorAll('.tab-btn');
+  tabBtns.forEach(function(btn){
+    btn.addEventListener('click',function(){
+      var tab = btn.dataset.tab;
+      tabBtns.forEach(function(b){b.classList.toggle('active',b.dataset.tab===tab);});
+      document.querySelectorAll('.tab-panel').forEach(function(p){
+        p.classList.toggle('active',p.id==='panel-'+tab);
+      });
+    });
+  });
+
+  // ===== 字数输入监听 =====
+  var wordInput = document.getElementById('wordInput');
+  var charCount = document.getElementById('charCount');
+  var charNum = document.getElementById('charNum');
+  wordInput.addEventListener('input',function(){
+    var len = this.value.replace(/\s/g,'').length;
+    charCount.style.display = len > 0 ? 'block' : 'none';
+    charNum.textContent = len;
+  });
+
+  // ===== 随机数字 =====
+  window.randomNumbers = function(){
+    document.getElementById('num1').value = Math.floor(Math.random()*999)+1;
+    document.getElementById('num2').value = Math.floor(Math.random()*999)+1;
+  };
+
+  // ===== 设置当前时间 =====
+  window.setNowTime = function(){
+    var now = new Date();
+    document.getElementById('timeYear').value = now.getFullYear();
+    document.getElementById('timeMonth').value = now.getMonth()+1;
+    document.getElementById('timeDay').value = now.getDate();
+    document.getElementById('timeHour').value = now.getHours();
+    document.getElementById('timeMinute').value = now.getMinutes();
+  };
+
+  // ===== 获取卦的五行 =====
+  function getWuxing(name){
+    var bagua = MeihuaEngine.BAGUA;
+    for(var k in bagua){
+      if(bagua.hasOwnProperty(k) && bagua[k].name === name) return bagua[k].wuxing || '';
+    }
+    return '';
+  }
+
+  // ===== 渲染卦象 =====
+  function renderGua(result){
+    var card = document.getElementById('guaCard');
+    var display = document.getElementById('guaDisplay');
+    var info = document.getElementById('guaInfo');
+    var bagua = MeihuaEngine.BAGUA;
+
+    function getBaguaByName(name){
+      for(var k in bagua){
+        if(bagua.hasOwnProperty(k) && bagua[k].name === name) return bagua[k];
+      }
+      return null;
+    }
+
+    var mainUpper = getBaguaByName(result.original_gua.shang_gua);
+    var mainLower = getBaguaByName(result.original_gua.xia_gua);
+    var changeUpper = getBaguaByName(result.changed_gua.shang_gua);
+    var changeLower = getBaguaByName(result.changed_gua.xia_gua);
+
+    // 本卦线条（从下往上：下卦三爻，上卦三爻）
+    var mainLines = (mainLower ? mainLower.yao : [1,0,1]).concat(mainUpper ? mainUpper.yao : [1,1,1]).reverse();
+    var changeLines = (changeLower ? changeLower.yao : [1,0,1]).concat(changeUpper ? changeUpper.yao : [1,1,1]).reverse();
+
+    var mainHtml = '<div class="gua-box"><div class="gua-lines">';
+    mainLines.forEach(function(line){
+      mainHtml += '<div class="gua-line '+(line===1?'yang':'yin')+'"></div>';
+    });
+    mainHtml += '</div><div class="gua-label">本卦</div><div class="gua-name">'+escHtml(result.original_gua.name)+'</div></div>';
+
+    var changeHtml = '<div class="gua-box"><div class="gua-lines">';
+    changeLines.forEach(function(line){
+      changeHtml += '<div class="gua-line '+(line===1?'yang':'yin')+'"></div>';
+    });
+    changeHtml += '</div><div class="gua-label">变卦</div><div class="gua-name">'+escHtml(result.changed_gua.name)+'</div></div>';
+
+    display.innerHTML = mainHtml + '<div class="gua-divider"></div>' + changeHtml;
+
+    // 卦象信息
+    var tiWx = mainUpper ? mainUpper.wuxing : '';
+    var yongWx = mainLower ? mainLower.wuxing : '';
+    info.innerHTML =
+      '<div class="result-item"><div class="label">本卦</div><div class="value">'+escHtml(result.original_gua.name)+'（'+escHtml(result.original_gua.shang_gua)+'上'+escHtml(result.original_gua.xia_gua)+'下）</div></div>' +
+      '<div class="result-item"><div class="label">变卦</div><div class="value">'+escHtml(result.changed_gua.name)+'（'+escHtml(result.changed_gua.shang_gua)+'上'+escHtml(result.changed_gua.xia_gua)+'下）</div></div>' +
+      '<div class="result-item"><div class="label">互卦</div><div class="value">'+escHtml(result.hu_gua.name)+'</div></div>' +
+      '<div class="result-item"><div class="label">体卦</div><div class="value">'+escHtml(result.ti_gua)+'（'+escHtml(tiWx)+'）</div></div>' +
+      '<div class="result-item"><div class="label">用卦</div><div class="value">'+escHtml(result.yong_gua)+'（'+escHtml(yongWx)+'）</div></div>';
+
+    card.classList.remove('hidden');
+  }
+
+  // ===== 渲染体用分析 =====
+  function renderTiyong(result){
+    var card = document.getElementById('tiyongCard');
+    var box = document.getElementById('tiyongBox');
+    var shengKe = document.getElementById('shengKeBox');
+
+    box.innerHTML =
+      '<div class="tiyong-card ti-card"><div class="tiyong-label">体卦（自己）</div><div class="tiyong-gua">'+escHtml(result.ti_gua)+'</div><div class="tiyong-desc">代表占问者自身</div></div>' +
+      '<div class="tiyong-card yong-card"><div class="tiyong-label">用卦（所问之事）</div><div class="tiyong-gua">'+escHtml(result.yong_gua)+'</div><div class="tiyong-desc">代表所问之事的现状</div></div>';
+
+    var relation = result.sheng_ke;
+    var relClass = relation.等级 >= 3 ? 'good' : relation.等级 >= 2 ? 'warn' : 'bad';
+    var relText = relation.关系 || '比和';
+
+    shengKe.innerHTML =
+      '<div class="relation '+relClass+'">'+escHtml(relText)+'</div>' +
+      '<div class="desc">'+escHtml(relation.说明 || '')+'</div>';
+
+    card.classList.remove('hidden');
+  }
+
+  // ===== 渲染断卦结果 =====
+  function renderResult(result){
+    var card = document.getElementById('resultCard');
+    var content = document.getElementById('resultContent');
+
+    var interp = result.interpretation || '';
+    var shengKe = result.sheng_ke || {};
+    var wanwu = result.wanwu_leixiang || {};
+
+    var html = '';
+
+    if(interp){
+      html += '<div class="interp-block"><div class="block-label">卦象解读</div><div class="block-content">'+escHtml(interp)+'</div></div>';
+    }
+
+    if(wanwu['体卦']){
+      html += '<div class="interp-block"><div class="block-label">体卦类象</div><div class="block-content"><p>方位：'+escHtml(wanwu['体卦'].方位||'')+'</p><p>人事：'+escHtml(wanwu['体卦'].人事||'')+'</p><p>身体：'+escHtml(wanwu['体卦'].身体||'')+'</p></div></div>';
+    }
+    if(wanwu['用卦']){
+      html += '<div class="interp-block"><div class="block-label">用卦类象</div><div class="block-content"><p>方位：'+escHtml(wanwu['用卦'].方位||'')+'</p><p>人事：'+escHtml(wanwu['用卦'].人事||'')+'</p><p>身体：'+escHtml(wanwu['用卦'].身体||'')+'</p></div></div>';
+    }
+
+    content.innerHTML = html || '<p style="color:var(--text3);text-align:center;padding:20px;">暂无分析结果</p>';
+    card.classList.remove('hidden');
+
+    // 渲染体用分析
+    renderTiyong(result);
+  }
+
+  // ===== 梅花易数大师分析 =====
+  function generateMeihuaAnalysis(master, result, question){
+    var interp = result.interpretation || '';
+    var shengKe = result.sheng_ke || {};
+    var wanwu = result.wanwu_leixiang || {};
+    var opening = '', overview = '', specialty = '', quote = '', closing = '';
+
+    var meihuaQuotes = {
+      '邵雍': '心易之学，以心感物，以物观理。梅花易数，不执于象，不拘于数，唯心是求。',
+      '陈抟': '先天之学，心为枢机。观物之妙，不在远求，即在目前。',
+      '孔子': '易有太极，是生两仪。两仪生四象，四象生八卦。',
+      '朱熹': '易者，象也。象者，像也。观象玩辞，可尽易矣。',
+      '王弼': '得意忘象，得象忘言。观象以尽意，玩辞以明理。'
+    };
+
+    // 开口
+    var tiWx = getWuxing(result.ti_gua);
+    var yongWx = getWuxing(result.yong_gua);
+    opening = '占得'+result.original_gua.name+'之'+result.changed_gua.name+'，体'+tiWx+'，用'+yongWx+'。'+shengKe.说明+'。';
+    if(question) opening += '所问者：'+question+'。';
+
+    // 总纲
+    var level = shengKe.等级 || 2;
+    var verdict = level>=3?'吉':level>=2?'平':'凶';
+    var levelDesc = level>=3?'体用相生，所求可成':level>=2?'体用比和，平中取利':'体克用或用克体，事多阻逆';
+    overview = '此卦总断为'+verdict+'。'+levelDesc+'。';
+
+    // 专项
+    specialty = '';
+    if(result.original_gua.guaCi){
+      specialty += '【卦辞】'+result.original_gua.guaCi+'。\n\n';
+    }
+    if(interp){
+      specialty += '【断语】'+interp+'。\n\n';
+    }
+    if(wanwu['体卦']){
+      specialty += '【体卦类象】方位在'+(wanwu['体卦'].方位||'')+'，人事主'+(wanwu['体卦'].人事||'')+'，身体应'+(wanwu['体卦'].身体||'')+'。\n';
+    }
+    if(wanwu['用卦']){
+      specialty += '【用卦类象】方位在'+(wanwu['用卦'].方位||'')+'，人事主'+(wanwu['用卦'].人事||'')+'，身体应'+(wanwu['用卦'].身体||'')+'。\n';
+    }
+
+    // 引经据典
+    quote = meihuaQuotes[master.name] || '邵子曰：'+'观物察己，以理推事。'+result.original_gua.name+'之象，'+(wanwu[result.original_gua.name]?'主'+wanwu[result.original_gua.name]:'可细推之。');
+
+    // 结语
+    if(level>=3){
+      closing = '综合而论，此卦大吉。所问之事，顺势而为，可成。然盛极必衰，宜见好就收，不可贪多。';
+    }else if(level>=2){
+      closing = '综合而论，此卦平。所问之事，需待时运。不宜强求，宜守正待时，静观其变。';
+    }else{
+      closing = '综合而论，此卦多阻。所问之事，短期内难有进展。宜退守蓄势，不可冒进。待时而动，自有转机。';
+    }
+
+    return {opening:opening, overview:overview, specialty:specialty, quote:quote, closing:closing};
+  }
+
+  // ===== 大师点评面板 =====
+  function initMastersPanel(){
+    var mastersArea = document.getElementById('mastersContent');
+    if(!mastersArea || !currentGua) return;
+    mastersArea.innerHTML = '';
+
+    // 过滤梅花相关大师
+    var meihuaMasters = [];
+    if(window.MastersEngine && MastersEngine.MASTERS){
+      var allMasters = MastersEngine.MASTERS;
+      for(var key in allMasters){
+        if(allMasters.hasOwnProperty(key)){
+          var m = allMasters[key];
+          if(m.category === '梅花' || m.category === '综合'){
+            meihuaMasters.push(m);
+          }
+        }
+      }
+    }
+
+    renderMastersPanel(mastersArea, {
+      category: '梅花',
+      masters: meihuaMasters,
+      analysisTypes: [{id:'full',label:'即时占断'}],
+      onAnalyze: function(masterId, analysisType){
+        var master = window.MastersEngine.MASTERS[masterId];
+        if(!master || !currentGua){ console.error('[天机阁] 大师分析失败: master不存在或result为空'); return null; }
+        try {
+          var result = generateMeihuaAnalysis(master, currentGua, currentQuestion);
+          console.log('[天机阁] 大师分析成功:', masterId, 'sections:', Object.keys(result).join(','));
+          return result;
+        } catch(e){ console.error('[天机阁] 大师分析异常:', masterId, e); throw e; }
+      }
+    });
+  }
+
+  // ===== 起卦 =====
+  document.getElementById('castBtn').addEventListener('click',function(){
+    var question = document.getElementById('question').value.trim();
+    if(!question){ alert('请先输入所问之事'); return; }
+
+    var mode = document.querySelector('.tab-btn.active').dataset.tab;
+    var year,month,day,hour,minute,num1,num2,wordCount;
+
+    if(mode==='time'){
+      year=parseInt(document.getElementById('timeYear').value);
+      month=parseInt(document.getElementById('timeMonth').value);
+      day=parseInt(document.getElementById('timeDay').value);
+      hour=parseInt(document.getElementById('timeHour').value);
+      minute=parseInt(document.getElementById('timeMinute').value);
+      if(isNaN(year)||isNaN(month)||isNaN(day)||isNaN(hour)){ alert('请填写完整的时间信息'); return; }
+    }else if(mode==='number'){
+      num1=parseInt(document.getElementById('num1').value);
+      num2=parseInt(document.getElementById('num2').value);
+      if(isNaN(num1)||isNaN(num2)||num1<1||num2<1){ alert('请输入有效的数字（1-999）'); return; }
+    }else if(mode==='word'){
+      wordCount=wordInput.value.replace(/\s/g,'').length;
+      if(wordCount===0){ alert('请输入至少一个字符'); return; }
+    }
+
+    var result;
+    if(mode==='time'){
+      result = MeihuaEngine.divine({
+        method: 'datetime',
+        upper: year,
+        lower: month * 10 + day,
+        moving: ((hour * 100 + minute) % 6) + 1
+      });
+    }else if(mode==='number'){
+      result = MeihuaEngine.divine({
+        method: 'number',
+        upper: num1,
+        lower: num2,
+        moving: ((num1 + num2) % 6) + 1
+      });
+    }else{
+      result = MeihuaEngine.divine({
+        method: 'number',
+        upper: wordCount,
+        lower: wordCount,
+        moving: (wordCount % 6) + 1
+      });
+    }
+
+    if(!result || result.error){
+      alert('起卦失败：'+(result?result.error:'未知错误'));
+      return;
+    }
+
+    currentGua = result;
+    currentQuestion = question;
+    renderGua(result);
+    renderResult(result);
+
+    var mastersCard = document.getElementById('mastersCard');
+    mastersCard.classList.remove('hidden');
+    initMastersPanel();
+
+    document.getElementById('resultCard').scrollIntoView({behavior:'smooth',block:'start'});
+
+    // 自动保存咨询记录到用户档案
+    try {
+      if (typeof UserProfileAPI !== 'undefined') {
+        UserProfileAPI.addRecord({
+          type: 'meihua',
+          question: question || '',
+          score: result.sheng_ke && result.sheng_ke.等级 ? result.sheng_ke.等级 * 25 : 50,
+          result: { originalGua: result.original_gua && result.original_gua.name, changedGua: result.changed_gua && result.changed_gua.name, tiGua: result.ti_gua, yongGua: result.yong_gua }
+        });
+      }
+    } catch(e) {}
+  });
+
+  // ===== 水墨粒子动画 =====
+  (function(){
+    var canvas = document.getElementById('inkCanvas');
+    var ctx = canvas.getContext('2d');
+    var w,h;
+    var particles = [];
+    function resize(){ w=canvas.width=window.innerWidth; h=canvas.height=window.innerHeight; }
+    resize();
+    window.addEventListener('resize',resize);
+    for(var i=0;i<50;i++){
+      particles.push({
+        x:Math.random()*w, y:Math.random()*h,
+        vx:(Math.random()-0.5)*0.3, vy:-Math.random()*0.5-0.1,
+        r:Math.random()*2+1, o:Math.random()*0.3+0.1,
+        age:0, life:Math.random()*400+200
+      });
+    }
+    function draw(){
+      ctx.clearRect(0,0,w,h);
+      particles.forEach(function(p){
+        p.age++;
+        if(p.age>p.life){ p.x=Math.random()*w; p.y=h+20; p.age=0; p.life=Math.random()*400+200; }
+        p.x+=p.vx; p.y+=p.vy;
+        var alpha=p.o*Math.sin((p.age/p.life)*Math.PI);
+        ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+        var grad=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r*2);
+        grad.addColorStop(0,'rgba(184,154,92,'+alpha+')');
+        grad.addColorStop(1,'rgba(184,154,92,0)');
+        ctx.fillStyle=grad; ctx.fill();
+      });
+      requestAnimationFrame(draw);
+    }
+    draw();
+  })();
+
+})();
+</script>
+</body>
+</html>

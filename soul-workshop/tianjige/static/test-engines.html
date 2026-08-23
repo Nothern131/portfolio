@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>天机阁 · 引擎全量测试</title>
+<style>
+body { font-family: monospace; background: #0a0a0f; color: #c9b37e; padding: 20px; margin: 0; }
+h1 { color: #f0d060; border-bottom: 1px solid #333; padding-bottom: 10px; }
+.test-section { margin: 20px 0; padding: 15px; background: #111118; border-radius: 8px; border-left: 3px solid #555; }
+.test-section.pass { border-left-color: #4caf50; }
+.test-section.fail { border-left-color: #f44336; }
+.test-section h3 { margin: 0 0 10px; color: #e0c080; }
+.pass-mark { color: #4caf50; }
+.fail-mark { color: #f44336; }
+pre { background: #0d0d14; padding: 10px; border-radius: 4px; overflow-x: auto; font-size: 12px; max-height: 300px; overflow-y: auto; }
+.summary { background: #1a1a2e; padding: 15px; border-radius: 8px; margin: 20px 0; }
+</style>
+</head>
+<body>
+<h1>天机阁 · 引擎全量测试</h1>
+<div id="summary" class="summary">加载引擎中...</div>
+<div id="results"></div>
+
+<script src="/static/js/bazi-engine.js?v=4"></script>
+<script src="/static/js/liuyao-engine.js?v=4"></script>
+<script src="/static/js/meihua-engine.js?v=4"></script>
+<script src="/static/js/qimen-engine.js?v=4"></script>
+<script src="/static/js/taiyi-engine.js?v=4"></script>
+<script src="/static/js/zhuge-engine.js?v=4"></script>
+<script src="/static/js/zhougong-engine.js?v=4"></script>
+<script src="/static/js/daliuren-engine.js?v=4"></script>
+<script src="/static/js/ziwei-engine.js?v=4"></script>
+<script src="/static/js/engine-registry.js?v=4"></script>
+<script src="/static/js/composite-engine.js?v=4"></script>
+<script src="/static/js/domain-analysis.js?v=4"></script>
+<script src="/static/js/masters-engine.js?v=5"></script>
+
+<script>
+var results = document.getElementById('results');
+var passCount = 0, failCount = 0, totalCount = 0;
+
+function addSection(name, passed, detail) {
+  totalCount++;
+  if (passed) passCount++; else failCount++;
+  var cls = passed ? 'pass' : 'fail';
+  var mark = passed ? '<span class="pass-mark">PASS</span>' : '<span class="fail-mark">FAIL</span>';
+  var html = '<div class="test-section ' + cls + '"><h3>' + mark + ' ' + name + '</h3>';
+  if (detail) html += '<pre>' + detail + '</pre>';
+  html += '</div>';
+  results.innerHTML += html;
+}
+
+function updateSummary() {
+  document.getElementById('summary').innerHTML = 
+    '总计: <b>' + totalCount + '</b> 项 | ' +
+    '<span class="pass-mark">通过: <b>' + passCount + '</b></span> | ' +
+    '<span class="fail-mark">失败: <b>' + failCount + '</b></span>' +
+    (failCount === 0 ? ' <span class="pass-mark">全部通过!</span>' : '');
+}
+
+function safeStringify(obj, maxLen) {
+  try {
+    var s = JSON.stringify(obj, null, 2);
+    if (maxLen && s.length > maxLen) s = s.substring(0, maxLen) + '...';
+    return s;
+  } catch(e) {
+    return String(obj);
+  }
+}
+
+// Test 1: BaziEngine
+try {
+  var r1 = BaziEngine.paipan(2000, 1, 1, 8);
+  var ok = r1 && r1['年柱'] && r1['月柱'] && r1['日柱'] && r1['时柱'];
+  addSection('1. BaziEngine.paipan(2000,1,1,8)', ok, 
+    '年柱:' + (r1['年柱']||'?') + ' 月柱:' + (r1['月柱']||'?') + ' 日柱:' + (r1['日柱']||'?') + ' 时柱:' + (r1['时柱']||'?') + 
+    '\n综合运势:' + (r1['综合运势']||'?') + '\n' + safeStringify(r1, 500));
+} catch(e) { addSection('1. BaziEngine', false, 'Error: ' + e.message); }
+
+// Test 2: LiuyaoEngine
+try {
+  var lines = [];
+  for (var i = 0; i < 6; i++) {
+    var t = (Math.random() > 0.5 ? 3 : 2) + (Math.random() > 0.5 ? 3 : 2) + (Math.random() > 0.5 ? 3 : 2);
+    lines.push({ type: t % 2 === 0 ? 'yin' : 'yang', changing: t === 6 || t === 9 });
+  }
+  var r2 = LiuyaoEngine.divine(lines);
+  var ok = r2 && r2.gua_name;
+  addSection('2. LiuyaoEngine.divine()', ok,
+    '卦名:' + (r2.gua_name||'?') + ' level:' + (r2.level||'?') + '\n' + safeStringify(r2, 500));
+} catch(e) { addSection('2. LiuyaoEngine', false, 'Error: ' + e.message); }
+
+// Test 3: MeihuaEngine
+try {
+  var r3 = MeihuaEngine.divine({ method: 'random' });
+  var ok = r3 && r3.original_gua && r3.original_gua.name;
+  addSection('3. MeihuaEngine.divine({method:"random"})', ok,
+    '本卦:' + (r3.original_gua&&r3.original_gua.name||'?') + ' 体用:' + safeStringify(r3.ti_yong) + '\n' + safeStringify(r3, 400));
+} catch(e) { addSection('3. MeihuaEngine', false, 'Error: ' + e.message); }
+
+// Test 4: QimenEngine
+try {
+  var r4 = QimenEngine.divine('2026-07-27', '午时', 'auto');
+  var ok = r4 && r4.ju !== undefined && r4.period !== undefined;
+  addSection('4. QimenEngine.divine("2026-07-27","午时","auto")', ok,
+    '局数:' + (r4.ju||'?') + ' 遁:' + (r4.period||'?') + ' 节气:' + (r4.jieqi||'?') + '\n' + safeStringify(r4, 400));
+} catch(e) { addSection('4. QimenEngine', false, 'Error: ' + e.message); }
+
+// Test 5: TaiyiEngine
+try {
+  var r5 = TaiyiEngine.divine('2026-07-27', '午时');
+  var ok = r5 && r5.ji_nian !== undefined;
+  addSection('5. TaiyiEngine.divine("2026-07-27","午时")', ok,
+    '积年:' + (r5.ji_nian||'?') + ' 纪元:' + (r5.epoch||'?') + ' outcome:' + (r5.outcome||'?') + '\n' + safeStringify(r5, 400));
+} catch(e) { addSection('5. TaiyiEngine', false, 'Error: ' + e.message); }
+
+// Test 6: ZhugeEngine
+try {
+  var r6 = ZhugeEngine.divine({ method: 'number', numbers: [123, 456, 789] });
+  var ok = r6 && r6.number !== undefined && r6.poem;
+  addSection('6. ZhugeEngine.divine({numbers:[123,456,789]})', ok,
+    '签号:' + (r6.number||'?') + ' level:' + (r6.level||'?') + '\n签文:' + (r6.poem||'').substring(0, 80) + '\n' + safeStringify(r6, 400));
+} catch(e) { addSection('6. ZhugeEngine', false, 'Error: ' + e.message); }
+
+// Test 7: ZhougongEngine
+try {
+  var r7 = ZhougongEngine.divine('梦见龙在天空飞翔', '我最近事业运如何');
+  var ok = r7 && r7.results && r7.results.length > 0;
+  addSection('7. ZhougongEngine.divine("梦见龙在天空飞翔","我最近事业运如何")', ok,
+    '匹配条目:' + (r7.results ? r7.results.length : 0) + ' 吉凶:' + (r7.ji||'?') + '\n' + safeStringify(r7, 500));
+} catch(e) { addSection('7. ZhougongEngine', false, 'Error: ' + e.message); }
+
+// Test 8: DaLiuRenEngine
+try {
+  var r8 = DaLiuRenEngine.divine('2026-07-27', 6);
+  var ok = r8 && r8.ke_name && r8.san_chuan;
+  addSection('8. DaLiuRenEngine.divine("2026-07-27",6)', ok,
+    '课名:' + (r8.ke_name||'?') + ' 日干:' + (r8.ri_gan||'?') + ' 日支:' + (r8.ri_zhi||'?') + 
+    '\n三传:' + safeStringify(r8.san_chuan) + '\n' + safeStringify(r8, 500));
+} catch(e) { addSection('8. DaLiuRenEngine', false, 'Error: ' + e.message); }
+
+// Test 9: ZiWeiEngine
+try {
+  var r9 = ZiWeiEngine.paipan({ year: 2000, month: 1, day: 1, hour: '辰时', gender: '男', isLunar: false });
+  var ok = r9 && r9.命宫 && r9.命宫主星;
+  addSection('9. ZiWeiEngine.paipan({2000,1,1,辰时,男})', ok,
+    '命宫:' + (r9.命宫||'?') + ' 命宫主星:' + (r9.命宫主星||'?') + ' 身宫:' + (r9.身宫||'?') +
+    '\n总体运势:' + (r9.总体运势||'?') + '\n十二宫:' + safeStringify(r9.十二宫, 500));
+} catch(e) { addSection('9. ZiWeiEngine', false, 'Error: ' + e.message); }
+
+// Test 10: EngineRegistry
+setTimeout(function() {
+try {
+  var keys = EngineRegistry.getAllKeys();
+  var ok = keys.length === 9;
+  addSection('10. EngineRegistry.getAllKeys()', ok,
+    '注册引擎数:' + keys.length + ' (期望9) — ' + keys.join(', '));
+  updateSummary();
+} catch(e) { addSection('10. EngineRegistry', false, 'Error: ' + e.message); updateSummary(); }
+
+// Test 11: CompositeEngine (合参)
+try {
+  var engineKeys = ['bazi', 'liuyao', 'meihua', 'qimen', 'taiyi', 'zhuge', 'zhougong', 'daliuren', 'ziwei'];
+  var uiParams = {
+    birthDate: '2000-01-01', birthTime: '辰时', gender: '男',
+    date: '2026-07-27', hour: '午时',
+    dreamText: '梦见龙飞九天', question: '我今年的事业发展如何'
+  };
+  CompositeEngine.run(engineKeys, uiParams).then(function(compositeResult) {
+    var ok = compositeResult && compositeResult.score !== undefined && compositeResult.individualResults;
+    addSection('11. CompositeEngine.run() — 合参 (9引擎)', ok,
+      '综合评分:' + (compositeResult.score||'?') + ' 趋势:' + (compositeResult.trend||'?') + 
+      ' 有效引擎:' + (compositeResult.individualResults ? compositeResult.individualResults.length : 0) + '/' + engineKeys.length +
+      '\n研判:' + (compositeResult.synthesis ? compositeResult.synthesis.consensus || '' : '') +
+      '\n' + safeStringify(compositeResult, 600));
+    updateSummary();
+  }).catch(function(e) {
+    addSection('11. CompositeEngine', false, 'Error: ' + e.message);
+    updateSummary();
+  });
+} catch(e) { addSection('11. CompositeEngine', false, 'Error: ' + e.message); updateSummary(); }
+
+// Test 12: DomainAnalysis
+try {
+  var testBaziResult = BaziEngine.paipan(2000, 1, 1, 8);
+  var domainResult = DomainAnalysis.analyze('bazi', testBaziResult, '我今年的事业发展如何');
+  var ok = domainResult && domainResult.domain && domainResult.domain.key;
+  addSection('12. DomainAnalysis.analyze("bazi", result, "我今年的事业发展如何")', ok,
+    '检测领域:' + (domainResult && domainResult.domain ? domainResult.domain.key + ' ' + domainResult.domain.name : '?') + 
+    '\n分析长度:' + (domainResult && domainResult.analysis ? domainResult.analysis.length + '字符' : '0') + '\n' + safeStringify(domainResult, 400));
+  updateSummary();
+} catch(e) { addSection('12. DomainAnalysis', false, 'Error: ' + e.message); updateSummary(); }
+
+// Test 13: MastersEngine — 单大师分析
+try {
+  var masterKeys = Object.keys(MastersEngine.MASTERS);
+  var testBazi = BaziEngine.paipan(2000, 1, 1, 8);
+  var masterResult = MastersEngine.analyze('shaoyanhe', 'full', testBazi, 'male');
+  var ok = masterResult && masterResult.opening && masterResult.overview && masterResult.specialty && masterResult.quote && masterResult.closing;
+  addSection('13. MastersEngine.analyze("shaoyanhe", "full", bazi)', ok,
+    '大师总数:' + masterKeys.length + ' 位' +
+    '\n开场:' + (masterResult.opening||'').substring(0, 60) + '...' +
+    '\n专论长度:' + (masterResult.specialty ? masterResult.specialty.length + '字符' : '0'));
+  updateSummary();
+} catch(e) { addSection('13. MastersEngine', false, 'Error: ' + e.message); updateSummary(); }
+
+// Test 14: MastersEngine — 批量大师蒸馏（合参点评）
+try {
+  var compositeData = {
+    score: 72,
+    trend: 'up',
+    synthesis: { consensus: '多术合参，吉象明显' },
+    individualResults: [
+      { name: '八字' }, { name: '六爻' }, { name: '大六壬' }, { name: '紫微斗数' }
+    ]
+  };
+  var batchResult = MastersEngine.batchAnalyze(['shaoyanhe', 'chengongxian', 'guoyuqing', 'chengshuxun', 'nihaihsia', 'wangtingzhi', 'luohongxian', 'lubinzao'], compositeData, '今年运势如何');
+  var ok = batchResult && batchResult.length === 8;
+  addSection('14. MastersEngine.batchAnalyze() — 8位大师合参点评', ok,
+    '点评大师:' + (batchResult ? batchResult.map(function(r){return r.name}).join(', ') : '0') +
+    '\n首条点评长度:' + (batchResult && batchResult[0] ? batchResult[0].commentary.length + '字符' : '0'));
+  updateSummary();
+} catch(e) { addSection('14. MastersEngine.batchAnalyze', false, 'Error: ' + e.message); updateSummary(); }
+
+}, 500);
+</script>
+</body>
+</html>

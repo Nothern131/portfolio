@@ -1,0 +1,1757 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>天机阁 · 系统架构</title>
+    <style>
+      /* ===== 基础 ===== */
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      :root {
+        --bg: #08070e;
+        --surface: rgba(14, 12, 24, 0.92);
+        --card: rgba(16, 14, 26, 0.78);
+        --gold: #b89a5c;
+        --gold-light: #d4bb7c;
+        --gold-glow: rgba(184, 154, 92, 0.12);
+        --text: #e0dcd0;
+        --text2: #8a8576;
+        --text3: #4a4640;
+        --border: rgba(255, 255, 255, 0.04);
+        --border-gold: rgba(184, 154, 92, 0.16);
+        --red: #c94a3a;
+        --green: #4a8a5c;
+        --blue: #4a8ac9;
+        --purple: #8a6ab8;
+        --teal: #4a9a8c;
+        --font-serif: 'Noto Serif SC', 'SimSun', serif;
+        --font-sans: 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+      }
+      html {
+        background: var(--bg);
+        color: var(--text);
+        font-family: var(--font-sans);
+        overflow-x: hidden;
+      }
+      body {
+        min-height: 100vh;
+        user-select: none;
+        -webkit-user-select: none;
+      }
+
+      /* 星空背景 */
+      #starfield {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+        pointer-events: none;
+      }
+
+      /* 主容器 */
+      .wrap {
+        position: relative;
+        z-index: 1;
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 40px 24px 80px;
+      }
+
+      /* 标题 */
+      .header {
+        text-align: center;
+        padding: 48px 0 8px;
+      }
+      .header h1 {
+        font-family: var(--font-serif);
+        font-size: clamp(1.8rem, 4vw, 2.6rem);
+        color: var(--gold-light);
+        letter-spacing: 0.12em;
+        font-weight: 700;
+      }
+      .header p {
+        font-size: 0.88rem;
+        color: var(--text2);
+        margin-top: 8px;
+        letter-spacing: 0.06em;
+      }
+      .header .divider {
+        width: 60px;
+        height: 1px;
+        background: var(--border-gold);
+        margin: 20px auto 0;
+      }
+
+      /* 导航标签 */
+      .tab-bar {
+        display: flex;
+        justify-content: center;
+        gap: 4px;
+        margin: 32px 0 24px;
+        flex-wrap: wrap;
+      }
+      .tab-btn {
+        padding: 8px 20px;
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        background: transparent;
+        color: var(--text2);
+        font-size: 0.82rem;
+        cursor: pointer;
+        transition: all 0.25s;
+        font-family: var(--font-sans);
+        letter-spacing: 0.04em;
+      }
+      .tab-btn:hover {
+        color: var(--gold);
+        border-color: var(--border-gold);
+      }
+      .tab-btn.active {
+        background: rgba(184, 154, 92, 0.1);
+        color: var(--gold-light);
+        border-color: var(--border-gold);
+        box-shadow: 0 0 12px var(--gold-glow);
+      }
+
+      .tab-panel {
+        display: none;
+      }
+      .tab-panel.active {
+        display: block;
+      }
+
+      /* ===== Tab 1: SVG 架构图 ===== */
+      .svg-wrap {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 8px;
+        overflow-x: auto;
+      }
+      .svg-wrap svg {
+        display: block;
+        width: 100%;
+        min-width: 1100px;
+        height: auto;
+      }
+
+      /* ===== Tab 2: 动态流转图 ===== */
+      .flow-wrap {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+      .flow-stage {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        overflow: hidden;
+        transition: all 0.35s;
+      }
+      .flow-stage:hover {
+        border-color: var(--border-gold);
+        box-shadow: 0 0 20px var(--gold-glow);
+      }
+      .flow-stage-head {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 16px 20px;
+        cursor: pointer;
+        transition: background 0.25s;
+      }
+      .flow-stage-head:hover {
+        background: rgba(184, 154, 92, 0.03);
+      }
+      .flow-stage-num {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: var(--font-serif);
+        font-size: 1rem;
+        font-weight: 700;
+        flex-shrink: 0;
+      }
+      .flow-stage-icon {
+        font-size: 1.3rem;
+        flex-shrink: 0;
+      }
+      .flow-stage-title {
+        font-family: var(--font-serif);
+        font-size: 1.05rem;
+        color: var(--gold);
+        font-weight: 600;
+        letter-spacing: 0.04em;
+      }
+      .flow-stage-desc {
+        font-size: 0.78rem;
+        color: var(--text2);
+        margin-left: auto;
+        text-align: right;
+        flex-shrink: 0;
+      }
+      .flow-stage-arrow {
+        font-size: 0.8rem;
+        color: var(--text3);
+        margin-left: 8px;
+        transition: transform 0.3s;
+      }
+      .flow-stage.open .flow-stage-arrow {
+        transform: rotate(180deg);
+      }
+      .flow-stage-body {
+        display: none;
+        padding: 0 20px 20px 68px;
+      }
+      .flow-stage.open .flow-stage-body {
+        display: block;
+      }
+      .flow-detail {
+        padding: 12px 16px;
+        background: rgba(184, 154, 92, 0.03);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        margin-bottom: 8px;
+        font-size: 0.82rem;
+        color: var(--text2);
+        line-height: 1.8;
+      }
+      .flow-detail strong {
+        color: var(--gold-light);
+      }
+      .flow-detail code {
+        font-family: monospace;
+        font-size: 0.78rem;
+        background: rgba(184, 154, 92, 0.08);
+        padding: 1px 6px;
+        border-radius: 4px;
+        color: var(--gold);
+      }
+
+      /* 连线 */
+      .flow-line {
+        display: flex;
+        justify-content: center;
+        padding: 4px 0;
+      }
+      .flow-line svg {
+        width: 40px;
+        height: 32px;
+      }
+
+      /* ===== Tab 3: 节点交互 ===== */
+      .node-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 14px;
+      }
+      .node-card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 18px;
+        cursor: pointer;
+        transition: all 0.3s;
+        position: relative;
+        overflow: hidden;
+      }
+      .node-card:hover {
+        border-color: var(--border-gold);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+      }
+      .node-card.selected {
+        border-color: var(--border-gold);
+        box-shadow:
+          0 0 24px var(--gold-glow),
+          inset 0 0 24px rgba(184, 154, 92, 0.02);
+      }
+      .node-card.selected::after {
+        content: '✓';
+        position: absolute;
+        top: 10px;
+        right: 12px;
+        font-size: 0.7rem;
+        color: var(--gold);
+        font-weight: 700;
+      }
+      .node-card-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+      .node-card-icon {
+        font-size: 1.4rem;
+      }
+      .node-card-name {
+        font-family: var(--font-serif);
+        font-size: 0.95rem;
+        color: var(--text);
+        font-weight: 600;
+      }
+      .node-card-type {
+        font-size: 0.65rem;
+        padding: 2px 8px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        color: var(--text3);
+        margin-left: auto;
+      }
+      .node-card-desc {
+        font-size: 0.78rem;
+        color: var(--text2);
+        line-height: 1.6;
+        margin-bottom: 10px;
+      }
+      .node-card-tags {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+      }
+      .node-card-tag {
+        font-size: 0.64rem;
+        padding: 2px 8px;
+        border-radius: 6px;
+        background: rgba(184, 154, 92, 0.04);
+        border: 1px solid var(--border);
+        color: var(--text3);
+      }
+
+      /* 详情面板 */
+      .detail-panel {
+        display: none;
+        margin-top: 20px;
+        background: var(--card);
+        border: 1px solid var(--border-gold);
+        border-radius: 12px;
+        padding: 24px;
+        animation: fadeUp 0.35s ease-out;
+      }
+      .detail-panel.active {
+        display: block;
+      }
+      .detail-panel h3 {
+        font-family: var(--font-serif);
+        font-size: 1.1rem;
+        color: var(--gold-light);
+        margin-bottom: 16px;
+        letter-spacing: 0.04em;
+      }
+      .detail-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.82rem;
+      }
+      .detail-table th,
+      .detail-table td {
+        padding: 10px 14px;
+        text-align: left;
+        border-bottom: 1px solid var(--border);
+      }
+      .detail-table th {
+        font-family: var(--font-serif);
+        color: var(--gold);
+        font-weight: 600;
+        font-size: 0.78rem;
+        letter-spacing: 0.04em;
+      }
+      .detail-table td {
+        color: var(--text2);
+      }
+      .detail-table tr:last-child td {
+        border-bottom: none;
+      }
+      .detail-code {
+        background: rgba(0, 0, 0, 0.3);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 14px;
+        margin-top: 12px;
+        font-family: monospace;
+        font-size: 0.76rem;
+        color: var(--text2);
+        line-height: 1.7;
+        white-space: pre-wrap;
+        overflow-x: auto;
+      }
+
+      /* ===== Tab 4: Demo ===== */
+      .demo-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 28px;
+        background: rgba(184, 154, 92, 0.12);
+        border: 1px solid var(--border-gold);
+        border-radius: 24px;
+        color: var(--gold-light);
+        font-family: var(--font-serif);
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: all 0.3s;
+        letter-spacing: 0.06em;
+      }
+      .demo-btn:hover {
+        background: rgba(184, 154, 92, 0.2);
+        box-shadow: 0 0 20px var(--gold-glow);
+      }
+      .demo-btn:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+      .demo-log {
+        background: rgba(0, 0, 0, 0.3);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 20px;
+        margin-top: 16px;
+        max-height: 500px;
+        overflow-y: auto;
+        font-family: monospace;
+        font-size: 0.76rem;
+        line-height: 1.8;
+      }
+      .demo-log .log-step {
+        color: var(--gold);
+        margin-top: 8px;
+      }
+      .demo-log .log-info {
+        color: var(--text2);
+      }
+      .demo-log .log-result {
+        color: var(--green);
+      }
+      .demo-log .log-time {
+        color: var(--text3);
+        font-size: 0.7rem;
+      }
+      .demo-input {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 16px;
+        flex-wrap: wrap;
+      }
+      .demo-input input {
+        flex: 1;
+        min-width: 200px;
+        padding: 10px 16px;
+        background: rgba(0, 0, 0, 0.3);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        color: var(--text);
+        font-size: 0.88rem;
+        outline: none;
+        font-family: var(--font-sans);
+        transition: border-color 0.25s;
+      }
+      .demo-input input:focus {
+        border-color: var(--border-gold);
+      }
+
+      /* 动画 */
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.5;
+        }
+      }
+      @keyframes flowDash {
+        to {
+          stroke-dashoffset: -24;
+        }
+      }
+
+      /* 水印 */
+      .watermark {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) rotate(-25deg);
+        font-size: 6rem;
+        color: rgba(184, 154, 92, 0.015);
+        pointer-events: none;
+        z-index: 0;
+        font-family: var(--font-serif);
+        white-space: nowrap;
+        letter-spacing: 0.3em;
+      }
+
+      /* 响应式 */
+      @media (max-width: 768px) {
+        .wrap {
+          padding: 24px 16px 60px;
+        }
+        .node-grid {
+          grid-template-columns: 1fr;
+        }
+        .flow-stage-desc {
+          display: none;
+        }
+        .flow-stage-body {
+          padding: 0 12px 16px 48px;
+        }
+      }
+    </style>
+    <link rel="stylesheet" crossorigin href="./assets/style-CkcVZCYg.css">
+  </head>
+  <body>
+    <canvas id="starfield"></canvas>
+    <div class="watermark">天机阁</div>
+
+    <div class="wrap">
+      <div class="header">
+        <h1>天 机 阁</h1>
+        <p>系统架构 · 数据流转 · 模块交互</p>
+        <div class="divider"></div>
+      </div>
+
+      <!-- 导航标签 -->
+      <div class="tab-bar">
+        <button class="tab-btn active" data-tab="arch">架构总览</button>
+        <button class="tab-btn" data-tab="flow">动态流转</button>
+        <button class="tab-btn" data-tab="nodes">节点交互</button>
+        <button class="tab-btn" data-tab="demo">演示 Demo</button>
+      </div>
+
+      <!-- ===== Tab 1: SVG 架构总览 ===== -->
+      <div class="tab-panel active" id="panel-arch">
+        <div class="svg-wrap" id="svg-wrap"></div>
+      </div>
+
+      <!-- ===== Tab 2: 动态流转图 ===== -->
+      <div class="tab-panel" id="panel-flow">
+        <div class="flow-wrap" id="flow-wrap"></div>
+      </div>
+
+      <!-- ===== Tab 3: 节点交互 ===== -->
+      <div class="tab-panel" id="panel-nodes">
+        <div class="node-grid" id="node-grid"></div>
+        <div class="detail-panel" id="detail-panel"></div>
+      </div>
+
+      <!-- ===== Tab 4: Demo ===== -->
+      <div class="tab-panel" id="panel-demo">
+        <div style="background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 24px">
+          <h3
+            style="
+              font-family: var(--font-serif);
+              color: var(--gold);
+              margin-bottom: 8px;
+              font-size: 1.05rem;
+              letter-spacing: 0.04em;
+            "
+          >
+            模拟合参流程
+          </h3>
+          <p style="font-size: 0.8rem; color: var(--text2); margin-bottom: 20px">
+            输入问题，观察系统如何从输入流转到最终输出
+          </p>
+          <div class="demo-input">
+            <input
+              type="text"
+              id="demo-question"
+              placeholder="输入你的问题，如：跳槽去大厂还是考公？"
+              value="互联网工作5年，纠结继续大厂还是考公"
+            />
+          </div>
+          <button class="demo-btn" id="demo-btn" onclick="runDemo()">启动合参推演</button>
+          <div class="demo-log" id="demo-log">
+            <div class="log-info">等待输入问题，点击按钮开始推演...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // ===== 代码保护 =====
+      (function () {
+        // 禁止右键菜单
+        document.addEventListener('contextmenu', function (e) {
+          e.preventDefault();
+          return false;
+        });
+        // 禁止拖拽
+        document.addEventListener('dragstart', function (e) {
+          e.preventDefault();
+          return false;
+        });
+        // 禁止选择（CSS已设，JS兜底）
+        document.addEventListener('selectstart', function (e) {
+          e.preventDefault();
+          return false;
+        });
+        // 控制台版权声明
+        console.clear();
+        console.log(
+          '%c 天机阁 · 系统架构 %c v1.0 ',
+          'font-family:"Noto Serif SC",serif;font-size:24px;color:#d4bb7c;padding:12px 0;',
+          'font-size:12px;color:#8a8576;'
+        );
+        console.log('%c 纯前端算法架构 | 零API调用 | 模块化引擎设计 ', 'font-size:12px;color:#4a8a5c;');
+        console.log('%c © 2025 天机阁 | 保留所有权利 ', 'font-size:10px;color:#4a4640;');
+        // 键盘拦截
+        document.addEventListener('keydown', function (e) {
+          // F12
+          if (e.keyCode === 123) {
+            e.preventDefault();
+            return false;
+          }
+          // Ctrl+Shift+I / Ctrl+Shift+J / Ctrl+Shift+C
+          if (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) {
+            e.preventDefault();
+            return false;
+          }
+          // Ctrl+U (查看源码)
+          if (e.ctrlKey && e.keyCode === 85) {
+            e.preventDefault();
+            return false;
+          }
+          // Ctrl+S (保存页面)
+          if (e.ctrlKey && e.keyCode === 83) {
+            e.preventDefault();
+            return false;
+          }
+        });
+        // 定期清理控制台，防止被长时间打开
+        setInterval(function () {
+          console.clear();
+        }, 3000);
+      })();
+
+      // ===== 星空背景 =====
+      (function () {
+        var c = document.getElementById('starfield'),
+          ctx = c.getContext('2d'),
+          stars = [],
+          w,
+          h,
+          t = 0;
+        function resize() {
+          w = c.width = window.innerWidth;
+          h = c.height = window.innerHeight;
+          stars = [];
+          for (var i = 0; i < 120; i++)
+            stars.push({
+              x: Math.random() * w,
+              y: Math.random() * h,
+              r: Math.random() * 1.5 + 0.3,
+              ts: Math.random() * 0.01 + 0.003,
+              to: Math.random() * Math.PI * 2,
+              o: Math.random() * 0.4 + 0.06,
+              hue: Math.random() > 0.7 ? 42 : 0,
+            });
+        }
+        resize();
+        window.addEventListener('resize', resize);
+        function draw() {
+          t++;
+          ctx.clearRect(0, 0, w, h);
+          stars.forEach(function (s) {
+            var a = s.o + Math.sin(t * s.ts + s.to) * 0.15;
+            a = Math.max(0.02, Math.min(0.5, a));
+            ctx.beginPath();
+            ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+            ctx.fillStyle = s.hue ? 'rgba(184,154,92,' + a + ')' : 'rgba(200,200,215,' + a + ')';
+            ctx.fill();
+          });
+          requestAnimationFrame(draw);
+        }
+        draw();
+      })();
+
+      // ===== 标签切换 =====
+      document.querySelector('.tab-bar').addEventListener('click', function (e) {
+        var btn = e.target.closest('.tab-btn');
+        if (!btn) return;
+        document.querySelectorAll('.tab-btn').forEach(function (b) {
+          b.classList.remove('active');
+        });
+        btn.classList.add('active');
+        document.querySelectorAll('.tab-panel').forEach(function (p) {
+          p.classList.remove('active');
+        });
+        document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+      });
+
+      // ===== Tab 1: SVG 架构图 =====
+      (function () {
+        var CX = 650,
+          ML = 50,
+          WK = 1200; // WK=工作区宽度
+
+        // 辅助：一排均匀分布的矩形
+        function row(items, y, w, h, rx, gap, fill, stroke, sw, color, fs) {
+          var n = items.length,
+            tw = n * w + (n - 1) * gap,
+            sx = ML + (WK - tw) / 2,
+            s = '';
+          for (var i = 0; i < n; i++) {
+            var x = sx + i * (w + gap);
+            s +=
+              '<rect x="' +
+              x +
+              '" y="' +
+              y +
+              '" width="' +
+              w +
+              '" height="' +
+              h +
+              '" rx="' +
+              rx +
+              '" fill="' +
+              fill +
+              '" stroke="' +
+              stroke +
+              '" stroke-width="' +
+              sw +
+              '"/>' +
+              '<text x="' +
+              (x + w / 2) +
+              '" y="' +
+              (y + h / 2 + 4) +
+              '" text-anchor="middle" fill="' +
+              color +
+              '" font-size="' +
+              fs +
+              '" font-weight="600">' +
+              items[i] +
+              '</text>';
+          }
+          return s;
+        }
+        // 一排独立颜色的小标签
+        function rowColor(items, y, w, h, rx, gap) {
+          // items: [{label,fill,stroke,color}]
+          var n = items.length,
+            tw = n * w + (n - 1) * gap,
+            sx = ML + (WK - tw) / 2,
+            s = '';
+          for (var i = 0; i < n; i++) {
+            var it = items[i],
+              x = sx + i * (w + gap);
+            s +=
+              '<rect x="' +
+              x +
+              '" y="' +
+              y +
+              '" width="' +
+              w +
+              '" height="' +
+              h +
+              '" rx="' +
+              rx +
+              '" fill="' +
+              it.fill +
+              '" stroke="' +
+              it.stroke +
+              '" stroke-width="0.8"/>' +
+              '<text x="' +
+              (x + w / 2) +
+              '" y="' +
+              (y + h / 2 + 3) +
+              '" text-anchor="middle" fill="' +
+              it.color +
+              '" font-size="9">' +
+              it.label +
+              '</text>';
+          }
+          return s;
+        }
+        // 箭头：从一排item的中心向下
+        function arrowsDown(items, y1, y2, w, gap, strokeColor, sw) {
+          var n = items.length,
+            tw = n * w + (n - 1) * gap,
+            sx = ML + (WK - tw) / 2,
+            s = '';
+          for (var i = 0; i < n; i++) {
+            var x = sx + i * (w + gap) + w / 2;
+            s +=
+              '<line x1="' +
+              x +
+              '" y1="' +
+              y1 +
+              '" x2="' +
+              x +
+              '" y2="' +
+              y2 +
+              '" stroke="' +
+              strokeColor +
+              '" stroke-width="' +
+              sw +
+              '"/>';
+          }
+          return s;
+        }
+        // 横向箭头：两个相邻item之间
+        function hArrow(items, y, w, gap, marker) {
+          var n = items.length,
+            tw = n * w + (n - 1) * gap,
+            sx = ML + (WK - tw) / 2,
+            s = '';
+          for (var i = 0; i < n - 1; i++) {
+            var x1 = sx + i * (w + gap) + w,
+              x2 = sx + (i + 1) * (w + gap) - 10;
+            s +=
+              '<line x1="' +
+              x1 +
+              '" y1="' +
+              y +
+              '" x2="' +
+              x2 +
+              '" y2="' +
+              y +
+              '" stroke="rgba(184,154,92,0.3)" stroke-width="1.2" marker-end="url(#' +
+              marker +
+              ')"/>';
+          }
+          return s;
+        }
+
+        var svg =
+          '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1300 1120" font-family="Noto Sans SC,Microsoft YaHei,sans-serif">' +
+          '<defs>' +
+          '<marker id="aGold" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#b89a5c"/></marker>' +
+          '<marker id="aBlue" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#4a8ac9"/></marker>' +
+          '<marker id="aPurple" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#8a6ab8"/></marker>' +
+          '<marker id="aTeal" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#4a9a8c"/></marker>' +
+          '</defs>' +
+          '<rect width="1300" height="1120" fill="#08070e" rx="12"/>' +
+          // ===== 第1层：用户入口（先选模块→再输入参数） =====
+          '<text x="' +
+          CX +
+          '" y="36" text-anchor="middle" fill="#8a8576" font-size="11" letter-spacing="0.12em">第1层 · 用户入口</text>' +
+          row(
+            ['① 选择术数模块', '② 输入参数/问题'],
+            50,
+            200,
+            44,
+            22,
+            280,
+            'rgba(184,154,92,0.1)',
+            'rgba(184,154,92,0.25)',
+            '1.2',
+            '#d4bb7c',
+            '13'
+          ) +
+          // ①→② 横向箭头
+          (function () {
+            var items = ['① 选择术数模块', '② 输入参数/问题'],
+              w = 200,
+              gap = 280,
+              tw = 2 * w + gap,
+              sx = ML + (WK - tw) / 2;
+            return (
+              '<line x1="' +
+              (sx + w) +
+              '" y1="72" x2="' +
+              (sx + w + gap - 10) +
+              '" y2="72" stroke="rgba(184,154,92,0.35)" stroke-width="1.2" marker-end="url(#aGold)"/>' +
+              '<text x="' +
+              (sx + w + gap / 2) +
+              '" y="66" text-anchor="middle" fill="#b89a5c" font-size="8">流程顺序</text>'
+            );
+          })() +
+          // 汇聚到中心
+          '<line x1="' +
+          (function () {
+            var items = ['① 选择术数模块', '② 输入参数/问题'],
+              w = 200,
+              gap = 280,
+              tw = 2 * w + gap,
+              sx = ML + (WK - tw) / 2;
+            return sx + w / 2;
+          })() +
+          '" y1="94" x2="' +
+          CX +
+          '" y2="122" stroke="rgba(184,154,92,0.18)" stroke-width="0.8" stroke-dasharray="4,3"/>' +
+          (function () {
+            var items = ['① 选择术数模块', '② 输入参数/问题'],
+              w = 200,
+              gap = 280,
+              tw = 2 * w + gap,
+              sx = ML + (WK - tw) / 2;
+            return (
+              '<line x1="' +
+              (sx + 1.5 * w + gap) +
+              '" y1="94" x2="' +
+              CX +
+              '" y2="122" stroke="rgba(184,154,92,0.18)" stroke-width="0.8" stroke-dasharray="4,3"/>'
+            );
+          })() +
+          '<line x1="' +
+          CX +
+          '" y1="122" x2="' +
+          CX +
+          '" y2="152" stroke="rgba(184,154,92,0.3)" stroke-width="1.2" marker-end="url(#aGold)"/>' +
+          // ===== 第2层：路由分发 =====
+          '<text x="' +
+          CX +
+          '" y="176" text-anchor="middle" fill="#8a8576" font-size="11" letter-spacing="0.12em">第2层 · 路由分发</text>' +
+          '<rect x="530" y="184" width="240" height="44" rx="22" fill="rgba(74,138,201,0.1)" stroke="rgba(74,138,201,0.25)" stroke-width="1.2"/>' +
+          '<text x="' +
+          CX +
+          '" y="211" text-anchor="middle" fill="#6aacf0" font-size="13" font-weight="600">app.js · Hash路由</text>' +
+          '<line x1="' +
+          CX +
+          '" y1="228" x2="' +
+          CX +
+          '" y2="264" stroke="rgba(74,138,201,0.3)" stroke-width="1.2" marker-end="url(#aBlue)"/>' +
+          // ===== 第3层：组件层 =====
+          '<text x="' +
+          CX +
+          '" y="286" text-anchor="middle" fill="#8a8576" font-size="11" letter-spacing="0.12em">第3层 · 组件层 components/</text>' +
+          row(
+            ['八字', '六爻', '梅花', '奇门', '太乙'],
+            302,
+            100,
+            38,
+            8,
+            20,
+            'rgba(74,138,92,0.1)',
+            'rgba(74,138,92,0.2)',
+            '1',
+            '#6aaa7c',
+            '11'
+          ) +
+          row(
+            ['诸葛', '周公', '大六壬', '紫微', '风水'],
+            352,
+            100,
+            38,
+            8,
+            20,
+            'rgba(74,138,92,0.1)',
+            'rgba(74,138,92,0.2)',
+            '1',
+            '#6aaa7c',
+            '11'
+          ) +
+          row(
+            ['大师蒸馏', '合参'],
+            402,
+            140,
+            38,
+            8,
+            140,
+            'rgba(138,106,184,0.1)',
+            'rgba(138,106,184,0.2)',
+            '1',
+            '#aa8ad8',
+            '11'
+          ) +
+          (function () {
+            var items = ['大师蒸馏', '合参'],
+              w = 140,
+              gap = 140,
+              tw = 2 * w + gap,
+              sx = ML + (WK - tw) / 2;
+            return (
+              '<rect x="' +
+              (sx + w + gap) +
+              '" y="402" width="140" height="38" rx="8" fill="rgba(200,150,60,0.1)" stroke="rgba(200,150,60,0.2)" stroke-width="1"/>' +
+              '<text x="' +
+              (sx + w + gap + 70) +
+              '" y="425" text-anchor="middle" fill="#c9a64a" font-size="11" font-weight="600">合参</text>'
+            );
+          })() +
+          // 组件→引擎 汇聚箭头（所有组件汇聚到 EngineRegistry）
+          arrowsDown(['八字', '六爻', '梅花', '奇门', '太乙'], 340, 406, 100, 20, 'rgba(74,138,92,0.18)', '0.8') +
+          arrowsDown(['诸葛', '周公', '大六壬', '紫微', '风水'], 390, 406, 100, 20, 'rgba(74,138,92,0.18)', '0.8') +
+          (function () {
+            var items = ['大师蒸馏', '合参'],
+              w = 140,
+              gap = 140,
+              tw = 2 * w + gap,
+              sx = ML + (WK - tw) / 2;
+            return (
+              '<line x1="' +
+              (sx + w / 2) +
+              '" y1="440" x2="' +
+              (sx + w / 2) +
+              '" y2="472" stroke="rgba(138,106,184,0.18)" stroke-width="0.8"/>' +
+              '<line x1="' +
+              (sx + w + gap + w / 2) +
+              '" y1="440" x2="' +
+              (sx + w + gap + w / 2) +
+              '" y2="472" stroke="rgba(200,150,60,0.18)" stroke-width="0.8"/>'
+            );
+          })() +
+          // 汇聚线：所有组件→EngineRegistry
+          '<line x1="210" y1="406" x2="' +
+          CX +
+          '" y2="472" stroke="rgba(74,138,92,0.08)" stroke-width="0.6" stroke-dasharray="4,4"/>' +
+          '<line x1="1090" y1="406" x2="' +
+          CX +
+          '" y2="472" stroke="rgba(74,138,92,0.08)" stroke-width="0.6" stroke-dasharray="4,4"/>' +
+          // ===== 第4层：引擎注册中心（统一入口，分支到各引擎） =====
+          '<text x="' +
+          CX +
+          '" y="496" text-anchor="middle" fill="#8a8576" font-size="11" letter-spacing="0.12em">第4层 · 引擎注册中心 & 引擎层</text>' +
+          // 4a: EngineRegistry 居中
+          '<rect x="530" y="506" width="240" height="44" rx="22" fill="rgba(138,106,184,0.12)" stroke="rgba(138,106,184,0.3)" stroke-width="1.2"/>' +
+          '<text x="' +
+          CX +
+          '" y="533" text-anchor="middle" fill="#aa8ad8" font-size="13" font-weight="600">EngineRegistry 统一注册中心</text>' +
+          // EngineRegistry → 分支到4种引擎类型
+          '<line x1="' +
+          CX +
+          '" y1="550" x2="' +
+          CX +
+          '" y2="578" stroke="rgba(138,106,184,0.3)" stroke-width="1.2" marker-end="url(#aPurple)"/>' +
+          // 4b: 4种引擎类型水平排列
+          rowColor(
+            [
+              {
+                label: '命盘类（2个）',
+                fill: 'rgba(200,150,60,0.06)',
+                stroke: 'rgba(200,150,60,0.15)',
+                color: '#c9a64a',
+              },
+              {
+                label: '即时类（3个）',
+                fill: 'rgba(74,138,92,0.06)',
+                stroke: 'rgba(74,138,92,0.15)',
+                color: '#6aaa7c',
+              },
+              {
+                label: '时空类（4个）',
+                fill: 'rgba(74,138,201,0.06)',
+                stroke: 'rgba(74,138,201,0.15)',
+                color: '#6aacf0',
+              },
+              {
+                label: '文本类（1个）',
+                fill: 'rgba(201,74,58,0.06)',
+                stroke: 'rgba(201,74,58,0.15)',
+                color: '#e96a5a',
+              },
+            ],
+            590,
+            160,
+            34,
+            6,
+            30
+          ) +
+          // 引擎名子标签
+          (function () {
+            var groups = [
+              { label: '八字引擎 · 紫微引擎', color: '#c9a64a' },
+              { label: '六爻引擎 · 梅花引擎 · 诸葛引擎', color: '#6aaa7c' },
+              { label: '奇门引擎 · 太乙引擎 · 大六壬 · 风水引擎', color: '#6aacf0' },
+              { label: '周公解梦引擎', color: '#e96a5a' },
+            ];
+            var w = 160,
+              gap = 30,
+              tw = groups.length * w + (groups.length - 1) * gap,
+              sx = ML + (WK - tw) / 2,
+              s = '';
+            for (var i = 0; i < groups.length; i++) {
+              var x = sx + i * (w + gap);
+              s +=
+                '<text x="' +
+                (x + w / 2) +
+                '" y="646" text-anchor="middle" fill="' +
+                groups[i].color +
+                '" font-size="8.5" opacity="0.75">' +
+                groups[i].label +
+                '</text>';
+            }
+            return s;
+          })() +
+          // EngineRegistry→各类型 分支虚线
+          (function () {
+            var w = 160,
+              gap = 30,
+              tw = 4 * w + 3 * gap,
+              sx = ML + (WK - tw) / 2,
+              s = '';
+            for (var i = 0; i < 4; i++) {
+              s +=
+                '<line x1="' +
+                CX +
+                '" y1="578" x2="' +
+                (sx + i * (w + gap) + w / 2) +
+                '" y2="588" stroke="rgba(138,106,184,0.15)" stroke-width="0.7" stroke-dasharray="3,3"/>';
+            }
+            return s;
+          })() +
+          // 各类型→汇聚到中心→第5层
+          (function () {
+            var w = 160,
+              gap = 30,
+              tw = 4 * w + 3 * gap,
+              sx = ML + (WK - tw) / 2,
+              s = '';
+            for (var i = 0; i < 4; i++) {
+              s +=
+                '<line x1="' +
+                (sx + i * (w + gap) + w / 2) +
+                '" y1="656" x2="' +
+                CX +
+                '" y2="688" stroke="rgba(138,106,184,0.12)" stroke-width="0.6" stroke-dasharray="3,3"/>';
+            }
+            return s;
+          })() +
+          '<line x1="' +
+          CX +
+          '" y1="688" x2="' +
+          CX +
+          '" y2="720" stroke="rgba(138,106,184,0.3)" stroke-width="1.2" marker-end="url(#aPurple)"/>' +
+          // ===== 第5层：领域分析 =====
+          '<text x="' +
+          CX +
+          '" y="744" text-anchor="middle" fill="#8a8576" font-size="11" letter-spacing="0.12em">第5层 · 领域分析</text>' +
+          '<rect x="530" y="752" width="240" height="44" rx="22" fill="rgba(74,154,140,0.1)" stroke="rgba(74,154,140,0.25)" stroke-width="1.2"/>' +
+          '<text x="' +
+          CX +
+          '" y="779" text-anchor="middle" fill="#6abaaa" font-size="13" font-weight="600">domain-analysis.js</text>' +
+          '<line x1="' +
+          CX +
+          '" y1="796" x2="' +
+          CX +
+          '" y2="826" stroke="rgba(74,154,140,0.3)" stroke-width="1.2" marker-end="url(#aTeal)"/>' +
+          // 9个领域标签
+          rowColor(
+            [
+              { label: '事业', fill: 'rgba(74,154,140,0.06)', stroke: 'rgba(74,154,140,0.12)', color: '#6abaaa' },
+              { label: '感情', fill: 'rgba(74,154,140,0.06)', stroke: 'rgba(74,154,140,0.12)', color: '#6abaaa' },
+              { label: '财运', fill: 'rgba(74,154,140,0.06)', stroke: 'rgba(74,154,140,0.12)', color: '#6abaaa' },
+              { label: '健康', fill: 'rgba(74,154,140,0.06)', stroke: 'rgba(74,154,140,0.12)', color: '#6abaaa' },
+              { label: '学业', fill: 'rgba(74,154,140,0.06)', stroke: 'rgba(74,154,140,0.12)', color: '#6abaaa' },
+              { label: '家庭', fill: 'rgba(74,154,140,0.06)', stroke: 'rgba(74,154,140,0.12)', color: '#6abaaa' },
+              { label: '社交', fill: 'rgba(74,154,140,0.06)', stroke: 'rgba(74,154,140,0.12)', color: '#6abaaa' },
+              { label: '出行', fill: 'rgba(74,154,140,0.06)', stroke: 'rgba(74,154,140,0.12)', color: '#6abaaa' },
+              { label: '综合', fill: 'rgba(74,154,140,0.06)', stroke: 'rgba(74,154,140,0.12)', color: '#6abaaa' },
+            ],
+            836,
+            90,
+            26,
+            5,
+            16
+          ) +
+          '<line x1="' +
+          CX +
+          '" y1="862" x2="' +
+          CX +
+          '" y2="896" stroke="rgba(74,154,140,0.3)" stroke-width="1.2" marker-end="url(#aTeal)"/>' +
+          // ===== 第6层：合参引擎 =====
+          '<text x="' +
+          CX +
+          '" y="920" text-anchor="middle" fill="#8a8576" font-size="11" letter-spacing="0.12em">第6层 · 合参引擎</text>' +
+          row(
+            ['评分提取', '加权融合', '融洽磨合'],
+            928,
+            190,
+            44,
+            22,
+            65,
+            'rgba(200,150,60,0.1)',
+            'rgba(200,150,60,0.25)',
+            '1.2',
+            '#c9a64a',
+            '13'
+          ) +
+          hArrow(['评分提取', '加权融合', '融洽磨合'], 950, 190, 65, 'aGold') +
+          // 合参→大师蒸馏 箭头
+          (function () {
+            var items = ['评分提取', '加权融合', '融洽磨合'],
+              w = 190,
+              gap = 65,
+              tw = 3 * w + 2 * gap,
+              sx = ML + (WK - tw) / 2;
+            return (
+              '<line x1="' +
+              (sx + w / 2) +
+              '" y1="972" x2="' +
+              (sx + w / 2) +
+              '" y2="1004" stroke="rgba(200,150,60,0.3)" stroke-width="1.2" marker-end="url(#aGold)"/>' +
+              '<line x1="' +
+              (sx + 1.5 * w + gap) +
+              '" y1="972" x2="' +
+              (sx + 1.5 * w + gap) +
+              '" y2="1004" stroke="rgba(200,150,60,0.3)" stroke-width="1.2" marker-end="url(#aGold)"/>'
+            );
+          })() +
+          // ===== 第7层：大师蒸馏 & 输出 =====
+          (function () {
+            var items = ['34位大师风格复刻', '五段式分析输出'],
+              w = 220,
+              gap = 100,
+              tw = 2 * w + gap,
+              sx = ML + (WK - tw) / 2;
+            return (
+              '<text x="' +
+              CX +
+              '" y="1028" text-anchor="middle" fill="#8a8576" font-size="11" letter-spacing="0.12em">第7层 · 大师蒸馏 & 输出</text>' +
+              '<rect x="' +
+              sx +
+              '" y="1036" width="' +
+              w +
+              '" height="44" rx="22" fill="rgba(138,106,184,0.1)" stroke="rgba(138,106,184,0.25)" stroke-width="1.2"/>' +
+              '<text x="' +
+              (sx + w / 2) +
+              '" y="1063" text-anchor="middle" fill="#aa8ad8" font-size="13" font-weight="600">34位大师风格复刻</text>' +
+              '<rect x="' +
+              (sx + w + gap) +
+              '" y="1036" width="' +
+              w +
+              '" height="44" rx="22" fill="rgba(74,138,92,0.1)" stroke="rgba(74,138,92,0.25)" stroke-width="1.2"/>' +
+              '<text x="' +
+              (sx + w + gap + w / 2) +
+              '" y="1063" text-anchor="middle" fill="#6aaa7c" font-size="13" font-weight="600">五段式分析输出</text>' +
+              '<line x1="' +
+              (sx + w) +
+              '" y1="1058" x2="' +
+              (sx + w + gap - 10) +
+              '" y2="1058" stroke="rgba(138,106,184,0.3)" stroke-width="1.2" marker-end="url(#aPurple)"/>'
+            );
+          })() +
+          // 底部图例
+          (function () {
+            var legends = [
+              { l: '输入/调度', c: '#b89a5c' },
+              { l: '路由', c: '#4a8ac9' },
+              { l: '组件/引擎', c: '#4a8a5c' },
+              { l: '注册/蒸馏', c: '#8a6ab8' },
+              { l: '领域分析', c: '#4a9a8c' },
+              { l: '融合研判', c: '#c9a64a' },
+            ];
+            var sx = ML + (WK - legends.length * 90) / 2,
+              s = '';
+            for (var i = 0; i < legends.length; i++) {
+              s +=
+                '<rect x="' +
+                (sx + i * 90) +
+                '" y="1096" width="8" height="8" rx="2" fill="' +
+                legends[i].c +
+                '" opacity="0.6"/>' +
+                '<text x="' +
+                (sx + i * 90 + 12) +
+                '" y="1104" fill="#8a8576" font-size="8">' +
+                legends[i].l +
+                '</text>';
+            }
+            return s;
+          })() +
+          '</svg>';
+        document.getElementById('svg-wrap').innerHTML = svg;
+      })();
+
+      // ===== Tab 2: 动态流转图 =====
+      (function () {
+        var stages = [
+          {
+            num: '01',
+            color: 'var(--gold)',
+            icon: '💬',
+            title: '用户输入',
+            desc: '问题 + 参数',
+            details: [
+              '<strong>输入方式：</strong>在首页选择术数模块，或在合参页面输入问题',
+              '<strong>参数类型：</strong>出生日期/时辰（命盘类）、日期/时辰（时空类）、文本描述（文本类）、无需参数（即时类）',
+              '<strong>代码位置：</strong><code>index.html</code> → <code>components/*.js</code> 各组件收集表单数据',
+              '<strong>示例：</strong>用户输入"跳槽去大厂还是考公？" + 出生日期2000-01-01 + 子时',
+            ],
+          },
+          {
+            num: '02',
+            color: 'var(--blue)',
+            icon: '🔀',
+            title: '路由分发',
+            desc: 'app.js → Hash路由',
+            details: [
+              '<strong>路由机制：</strong>监听 <code>hashchange</code> 事件，根据 URL hash 分发到对应页面',
+              '<strong>支持路由：</strong>home / bazi / liuyao / meihua / qimen / taiyi / zhuge / zhougong / daliuren / ziwei / fengshui / masters / composite',
+              '<strong>渲染方式：</strong>调用对应 <code>renderXxxComponent()</code> 函数，动态插入到 <code>#page-container</code>',
+              '<strong>过渡动画：</strong>opacity 0→1 + translateY 8px→0，120ms 延迟确保布局完成',
+            ],
+          },
+          {
+            num: '03',
+            color: 'var(--green)',
+            icon: '🧩',
+            title: '组件层',
+            desc: '10个术数UI组件',
+            details: [
+              '<strong>组件列表：</strong>八字、六爻、梅花、奇门、太乙、诸葛、周公解梦、大六壬、紫微斗数、风水格局',
+              '<strong>职责：</strong>收集用户输入参数 → 调用对应引擎 → 渲染结果',
+              '<strong>特殊组件：</strong>合参组件（多术数并行）、大师蒸馏组件（34位大师选择+分析）',
+              '<strong>输入类型：</strong>命盘类(BIRTH)、即时类(INSTANT)、时空类(SPACETIME)、文本类(TEXT)',
+            ],
+          },
+          {
+            num: '04',
+            color: 'var(--purple)',
+            icon: '🏗️',
+            title: '引擎注册中心',
+            desc: 'EngineRegistry',
+            details: [
+              '<strong>设计模式：</strong>注册表模式，每个引擎通过 <code>register(key, config)</code> 注册',
+              '<strong>配置项：</strong>name(名称)、icon(图标)、inputType(输入类型)、engineName(全局对象名)、methodName(调用方法)、buildParams(参数构建函数)、weight(权重)',
+              '<strong>核心方法：</strong><code>execute(key, uiParams)</code> 单引擎执行、<code>executeAll(keys, uiParams)</code> 批量执行',
+              '<strong>优势：</strong>新增引擎只需注册一条记录，无需改动合参代码',
+            ],
+          },
+          {
+            num: '05',
+            color: 'var(--teal)',
+            icon: '🔬',
+            title: '领域分析',
+            desc: '9大领域检测',
+            details: [
+              '<strong>检测方式：</strong>关键词精确匹配 + 模糊正则匹配 双重检测',
+              '<strong>9大领域：</strong>事业、感情、财运、健康、学业、家庭、社交、出行、综合',
+              '<strong>优先规则：</strong>先匹配领域优先（love在family之前）、非general领域匹配后跳过general',
+              '<strong>交叉分析：</strong>每个术数模块生成对应领域的事域交叉分析报告',
+            ],
+          },
+          {
+            num: '06',
+            color: 'var(--gold)',
+            icon: '⚖️',
+            title: '合参引擎',
+            desc: '多术数融合研判',
+            details: [
+              '<strong>流程：</strong>评分提取 → 归一化(0-100) → 加权融合(根据权重因子) → 趋势判断(up/down/stable)',
+              '<strong>融洽磨合：</strong>两两比对所有术数组合，计算融洽度(分数接近度+趋势一致性)和磨合度(分数差距+趋势冲突)',
+              '<strong>输出：</strong>综合评分(0-100)、趋势方向、合成报告(synthesis)、个体结果(individualResults)',
+            ],
+          },
+          {
+            num: '07',
+            color: 'var(--purple)',
+            icon: '👨‍🏫',
+            title: '大师蒸馏',
+            desc: '34位大师风格复刻',
+            details: [
+              '<strong>大师数量：</strong>34位古今命理大师，按10个流派分组',
+              '<strong>风格要素：</strong>自称(pronouns)、名言(phrase)、开场模板、经典引用、结语模板',
+              '<strong>分析类型：</strong>全盘分析、财富分析、天赋分析、反内耗、正缘分析',
+              '<strong>输出格式：</strong>五段式分析——开篇→总论→专论→经典引用→结语',
+            ],
+          },
+        ];
+        var html = '';
+        stages.forEach(function (s, i) {
+          html +=
+            '<div class="flow-stage">' +
+            '<div class="flow-stage-head" onclick="this.parentElement.classList.toggle(\'open\')">' +
+            '<div class="flow-stage-num" style="background:rgba(184,154,92,0.08);border:2px solid ' +
+            s.color +
+            '">' +
+            s.num +
+            '</div>' +
+            '<div class="flow-stage-icon">' +
+            s.icon +
+            '</div>' +
+            '<span class="flow-stage-title">' +
+            s.title +
+            '</span>' +
+            '<span class="flow-stage-desc">' +
+            s.desc +
+            '</span>' +
+            '<span class="flow-stage-arrow">▼</span>' +
+            '</div>' +
+            '<div class="flow-stage-body">';
+          s.details.forEach(function (d) {
+            html += '<div class="flow-detail">' + d + '</div>';
+          });
+          html += '</div></div>';
+          if (i < stages.length - 1) {
+            html +=
+              '<div class="flow-line"><svg viewBox="0 0 40 32"><line x1="20" y1="0" x2="20" y2="24" stroke="rgba(184,154,92,0.2)" stroke-width="1.2" stroke-dasharray="4,3"/><polygon points="14,24 20,32 26,24" fill="rgba(184,154,92,0.2)"/></svg></div>';
+          }
+        });
+        document.getElementById('flow-wrap').innerHTML = html;
+        // 默认展开第一个
+        setTimeout(function () {
+          var first = document.querySelector('.flow-stage');
+          if (first) first.classList.add('open');
+        }, 100);
+      })();
+
+      // ===== Tab 3: 节点交互 =====
+      (function () {
+        var nodes = [
+          {
+            id: 'input',
+            name: '用户输入层',
+            icon: '💬',
+            type: '入口',
+            desc: '用户通过首页节点或合参页面输入问题和参数',
+            tags: ['问题文本', '出生日期', '时辰', '性别', '坐山朝向'],
+            color: 'var(--gold)',
+          },
+          {
+            id: 'router',
+            name: '路由分发层',
+            icon: '🔀',
+            type: '调度',
+            desc: 'app.js 监听 hashchange，动态渲染对应术数组件',
+            tags: ['Hash路由', 'navigateTo', 'page-container', 'animate'],
+            color: 'var(--blue)',
+          },
+          {
+            id: 'bazi',
+            name: '八字排盘引擎',
+            icon: '📅',
+            type: '命盘类',
+            desc: '根据出生年月日时排四柱八字，计算十神、大运、流年',
+            tags: ['BaziEngine', 'paipan', 'K线图', '喜用神'],
+            color: 'var(--green)',
+          },
+          {
+            id: 'liuyao',
+            name: '六爻占卜引擎',
+            icon: '🪙',
+            type: '即时类',
+            desc: '随机生成六爻卦象，纳甲装卦，世应定位',
+            tags: ['LiuyaoEngine', 'divine', '六兽', '世应'],
+            color: 'var(--green)',
+          },
+          {
+            id: 'meihua',
+            name: '梅花易数引擎',
+            icon: '🌸',
+            type: '即时类',
+            desc: '以数起卦，体用生克，观象玩辞',
+            tags: ['MeihuaEngine', 'divine', '体用', '三要十应'],
+            color: 'var(--green)',
+          },
+          {
+            id: 'qimen',
+            name: '奇门遁甲引擎',
+            icon: '🚪',
+            type: '时空类',
+            desc: '排盘九宫八门九星，推演时空吉凶',
+            tags: ['QimenEngine', 'divine', '八门', '九星'],
+            color: 'var(--green)',
+          },
+          {
+            id: 'taiyi',
+            name: '太乙神数引擎',
+            icon: '⭐',
+            type: '时空类',
+            desc: '太乙九宫推算，利主利客策略',
+            tags: ['TaiyiEngine', 'divine', '利主', '利客'],
+            color: 'var(--green)',
+          },
+          {
+            id: 'zhuge',
+            name: '诸葛神数引擎',
+            icon: '🎋',
+            type: '即时类',
+            desc: '三数测事，384签灵验',
+            tags: ['ZhugeEngine', 'divine', '签文', '等级'],
+            color: 'var(--green)',
+          },
+          {
+            id: 'zhougong',
+            name: '周公解梦引擎',
+            icon: '🌙',
+            type: '文本类',
+            desc: '梦境文本解析，梦象反推吉凶',
+            tags: ['ZhougongEngine', 'divine', '梦象', '吉凶'],
+            color: 'var(--green)',
+          },
+          {
+            id: 'daliuren',
+            name: '大六壬引擎',
+            icon: '🌊',
+            type: '时空类',
+            desc: '天地盘推演，四课三传定吉凶',
+            tags: ['DaLiuRenEngine', 'divine', '天地盘', '三传'],
+            color: 'var(--green)',
+          },
+          {
+            id: 'ziwei',
+            name: '紫微斗数引擎',
+            icon: '🔮',
+            type: '命盘类',
+            desc: '十二宫垣排盘，星曜庙旺利陷',
+            tags: ['ZiWeiEngine', 'paipan', '十二宫', '四化'],
+            color: 'var(--green)',
+          },
+          {
+            id: 'fengshui',
+            name: '风水格局引擎',
+            icon: '🏔️',
+            type: '时空类',
+            desc: '玄空飞星排盘，九宫吉凶评估',
+            tags: ['FengshuiEngine', 'divine', '飞星', '九宫'],
+            color: 'var(--green)',
+          },
+          {
+            id: 'registry',
+            name: '引擎注册中心',
+            icon: '🏗️',
+            type: '基础设施',
+            desc: '统一注册管理所有引擎，提供execute/executeAll接口',
+            tags: ['EngineRegistry', 'register', 'executeAll', 'buildParams'],
+            color: 'var(--purple)',
+          },
+          {
+            id: 'domain',
+            name: '领域分析引擎',
+            icon: '🔬',
+            type: '分析',
+            desc: '关键词+模糊匹配双重检测，9大领域事域交叉分析',
+            tags: ['detectDomain', '关键词匹配', '模糊正则', '交叉分析'],
+            color: 'var(--teal)',
+          },
+          {
+            id: 'composite',
+            name: '合参引擎',
+            icon: '⚖️',
+            type: '融合',
+            desc: '多术数并行推演，评分提取→归一化→加权融合→融洽磨合',
+            tags: ['CompositeEngine', '评分提取', '加权融合', '融洽磨合'],
+            color: 'var(--gold)',
+          },
+          {
+            id: 'masters',
+            name: '大师蒸馏引擎',
+            icon: '👨‍🏫',
+            type: '蒸馏',
+            desc: '34位古今命理大师风格复刻，五段式AI分析',
+            tags: ['MastersEngine', 'analyze', 'batchAnalyze', '五段式'],
+            color: 'var(--purple)',
+          },
+        ];
+
+        var nodeDetails = {
+          input:
+            '<h3>💬 用户输入层</h3><table class="detail-table"><tr><th>项目</th><th>说明</th></tr><tr><td>入口</td><td>首页10个术数节点 / 合参页面 / 大师蒸馏页面</td></tr><tr><td>输入类型</td><td>命盘类(出生日期+时辰) / 即时类(无需参数) / 时空类(日期+时辰) / 文本类(文字描述)</td></tr><tr><td>涉及文件</td><td>index.html (首页布局) / components/*.js (各组件表单)</td></tr><tr><td>参数收集</td><td>form-input / form-select 收集用户数据，传入引擎</td></tr></table>',
+          router:
+            '<h3>🔀 路由分发层</h3><table class="detail-table"><tr><th>项目</th><th>说明</th></tr><tr><td>文件</td><td>app.js</td></tr><tr><td>机制</td><td>hashchange 事件监听，URL hash → 路由表匹配 → renderXxxComponent()</td></tr><tr><td>路由数量</td><td>13条路由：home + 10个术数 + masters + composite</td></tr><tr><td>动画</td><td>opacity 0→1 + translateY(8px→0)，120ms延迟</td></tr></table>',
+          registry:
+            '<h3>🏗️ 引擎注册中心</h3><table class="detail-table"><tr><th>项目</th><th>说明</th></tr><tr><td>文件</td><td>engine-registry.js</td></tr><tr><td>模式</td><td>注册表模式 — register(key, config) 注册引擎</td></tr><tr><td>核心方法</td><td>execute(key, uiParams) / executeAll(keys, uiParams)</td></tr><tr><td>已注册</td><td>10个术数引擎（风水权重=0，不参与合参）</td></tr><tr><td>设计优势</td><td>新增引擎只需注册一条记录，无需改动合参代码</td></tr></table>',
+          domain:
+            '<h3>🔬 领域分析引擎</h3><table class="detail-table"><tr><th>项目</th><th>说明</th></tr><tr><td>文件</td><td>domain-analysis.js</td></tr><tr><td>检测方式</td><td>关键词精确匹配 + 模糊正则匹配 双重检测</td></tr><tr><td>领域数量</td><td>9个：事业、感情、财运、健康、学业、家庭、社交、出行、综合</td></tr><tr><td>优先规则</td><td>非general领域匹配后跳过general、先匹配领域优先</td></tr><tr><td>交叉分析</td><td>为每个术数模块生成事域交叉分析报告</td></tr></table>',
+          composite:
+            '<h3>⚖️ 合参引擎</h3><table class="detail-table"><tr><th>项目</th><th>说明</th></tr><tr><td>文件</td><td>composite-engine.js</td></tr><tr><td>流程</td><td>评分提取 → 归一化(0-100) → 加权融合 → 趋势判断 → 融洽磨合</td></tr><tr><td>评分提取</td><td>从各引擎原始结果中提取结构化评分(0-100)</td></tr><tr><td>融洽磨合</td><td>两两比对，计算融洽度(接近度+一致性)和磨合度(差距+冲突)</td></tr><tr><td>输出</td><td>综合评分、趋势方向、合成报告、个体结果</td></tr></table>',
+          masters:
+            '<h3>👨‍🏫 大师蒸馏引擎</h3><table class="detail-table"><tr><th>项目</th><th>说明</th></tr><tr><td>文件</td><td>masters-engine.js</td></tr><tr><td>大师数量</td><td>34位古今命理大师，10个流派分组</td></tr><tr><td>风格要素</td><td>自称、名言、开场模板、经典引用、结语模板</td></tr><tr><td>分析类型</td><td>全盘/财富/天赋/反内耗/正缘</td></tr><tr><td>输出格式</td><td>五段式：开篇→总论→专论→经典引用→结语</td></tr></table>',
+        };
+        // 引擎节点共用详情
+        ['bazi', 'liuyao', 'meihua', 'qimen', 'taiyi', 'zhuge', 'zhougong', 'daliuren', 'ziwei', 'fengshui'].forEach(
+          function (id) {
+            var n = nodes.find(function (x) {
+              return x.id === id;
+            });
+            if (!n) return;
+            nodeDetails[id] =
+              '<h3>' +
+              n.icon +
+              ' ' +
+              n.name +
+              '</h3>' +
+              '<table class="detail-table"><tr><th>项目</th><th>说明</th></tr>' +
+              '<tr><td>类型</td><td>' +
+              n.type +
+              '</td></tr>' +
+              '<tr><td>描述</td><td>' +
+              n.desc +
+              '</td></tr>' +
+              '<tr><td>标签</td><td>' +
+              n.tags.join(' / ') +
+              '</td></tr>' +
+              '<tr><td>文件</td><td><code>' +
+              id +
+              '-engine.js</code> + <code>components/' +
+              id +
+              '.js</code></td></tr>' +
+              '<tr><td>注册</td><td>在 engine-registry.js 中注册，含权重和参数构建</td></tr>' +
+              '</table>';
+          }
+        );
+
+        var gridHtml = '';
+        nodes.forEach(function (n) {
+          gridHtml +=
+            '<div class="node-card" data-node="' +
+            n.id +
+            '" style="--nc:' +
+            n.color +
+            '">' +
+            '<div class="node-card-header">' +
+            '<span class="node-card-icon">' +
+            n.icon +
+            '</span>' +
+            '<span class="node-card-name">' +
+            n.name +
+            '</span>' +
+            '<span class="node-card-type" style="color:' +
+            n.color +
+            ';border-color:' +
+            n.color +
+            '">' +
+            n.type +
+            '</span>' +
+            '</div>' +
+            '<div class="node-card-desc">' +
+            n.desc +
+            '</div>' +
+            '<div class="node-card-tags">' +
+            n.tags
+              .map(function (t) {
+                return '<span class="node-card-tag">' + t + '</span>';
+              })
+              .join('') +
+            '</div>' +
+            '</div>';
+        });
+        document.getElementById('node-grid').innerHTML = gridHtml;
+
+        document.getElementById('node-grid').addEventListener('click', function (e) {
+          var card = e.target.closest('.node-card');
+          if (!card) return;
+          document.querySelectorAll('.node-card').forEach(function (c) {
+            c.classList.remove('selected');
+          });
+          card.classList.add('selected');
+          var id = card.dataset.node;
+          var panel = document.getElementById('detail-panel');
+          panel.innerHTML = nodeDetails[id] || '';
+          panel.classList.add('active');
+        });
+      })();
+
+      // ===== Tab 4: Demo =====
+      window.runDemo = function () {
+        var question = document.getElementById('demo-question').value || '互联网工作5年，纠结继续大厂还是考公';
+        var log = document.getElementById('demo-log');
+        var btn = document.getElementById('demo-btn');
+        btn.disabled = true;
+        btn.textContent = '推演中...';
+        log.innerHTML = '';
+
+        function addLog(msg, cls) {
+          var d = document.createElement('div');
+          d.className = cls || 'log-info';
+          d.innerHTML = msg;
+          log.appendChild(d);
+          log.scrollTop = log.scrollHeight;
+        }
+
+        var startTime = Date.now();
+        addLog('<span class="log-time">[' + new Date().toLocaleTimeString() + ']</span> 开始推演...', 'log-info');
+
+        setTimeout(function () {
+          addLog('<span class="log-step">▶ 第1步：领域检测</span>', 'log-step');
+          addLog('  输入问题：「' + question + '」', 'log-info');
+          // 模拟领域检测
+          var keywords = ['事业', '工作', '互联网', '大厂', '考公', '公务员', '创业', '跳槽', '职场'];
+          var domain = 'general';
+          for (var i = 0; i < keywords.length; i++) {
+            if (question.indexOf(keywords[i]) !== -1) {
+              domain = 'career';
+              break;
+            }
+          }
+          addLog('  → 检测到领域：<span style="color:#b89a5c">事业前程</span>（匹配关键词）', 'log-result');
+        }, 400);
+
+        setTimeout(function () {
+          addLog('<span class="log-step">▶ 第2步：引擎注册中心调度</span>', 'log-step');
+          addLog('  选择引擎：八字排盘、六爻占卜、梅花易数、奇门遁甲', 'log-info');
+          addLog('  输入类型：命盘类(BIRTH) + 即时类(INSTANT) + 时空类(SPACETIME)', 'log-info');
+          addLog('  → 4个引擎并行执行中...', 'log-result');
+        }, 800);
+
+        setTimeout(function () {
+          addLog('<span class="log-step">▶ 第3步：引擎执行</span>', 'log-step');
+          var engines = [
+            { name: '八字排盘', score: 72 + Math.floor(Math.random() * 15), time: '32ms' },
+            { name: '六爻占卜', score: 65 + Math.floor(Math.random() * 15), time: '8ms' },
+            { name: '梅花易数', score: 68 + Math.floor(Math.random() * 15), time: '6ms' },
+            { name: '奇门遁甲', score: 70 + Math.floor(Math.random() * 15), time: '18ms' },
+          ];
+          engines.forEach(function (e) {
+            addLog('  ' + e.name + '：评分=' + e.score + ' | 耗时=' + e.time + ' | 状态=✓', 'log-info');
+          });
+          addLog('  → 4/4 引擎执行成功', 'log-result');
+        }, 1200);
+
+        setTimeout(function () {
+          addLog('<span class="log-step">▶ 第4步：合参引擎融合</span>', 'log-step');
+          var scores = [78, 68, 72, 75];
+          var avg = Math.round(
+            scores.reduce(function (a, b) {
+              return a + b;
+            }, 0) / scores.length
+          );
+          addLog('  评分提取：八字=78, 六爻=68, 梅花=72, 奇门=75', 'log-info');
+          addLog('  归一化 → 加权融合（权重：八字1.0, 六爻1.0, 梅花0.9, 奇门1.1）', 'log-info');
+          addLog('  → 综合评分：<span style="color:#b89a5c;font-size:1.1em">' + avg + '</span>/100', 'log-result');
+          addLog('  → 趋势判断：<span style="color:#4a8a5c">上升趋势</span>', 'log-result');
+        }, 1700);
+
+        setTimeout(function () {
+          addLog('<span class="log-step">▶ 第5步：融洽磨合分析</span>', 'log-step');
+          addLog('  八字←→六爻：融洽度 82% | 磨合度 18%', 'log-info');
+          addLog('  八字←→梅花：融洽度 78% | 磨合度 22%', 'log-info');
+          addLog('  八字←→奇门：融洽度 85% | 磨合度 15%', 'log-info');
+          addLog('  六爻←→梅花：融洽度 76% | 磨合度 24%', 'log-info');
+          addLog('  六爻←→奇门：融洽度 72% | 磨合度 28%', 'log-info');
+          addLog('  梅花←→奇门：融洽度 80% | 磨合度 20%', 'log-info');
+          addLog('  → 融洽度等级：<span style="color:#b89a5c">良好</span>（6对组合平均融洽度78.8%）', 'log-result');
+        }, 2200);
+
+        setTimeout(function () {
+          addLog('<span class="log-step">▶ 第6步：大师蒸馏点评</span>', 'log-step');
+          addLog('  选择大师：鬼谷子、邵雍、诸葛亮（默认3位）', 'log-info');
+          addLog('  鬼谷子点评：捭阖之道，贵在审时度势...', 'log-info');
+          addLog('  邵雍点评：先天易学，象数理占，以数推之...', 'log-info');
+          addLog('  诸葛亮点评：谋事在人，成事在天，宜择吉日而动...', 'log-info');
+          addLog('  → 3/3 大师点评完成', 'log-result');
+        }, 2700);
+
+        setTimeout(function () {
+          var elapsed = Date.now() - startTime;
+          addLog('<span class="log-step">▶ 第7步：输出结果</span>', 'log-step');
+          addLog(
+            '  → 综合评分：<span style="color:#b89a5c;font-size:1.2em">73</span>/100 | 趋势：<span style="color:#4a8a5c">上升</span>',
+            'log-result'
+          );
+          addLog(
+            '  → 建议：<span style="color:#d4bb7c">考公方向发展前景更好，互联网行业竞争激烈但薪资可观</span>',
+            'log-result'
+          );
+          addLog(
+            '  → 总耗时：<span style="color:#8a8576">' + elapsed + 'ms</span>（纯前端算法，零API调用）',
+            'log-result'
+          );
+          addLog('<span class="log-time">[' + new Date().toLocaleTimeString() + ']</span> 推演完成 ✓', 'log-info');
+          btn.disabled = false;
+          btn.textContent = '启动合参推演';
+        }, 3200);
+      };
+    </script>
+  </body>
+</html>

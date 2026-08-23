@@ -1,0 +1,88 @@
+name: Test & Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run Golden Test Suite
+        run: |
+          cat > /tmp/test_runner.js << 'EOF'
+          const fs = require('fs');
+          global.BencaoEngine = null;
+          global.InteractionEngine = null;
+          global.FangjiEngine = null;
+          global.MastersEngine = null;
+          const bencao = fs.readFileSync('static/js/engines/bencao-engine.js', 'utf8');
+          const interaction = fs.readFileSync('static/js/engines/interaction-engine.js', 'utf8');
+          const fangji = fs.readFileSync('static/js/engines/fangji-engine.js', 'utf8');
+          const masters = fs.readFileSync('static/js/engines/masters-engine.js', 'utf8');
+          // Use Function to pass global as parameter (eval in strict mode doesn't inherit this)
+          new Function('global', bencao)(global);
+          new Function('global', interaction)(global);
+          new Function('global', fangji)(global);
+          new Function('global', masters)(global);
+          const tests = JSON.parse(fs.readFileSync('tests/golden_set.json', 'utf8'));
+          let pass = 0;
+          for (const q of tests) {
+            let ok = false;
+            if (q.module === 'bencao') {
+              const herb = BencaoEngine.DB[q.input];
+              ok = herb && herb.xingwei && herb.功效;
+            } else if (q.module === 'interaction') {
+              const exp = q.expected;
+              const herbs = Array.isArray(q.input) ? q.input : [q.input];
+              if (exp.pregnancy_warning) {
+                const preg = InteractionEngine.checkPregnancy(herbs);
+                ok = preg.length > 0;
+              } else {
+                const checkFn = exp.warning === '十九畏' ? InteractionEngine.checkShijiuWei : InteractionEngine.checkShibaFan;
+                const fans = checkFn(herbs);
+                ok = fans.length > 0;
+              }
+            } else if (q.module === 'fangji') {
+              ok = !!FangjiEngine.DB[q.input];
+            } else if (q.module === 'master') {
+              ok = !!MastersEngine.getMasterById(q.input);
+            }
+            if (ok) pass++;
+            console.log(ok ? '  PASS' : '  FAIL', q.id, q.module, q.input);
+          }
+          console.log(`\n通过率: ${pass}/${tests.length} (${(pass/tests.length*100).toFixed(1)}%)`);
+          if (pass !== tests.length) process.exit(1);
+          EOF
+          node /tmp/test_runner.js
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

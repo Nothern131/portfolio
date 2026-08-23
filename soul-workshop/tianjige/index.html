@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#07060c" />
+    <title>天机阁 · 窥探命运之秘</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=Noto+Sans+SC:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" crossorigin href="./assets/style-CkcVZCYg.css">
+  </head>
+  <body>
+    <!-- 星空画布 -->
+    <canvas id="starfield"></canvas>
+
+    <!-- 纹理叠加层 (反AI模板化) -->
+    <div id="grain-overlay"></div>
+    <!-- 暗角 -->
+    <div id="vignette"></div>
+
+    <!-- 浮动粒子 -->
+    <div id="particles-container"></div>
+
+    <!-- 侧边栏 -->
+    <aside id="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">
+          <span class="logo-icon">☯</span>
+          <h1>天机阁</h1>
+        </div>
+        <p class="subtitle">TIAN JI GE</p>
+      </div>
+
+      <nav class="nav-menu">
+        <div class="nav-divider">核心功能</div>
+        <a href="#/home" class="nav-link active" data-route="/home"><span class="nav-icon">🏠</span>首页</a>
+        <a href="#/bazi" class="nav-link" data-route="/bazi"><span class="nav-icon">📅</span>八字排盘</a>
+        <a href="#/liuyao" class="nav-link" data-route="/liuyao"><span class="nav-icon">🪙</span>六爻占卜</a>
+        <a href="#/meihua" class="nav-link" data-route="/meihua"><span class="nav-icon">🌸</span>梅花易数</a>
+        <a href="#/qimen" class="nav-link" data-route="/qimen"><span class="nav-icon">🚪</span>奇门遁甲</a>
+        <a href="#/taiyi" class="nav-link" data-route="/taiyi"><span class="nav-icon">⭐</span>太乙神数</a>
+        <a href="#/zhuge" class="nav-link" data-route="/zhuge"><span class="nav-icon">🎋</span>诸葛神数</a>
+        <a href="#/zhougong" class="nav-link" data-route="/zhougong"><span class="nav-icon">🌙</span>周公解梦</a>
+        <a href="#/daliuren" class="nav-link" data-route="/daliuren"><span class="nav-icon">🌊</span>大六壬</a>
+        <a href="#/ziwei" class="nav-link" data-route="/ziwei"><span class="nav-icon">🔮</span>紫微斗数</a>
+        <a href="#/fengshui" class="nav-link" data-route="/fengshui"><span class="nav-icon">🏔️</span>风水格局</a>
+        <a href="#/masters" class="nav-link" data-route="/masters"><span class="nav-icon">👨‍🏫</span>大师蒸馏</a>
+        <a href="#/profile" class="nav-link" data-route="/profile"><span class="nav-icon">📜</span>命簿</a>
+        <a href="#/composite" class="nav-link" data-route="/composite"><span class="nav-icon">🧩</span>合参</a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <p class="footer-text">天机不可尽泄<br />留三分与造化</p>
+      </div>
+    </aside>
+
+    <!-- 移动端 -->
+    <button class="mobile-menu-btn" id="mobile-menu-btn">☰</button>
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <!-- 主内容区 -->
+    <main id="main-content">
+      <!-- 首页 -->
+      <div id="home-page" class="page-view active">
+        <div class="home-center">
+          <div class="oracle-core">
+            <div class="core-ring ring-1"></div>
+            <div class="core-ring ring-2"></div>
+            <div class="core-ring ring-3"></div>
+            <div class="core-yinyang"></div>
+          </div>
+          <h1 class="home-title">天 机 阁</h1>
+          <p class="home-subtitle">观天之道 · 执天之行</p>
+          <a href="#/profile" class="home-mingbu-btn" data-route="#/profile"><span>📜</span> 命 簿</a>
+          <p class="home-hint">选择一门术数，窥探命运轨迹</p>
+        </div>
+
+        <div class="home-nodes" id="home-nodes">
+          <div class="home-node" data-route="#/bazi" style="--na: 0deg">
+            <div class="node-orbit-dot"></div>
+            <div class="node-card">
+              <span class="node-icon">📅</span>
+              <span class="node-name">八字排盘</span>
+              <span class="node-desc">生辰八字，推算命运轨迹</span>
+            </div>
+          </div>
+          <div class="home-node" data-route="#/liuyao" style="--na: 36deg">
+            <div class="node-orbit-dot"></div>
+            <div class="node-card">
+              <span class="node-icon">🪙</span>
+              <span class="node-name">六爻占卜</span>
+              <span class="node-desc">铜钱起卦，洞察吉凶祸福</span>
+            </div>
+          </div>
+          <div class="home-node" data-route="#/meihua" style="--na: 72deg">
+            <div class="node-orbit-dot"></div>
+            <div class="node-card">
+              <span class="node-icon">🌸</span>
+              <span class="node-name">梅花易数</span>
+              <span class="node-desc">象数理占，万物皆可卜</span>
+            </div>
+          </div>
+          <div class="home-node" data-route="#/qimen" style="--na: 108deg">
+            <div class="node-orbit-dot"></div>
+            <div class="node-card">
+              <span class="node-icon">🚪</span>
+              <span class="node-name">奇门遁甲</span>
+              <span class="node-desc">时空模型，择吉而避凶</span>
+            </div>
+          </div>
+          <div class="home-node" data-route="#/taiyi" style="--na: 144deg">
+            <div class="node-orbit-dot"></div>
+            <div class="node-card">
+              <span class="node-icon">⭐</span>
+              <span class="node-name">太乙神数</span>
+              <span class="node-desc">天文推算，观国运大势</span>
+            </div>
+          </div>
+          <div class="home-node" data-route="#/zhuge" style="--na: 180deg">
+            <div class="node-orbit-dot"></div>
+            <div class="node-card">
+              <span class="node-icon">🎋</span>
+              <span class="node-name">诸葛神数</span>
+              <span class="node-desc">三字测事，灵签断疑云</span>
+            </div>
+          </div>
+          <div class="home-node" data-route="#/zhougong" style="--na: 216deg">
+            <div class="node-orbit-dot"></div>
+            <div class="node-card">
+              <span class="node-icon">🌙</span>
+              <span class="node-name">周公解梦</span>
+              <span class="node-desc">梦兆解析，以象喻人事</span>
+            </div>
+          </div>
+          <div class="home-node" data-route="#/daliuren" style="--na: 252deg">
+            <div class="node-orbit-dot"></div>
+            <div class="node-card">
+              <span class="node-icon">🌊</span>
+              <span class="node-name">大六壬</span>
+              <span class="node-desc">天地盘课，三传定吉凶</span>
+            </div>
+          </div>
+          <div class="home-node" data-route="#/ziwei" style="--na: 288deg">
+            <div class="node-orbit-dot"></div>
+            <div class="node-card">
+              <span class="node-icon">🔮</span>
+              <span class="node-name">紫微斗数</span>
+              <span class="node-desc">帝星照命，十二宫定一生</span>
+            </div>
+          </div>
+          <div class="home-node" data-route="#/fengshui" style="--na: 324deg">
+            <div class="node-orbit-dot"></div>
+            <div class="node-card">
+              <span class="node-icon">🏔️</span>
+              <span class="node-name">风水格局</span>
+              <span class="node-desc">玄空飞星，九宫断吉凶</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 子页面容器 -->
+      <div id="sub-page" class="page-view">
+        <div id="page-container"></div>
+      </div>
+    </main>
+
+    <script src="static/js/constants.js?v=20260802"></script>
+    <script src="static/js/logger.js"></script>
+    <script src="static/js/bazi-engine.js?v=20260729"></script>
+    <script src="static/js/zhuge-engine.js?v=20260729"></script>
+    <script src="static/js/liuyao-engine.js?v=20260729"></script>
+    <script src="static/js/meihua-engine.js?v=20260729"></script>
+    <script src="static/js/qimen-engine.js?v=20260729"></script>
+    <script src="static/js/taiyi-engine.js?v=20260729"></script>
+    <script src="static/js/masters-engine.js?v=20260729"></script>
+    <script src="static/js/zhougong-engine.js?v=20260729"></script>
+    <script src="static/js/daliuren-engine.js?v=20260729"></script>
+    <script src="static/js/ziwei-engine.js?v=20260729"></script>
+    <script src="static/js/domain-analysis.js?v=20260729"></script>
+    <script src="static/js/composite-engine.js?v=20260729"></script>
+    <script src="static/js/engine-registry.js?v=20260729"></script>
+    <script src="static/js/components/bazi.js?v=20260729"></script>
+    <script src="static/js/components/zhuge.js"></script>
+    <script src="static/js/components/liuyao.js"></script>
+    <script src="static/js/components/meihua.js"></script>
+    <script src="static/js/components/qimen.js"></script>
+    <script src="static/js/components/taiyi.js"></script>
+    <script src="static/js/components/masters.js"></script>
+    <script src="static/js/components/composite.js?v=20260729"></script>
+    <script src="static/js/components/zhougong.js"></script>
+    <script src="static/js/components/daliuren.js"></script>
+    <script src="static/js/components/ziwei.js"></script>
+    <script src="static/js/fengshui-engine.js?v=20260729"></script>
+    <script src="static/js/components/fengshui.js?v=20260729"></script>
+    <script src="static/js/components/profile.js?v=20260811"></script>
+    <script src="static/js/app.js"></script>
+  </body>
+</html>
