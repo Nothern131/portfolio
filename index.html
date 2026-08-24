@@ -7,23 +7,23 @@
 <meta name="description" content="纯算法智能系统设计。NPC 意识引擎、古籍推理、中医药知识系统、代码质量守卫。">
 <style>
   :root {
-    /* ── 古卷色彩 ── */
-    --ink: #14100c;           /* 墨底 · 暖黑 */
-    --ink-2: #1c1712;         /* 浅墨 */
-    --ink-3: #241d15;         /* 更浅墨 · 卡片面 */
-    --parchment: #e8dcc4;     /* 宣纸暖白 */
-    --parchment-dim: #b8a88c; /* 暗宣纸 */
-    --parchment-mute: #8a7c63;/* 灰宣纸 */
-    --gold: #c9a25e;          /* 鎏金 */
-    --gold-bright: #e6c887;   /* 亮金 */
-    --gold-deep: #9a7a3e;     /* 深金 */
-    --cinnabar: #b5342f;      /* 朱砂红 */
-    --cinnabar-dim: #8e2b27;  /* 暗朱砂 */
-    --rule: rgba(201, 162, 94, 0.18);  /* 金线 */
-    --rule-strong: rgba(201, 162, 94, 0.38);
+    /* ── 墨金 ── */
+    --ink: #0e0b08;
+    --ink-2: #16120e;
+    --ink-3: #1e1914;
+    --parchment: #e6d5b8;
+    --parchment-dim: #a89878;
+    --parchment-mute: #6e6350;
+    --gold: #c49a3c;
+    --gold-bright: #e8c468;
+    --gold-deep: #8a6d2b;
+    --cinnabar: #b5342f;
+    --cinnabar-dim: #7a2220;
+    --rule: rgba(196, 154, 60, 0.15);
+    --rule-strong: rgba(196, 154, 60, 0.35);
 
     /* ── 字体 ── */
-    --brush: "STXingkai", "STKaiti", "KaiTi", "楷体", "华文行楷", serif;
+    --brush: "STXingkai", "STKaiti", "KaiTi", "楷体", serif;
     --song: "STZhongsong", "SimSun", "Songti SC", "Noto Serif SC", serif;
     --mono: "JetBrains Mono", "Consolas", "Cascadia Code", monospace;
 
@@ -31,7 +31,6 @@
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
   html { scroll-behavior: smooth; }
 
   body {
@@ -43,32 +42,32 @@
     -webkit-font-smoothing: antialiased;
   }
 
-  /* ── 水墨纸纹 ── */
+  /* ── 墨纹底 ── */
   body::before {
     content: '';
     position: fixed;
     inset: 0;
     z-index: 0;
     pointer-events: none;
-    opacity: 0.035;
+    opacity: 0.04;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
 
-  /* ── 全局鎏金跟随光晕 ── */
+  /* ── 鎏金光晕 ── */
   .glow {
     position: fixed;
     top: 0; left: 0;
-    width: 560px; height: 560px;
+    width: 640px; height: 640px;
     border-radius: 50%;
     z-index: 0;
     pointer-events: none;
     transform: translate(-50%, -50%);
-    background: radial-gradient(circle, rgba(201, 162, 94, 0.10) 0%, rgba(201, 162, 94, 0.04) 32%, transparent 68%);
+    background: radial-gradient(circle, rgba(196, 154, 60, 0.09) 0%, rgba(196, 154, 60, 0.03) 28%, transparent 65%);
     mix-blend-mode: screen;
     will-change: transform;
   }
 
-  /* ── 舞台布景 · 背景墨晕 ── */
+  /* ── 背景墨晕 ── */
   .scene {
     position: fixed;
     inset: 0;
@@ -78,33 +77,33 @@
   .scene .ink-blot {
     position: absolute;
     border-radius: 50%;
-    filter: blur(60px);
-    opacity: 0.5;
+    filter: blur(80px);
+    opacity: 0.45;
   }
-  .scene .blot-a { width: 560px; height: 560px; top: -140px; right: -120px;
-    background: radial-gradient(circle, rgba(154, 122, 62, 0.14), transparent 70%); }
-  .scene .blot-b { width: 420px; height: 420px; bottom: 8%; left: -160px;
-    background: radial-gradient(circle, rgba(181, 52, 47, 0.08), transparent 70%); }
+  .scene .blot-a { width: 640px; height: 640px; top: -180px; right: -160px;
+    background: radial-gradient(circle, rgba(138, 109, 43, 0.12), transparent 70%); }
+  .scene .blot-b { width: 480px; height: 480px; bottom: 6%; left: -200px;
+    background: radial-gradient(circle, rgba(181, 52, 47, 0.07), transparent 70%); }
 
   .container {
     position: relative;
     z-index: 1;
-    max-width: 960px;
+    max-width: 900px;
     margin: 0 auto;
-    padding: 96px 32px 80px;
+    padding: 100px 32px 88px;
   }
 
-  /* ── 顶部卷轴装饰线 ── */
+  /* ── 顶部装饰线 ── */
   .scroll-top {
     display: flex;
     align-items: center;
-    gap: 16px;
-    margin-bottom: 72px;
+    gap: 20px;
+    margin-bottom: 88px;
     opacity: 0;
     animation: fadeDown .8s var(--ease) forwards;
   }
   .scroll-top .rod {
-    height: 2px;
+    height: 1px;
     background: linear-gradient(90deg, transparent, var(--gold-deep), transparent);
     flex: 1;
   }
@@ -112,76 +111,110 @@
   .scroll-top .rod.right { background: linear-gradient(90deg, transparent, var(--gold-deep)); }
   .scroll-top .mark {
     font-family: var(--mono);
-    font-size: 10px;
-    letter-spacing: 0.3em;
+    font-size: 9px;
+    letter-spacing: 0.36em;
     color: var(--gold-deep);
     text-transform: uppercase;
     white-space: nowrap;
   }
 
-  /* ── 首屏 · 首页 ── */
+  /* ── 首屏 ── */
   .hero {
-    margin-bottom: 80px;
-    padding-bottom: 60px;
+    margin-bottom: 88px;
+    padding-bottom: 72px;
     border-bottom: 1px solid var(--rule);
   }
-  .hero-name {
-    opacity: 0;
-    animation: fadeUp .9s var(--ease) .1s forwards;
-  }
-
-  .hero-title {
-    font-family: var(--song);
-    font-size: clamp(28px, 4vw, 42px);
+  .hero-tagline {
+    font-family: var(--brush);
+    font-size: clamp(22px, 3.2vw, 32px);
     font-weight: 400;
-    line-height: 1.3;
     color: var(--parchment);
-    letter-spacing: 0.08em;
-    margin-bottom: 12px;
+    letter-spacing: 0.12em;
+    line-height: 1.6;
+    margin-bottom: 28px;
+    opacity: 0;
+    animation: fadeUp .9s var(--ease) .12s forwards;
   }
-  .hero-sub {
-    font-family: var(--song);
-    font-size: clamp(14px, 2vw, 16px);
-    color: var(--gold-deep);
-    letter-spacing: 0.16em;
+  .hero-tagline em {
+    font-style: normal;
+    color: var(--gold-bright);
+  }
+  .hero-identity {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    color: var(--cinnabar);
+    text-transform: uppercase;
     margin-bottom: 20px;
-    font-weight: 300;
-  }
-  .hero-desc {
-    font-size: 14.5px;
-    line-height: 1.9;
-    color: var(--parchment-mute);
-    max-width: 460px;
-  }
-  .hero-desc strong { color: var(--parchment-dim); font-weight: 600; }
-
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(24px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes fadeDown {
-    from { opacity: 0; transform: translateY(-14px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  /* ── 简历 & 联系 卷首 ── */
-  .resume-band {
     display: flex;
     align-items: center;
     gap: 14px;
-    flex-wrap: wrap;
-    padding: 18px 22px;
-    border: 1px solid var(--rule);
-    border-radius: 12px;
-    background: linear-gradient(120deg, rgba(201,162,94,0.05), rgba(201,162,94,0.015));
-    margin-bottom: 72px;
     opacity: 0;
-    animation: fadeUp .8s var(--ease) .4s forwards;
+    animation: fadeUp .9s var(--ease) .24s forwards;
+  }
+  .hero-identity::before {
+    content: '';
+    width: 28px;
+    height: 1px;
+    background: var(--cinnabar);
+  }
+  .hero-desc {
+    font-size: 15px;
+    line-height: 2;
+    color: var(--parchment-dim);
+    max-width: 520px;
+    opacity: 0;
+    animation: fadeUp .9s var(--ease) .36s forwards;
+  }
+  .hero-desc strong {
+    color: var(--parchment);
+    font-weight: 600;
+  }
+  .hero-meta {
+    display: flex;
+    gap: 28px;
+    margin-top: 32px;
+    flex-wrap: wrap;
+    opacity: 0;
+    animation: fadeUp .9s var(--ease) .48s forwards;
+  }
+  .hero-meta .item {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--parchment-mute);
+    letter-spacing: 0.06em;
+  }
+  .hero-meta .item span {
+    color: var(--gold-deep);
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(28px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── 简历带 ── */
+  .resume-band {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    padding: 20px 24px;
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    background: linear-gradient(120deg, rgba(196,154,60,0.06), rgba(196,154,60,0.018));
+    margin-bottom: 80px;
+    opacity: 0;
+    animation: fadeUp .8s var(--ease) .56s forwards;
   }
   .resume-band .label {
     font-family: var(--mono);
-    font-size: 11px;
-    letter-spacing: 0.14em;
+    font-size: 10px;
+    letter-spacing: 0.16em;
     color: var(--gold-deep);
     text-transform: uppercase;
   }
@@ -192,31 +225,30 @@
   .resume-btn {
     display: inline-flex;
     align-items: center;
-    gap: 9px;
-    padding: 10px 20px;
-    border-radius: 9px;
+    gap: 10px;
+    padding: 11px 22px;
+    border-radius: 8px;
     border: 1px solid var(--gold-deep);
-    background: rgba(201, 162, 94, 0.08);
+    background: rgba(196, 154, 60, 0.09);
     color: var(--gold-bright);
     text-decoration: none;
     font-family: var(--song);
-    font-size: 14px;
-    letter-spacing: 0.04em;
+    font-size: 13px;
+    letter-spacing: 0.05em;
     transition: all .28s var(--ease);
   }
   .resume-btn:hover {
-    background: rgba(201, 162, 94, 0.16);
+    background: rgba(196, 154, 60, 0.18);
     border-color: var(--gold-bright);
     transform: translateY(-1px);
-    box-shadow: 0 6px 20px rgba(201, 162, 94, 0.18);
+    box-shadow: 0 8px 24px rgba(196, 154, 60, 0.2);
   }
-  .resume-btn svg { flex-shrink: 0; }
   .resume-band .contact {
     margin-left: auto;
     display: flex;
-    gap: 18px;
+    gap: 20px;
     font-family: var(--mono);
-    font-size: 12px;
+    font-size: 11px;
     color: var(--parchment-mute);
     align-items: center;
   }
@@ -230,39 +262,39 @@
   }
   .resume-band .contact a:hover { color: var(--gold-bright); }
 
-  /* ── 章节标题 · 卷 ── */
+  /* ── 章节标题 ── */
   .chapter {
     display: flex;
     align-items: baseline;
-    gap: 18px;
-    margin-bottom: 32px;
+    gap: 20px;
+    margin-bottom: 36px;
   }
   .chapter .vol {
     font-family: var(--brush);
-    font-size: 30px;
+    font-size: 26px;
     color: var(--gold);
-    letter-spacing: 0.06em;
+    letter-spacing: 0.08em;
     white-space: nowrap;
   }
   .chapter .line { flex: 1; height: 1px; background: linear-gradient(90deg, var(--rule-strong), transparent); }
   .chapter .en {
     font-family: var(--mono);
-    font-size: 10px;
-    letter-spacing: 0.22em;
+    font-size: 9px;
+    letter-spacing: 0.26em;
     color: var(--parchment-mute);
     text-transform: uppercase;
   }
 
-  /* ── 技术成果 · 四证 ── */
+  /* ── 四证 ── */
   .proofs {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 14px;
-    margin-bottom: 84px;
+    gap: 12px;
+    margin-bottom: 88px;
   }
   .proof {
     position: relative;
-    padding: 24px 20px;
+    padding: 26px 18px;
     border: 1px solid var(--rule);
     border-radius: 10px;
     background: linear-gradient(160deg, var(--ink-2), var(--ink));
@@ -275,39 +307,38 @@
     top: 0; left: 0;
     width: 100%; height: 2px;
     background: linear-gradient(90deg, var(--cinnabar), var(--gold));
-    opacity: 0.75;
+    opacity: 0.7;
   }
   .proof:hover { border-color: var(--rule-strong); transform: translateY(-3px); }
   .proof .num {
     font-family: var(--mono);
-    font-size: 30px;
+    font-size: 32px;
     font-weight: 700;
     color: var(--gold-bright);
     line-height: 1;
     margin-bottom: 10px;
     letter-spacing: -0.02em;
   }
-  .proof .num .unit { font-size: 14px; color: var(--gold-deep); font-weight: 400; }
+  .proof .num .unit { font-size: 13px; color: var(--gold-deep); font-weight: 400; }
   .proof .t {
-    font-size: 13.5px;
+    font-size: 13px;
     font-weight: 600;
     color: var(--parchment);
     margin-bottom: 6px;
   }
   .proof .d {
-    font-size: 11.5px;
+    font-size: 11px;
     color: var(--parchment-mute);
     line-height: 1.7;
   }
 
-  /* ── 项目 · 卷轴卡 ── */
-  .volumes { display: flex; flex-direction: column; gap: 22px; margin-bottom: 84px; }
+  /* ── 项目卷轴卡 ── */
+  .volumes { display: flex; flex-direction: column; gap: 20px; margin-bottom: 88px; }
 
   .volume {
     position: relative;
     display: grid;
     grid-template-columns: 1fr;
-    gap: 0;
     border: 1px solid var(--rule);
     border-radius: 14px;
     background: linear-gradient(165deg, var(--ink-2), var(--ink));
@@ -319,10 +350,9 @@
   .volume:hover {
     border-color: var(--rule-strong);
     transform: translateY(-3px);
-    box-shadow: 0 18px 50px rgba(0,0,0,0.45), 0 0 0 1px var(--rule-strong);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 0 1px var(--rule-strong);
   }
 
-  /* 卡内跟随高光 */
   .volume .spotlight {
     position: absolute;
     inset: 0;
@@ -330,7 +360,7 @@
     pointer-events: none;
     opacity: 0;
     transition: opacity .35s var(--ease);
-    background: radial-gradient(480px circle at var(--mx, 50%) var(--my, 50%), rgba(201,162,94,0.08), transparent 55%);
+    background: radial-gradient(500px circle at var(--mx, 50%) var(--my, 50%), rgba(196,154,60,0.09), transparent 55%);
   }
   .volume:hover .spotlight { opacity: 1; }
 
@@ -339,47 +369,49 @@
     z-index: 1;
     display: grid;
     grid-template-columns: 1fr;
-    gap: 22px;
-    padding: 30px 32px;
+    gap: 24px;
+    padding: 32px 34px;
   }
   @media (min-width: 720px) {
-    .volume-inner { grid-template-columns: 1.15fr 0.85fr; gap: 34px; align-items: center; }
+    .volume-inner { grid-template-columns: 1.1fr 0.9fr; gap: 38px; align-items: center; }
   }
 
   .vol-head .vol-no {
     font-family: var(--mono);
-    font-size: 10px;
-    letter-spacing: 0.18em;
+    font-size: 9px;
+    letter-spacing: 0.2em;
     color: var(--cinnabar);
     text-transform: uppercase;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
   }
   .vol-head .vol-no::before {
     content: '';
-    width: 16px; height: 1px;
+    width: 18px; height: 1px;
     background: var(--cinnabar);
   }
   .vol-title {
     font-family: var(--brush);
-    font-size: 27px;
+    font-size: 26px;
     font-weight: 400;
     color: var(--parchment);
-    letter-spacing: 0.03em;
-    margin-bottom: 10px;
+    letter-spacing: 0.04em;
+    margin-bottom: 12px;
+    line-height: 1.4;
   }
   .vol-title .en {
     font-family: var(--mono);
-    font-size: 12px;
+    font-size: 11px;
     color: var(--gold-deep);
-    letter-spacing: 0.08em;
-    margin-left: 6px;
+    letter-spacing: 0.1em;
+    margin-left: 8px;
+    font-weight: 400;
   }
   .vol-desc {
     font-size: 13.5px;
-    line-height: 1.85;
+    line-height: 1.9;
     color: var(--parchment-mute);
   }
   .vol-desc strong { color: var(--parchment-dim); font-weight: 600; }
@@ -388,58 +420,60 @@
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 8px;
-    margin-top: 16px;
+    margin-top: 18px;
   }
   .vol-metrics .m {
-    background: rgba(201,162,94,0.05);
+    background: rgba(196,154,60,0.04);
     border: 1px solid var(--rule);
     border-radius: 7px;
-    padding: 8px 10px;
+    padding: 9px 11px;
   }
   .vol-metrics .mv {
     font-family: var(--mono);
-    font-size: 14.5px;
+    font-size: 15px;
     font-weight: 700;
     color: var(--gold-bright);
     line-height: 1.2;
   }
   .vol-metrics .ml {
-    font-size: 10px;
+    font-size: 9px;
     color: var(--parchment-mute);
-    margin-top: 3px;
+    margin-top: 4px;
     line-height: 1.4;
+    letter-spacing: 0.04em;
   }
 
   .vol-problem {
-    margin-top: 14px;
-    padding: 10px 13px;
+    margin-top: 16px;
+    padding: 11px 14px;
     border-left: 2px solid var(--cinnabar);
     background: rgba(181,52,47,0.05);
     font-size: 12px;
     color: var(--parchment-mute);
-    line-height: 1.7;
+    line-height: 1.75;
   }
   .vol-problem strong { color: var(--parchment-dim); }
 
   .vol-links {
     display: flex;
     gap: 8px;
-    margin-top: 16px;
+    margin-top: 18px;
     flex-wrap: wrap;
   }
   .vol-link {
     font-family: var(--mono);
-    font-size: 11px;
+    font-size: 10px;
     color: var(--gold-deep);
     text-decoration: none;
-    padding: 5px 11px;
+    padding: 5px 12px;
     border: 1px solid var(--rule);
     border-radius: 6px;
     transition: all .2s;
+    letter-spacing: 0.04em;
   }
-  .vol-link:hover { border-color: var(--gold); color: var(--gold-bright); background: rgba(201,162,94,0.08); }
+  .vol-link:hover { border-color: var(--gold); color: var(--gold-bright); background: rgba(196,154,60,0.08); }
 
-  /* 媒体窗 */
+  /* ── 媒体窗 ── */
   .vol-media {
     position: relative;
     border-radius: 11px;
@@ -457,28 +491,28 @@
     position: absolute;
     inset: 0;
     pointer-events: none;
-    border: 1px solid rgba(201,162,94,0.25);
+    border: 1px solid rgba(196,154,60,0.22);
     border-radius: 11px;
   }
   .vol-media .cap {
     position: absolute;
     left: 12px; bottom: 10px;
     font-family: var(--mono);
-    font-size: 10px;
-    letter-spacing: 0.08em;
-    color: rgba(232,220,196,0.75);
-    background: rgba(20,16,12,0.6);
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    color: rgba(230,213,184,0.7);
+    background: rgba(14,11,8,0.65);
     padding: 4px 9px;
     border-radius: 5px;
-    backdrop-filter: blur(3px);
+    backdrop-filter: blur(4px);
   }
   .vol-media .play-tag {
     position: absolute;
     top: 12px; right: 12px;
-    width: 34px; height: 34px;
+    width: 32px; height: 32px;
     border-radius: 50%;
-    border: 1px solid rgba(201,162,94,0.4);
-    background: rgba(20,16,12,0.55);
+    border: 1px solid rgba(196,154,60,0.35);
+    background: rgba(14,11,8,0.6);
     backdrop-filter: blur(4px);
     display: flex;
     align-items: center;
@@ -487,10 +521,10 @@
     pointer-events: none;
   }
 
-  /* ── 落款 Footer ── */
+  /* ── Footer ── */
   .footer {
     border-top: 1px solid var(--rule);
-    padding-top: 36px;
+    padding-top: 40px;
     margin-top: 20px;
     display: flex;
     align-items: center;
@@ -499,47 +533,47 @@
     gap: 16px;
   }
   .footer .sig {
-    font-family: var(--brush);
-    font-size: 20px;
-    color: var(--parchment);
-    letter-spacing: 0.06em;
-  }
-  .footer .sig small {
     font-family: var(--mono);
-    font-size: 11px;
+    font-size: 12px;
     color: var(--parchment-mute);
-    letter-spacing: 0.1em;
-    margin-left: 8px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+  .footer .sig .name {
+    color: var(--gold-deep);
+    font-weight: 600;
   }
   .footer .links {
     display: flex;
-    gap: 20px;
+    gap: 22px;
   }
   .footer .links a {
     color: var(--parchment-mute);
     text-decoration: none;
     font-family: var(--mono);
-    font-size: 12px;
+    font-size: 11px;
     display: inline-flex;
     align-items: center;
     gap: 6px;
     transition: color .2s;
+    letter-spacing: 0.06em;
   }
   .footer .links a:hover { color: var(--gold-bright); }
 
   /* ── 滚动显现 ── */
   .reveal {
     opacity: 0;
-    transform: translateY(28px);
-    transition: opacity .8s var(--ease), transform .8s var(--ease);
+    transform: translateY(30px);
+    transition: opacity .85s var(--ease), transform .85s var(--ease);
   }
   .reveal.on { opacity: 1; transform: translateY(0); }
 
   /* ── 响应式 ── */
   @media (max-width: 720px) {
-    .container { padding: 56px 20px 60px; }
+    .container { padding: 64px 20px 64px; }
     .proofs { grid-template-columns: repeat(2, 1fr); }
     .resume-band .contact { margin-left: 0; width: 100%; }
+    .hero-tagline { font-size: 20px; }
   }
   @media (max-width: 420px) {
     .proofs { grid-template-columns: 1fr; }
@@ -556,36 +590,40 @@
 
 <div class="container">
 
-  <!-- 顶部卷轴 -->
+  <!-- 顶部装饰 -->
   <div class="scroll-top">
     <div class="rod left"></div>
-    <div class="mark">PORTFOLIO</div>
+    <div class="mark">Portfolio</div>
     <div class="rod right"></div>
   </div>
 
-  <!-- 首页 -->
+  <!-- 首屏 -->
   <header class="hero">
-    <div class="hero-name">
-      <div class="hero-title">梁梓渤</div>
-      <div class="hero-sub">以算法炼魂 · 以代码入道</div>
-      <p class="hero-desc">
-        <strong>纯算法智能系统设计者。</strong>不依赖大模型 API，不依赖外部服务，
-        从架构到算法到视觉一手完成。四卷系统，皆可本地运行，
-        每一行代码都在「赋予系统以灵魂」。
-      </p>
+    <div class="hero-identity">Algorithm Engineer · System Designer</div>
+    <h1 class="hero-tagline">以<em>算法</em>炼魂，以<em>代码</em>入道</h1>
+    <p class="hero-desc">
+      <strong>纯算法智能系统设计者。</strong>不依赖大模型 API，不依赖外部服务，
+      从架构到算法到视觉一手完成。四卷系统，皆可本地运行，
+      每一行代码都在「赋予系统以灵魂」。
+    </p>
+    <div class="hero-meta">
+      <div class="item"><span>0</span> 外部依赖</div>
+      <div class="item"><span>4</span> 卷系统</div>
+      <div class="item"><span>18</span> 天成书</div>
+      <div class="item"><span>PWA</span> 离线可用</div>
     </div>
-    </header>
+  </header>
 
   <!-- 简历 & 联系 -->
   <div class="resume-band">
     <span class="label">求<em>职</em> · 简历与联系方式</span>
     <a href="soul-workshop/assets/resume.pdf" class="resume-btn" download>
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-4-4m4 4l4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-4-4m4 4l4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
       下载简历（PDF）
     </a>
     <div class="contact">
       <a href="mailto:lzb17333426201@163.com">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
         邮件
       </a>
       <a href="https://github.com/Nothern131" target="_blank" rel="noopener">GitHub</a>
@@ -607,12 +645,12 @@
     </div>
     <div class="proof">
       <div class="num">0.02<span class="unit">ms</span></div>
-      <div class="t">单次响应延迟</div>
+      <div class="t">响应延迟</div>
       <div class="d">天机阁 O(1) 查表法，千次并发 P99 ≤ 4.5ms。</div>
     </div>
     <div class="proof">
       <div class="num">200<span class="unit">+</span></div>
-      <div class="t">NPC 同时在线</div>
+      <div class="t">NPC 在线</div>
       <div class="d">灵魂工坊 LOD 分级调度，计算开销降低 70%+。</div>
     </div>
     <div class="proof">
@@ -647,7 +685,7 @@
           </div>
           <div class="vol-metrics">
             <div class="m"><div class="mv">6 层</div><div class="ml">Pipeline 架构</div></div>
-            <div class="m"><div class="mv">70%+</div><div class="ml">计算开销降低</div></div>
+            <div class="m"><div class="mv">70%+</div><div class="ml">开销降低</div></div>
             <div class="m"><div class="mv">40+</div><div class="ml">版本迭代</div></div>
           </div>
           <div class="vol-problem">
@@ -664,7 +702,7 @@
           <div class="frame"></div>
           <div class="cap">DEMO · 灵魂工坊</div>
           <div class="play-tag">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
           </div>
         </div>
       </div>
@@ -702,7 +740,7 @@
           <div class="frame"></div>
           <div class="cap">ARCH · 天机阁</div>
           <div class="play-tag">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
           </div>
         </div>
       </div>
@@ -740,7 +778,7 @@
           <div class="frame"></div>
           <div class="cap">RULE · 岐黄阁</div>
           <div class="play-tag">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
           </div>
         </div>
       </div>
@@ -777,7 +815,7 @@
           <div class="frame"></div>
           <div class="cap">RULE · CodeGuard</div>
           <div class="play-tag">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
           </div>
         </div>
       </div>
@@ -785,11 +823,9 @@
 
   </div>
 
-  <!-- 落款 -->
+  <!-- Footer -->
   <footer class="footer reveal">
-    <div class="sig">
-      Nothern131 <small>· 2026</small>
-    </div>
+    <div class="sig"><span class="name">Nothern131</span> · 2026</div>
     <div class="links">
       <a href="https://github.com/Nothern131" target="_blank" rel="noopener">GitHub</a>
       <a href="mailto:lzb17333426201@163.com">邮件</a>
@@ -802,15 +838,13 @@
 (function () {
   'use strict';
 
-  // ── 全局鎏金光晕跟随（缓动） ──
+  // ── 鎏金光晕跟随 ──
   var glow = document.getElementById('glow');
   var gx = window.innerWidth / 2, gy = window.innerHeight / 2;
   var tx = gx, ty = gy;
-
   window.addEventListener('mousemove', function (e) {
     tx = e.clientX; ty = e.clientY;
   });
-
   (function renderGlow() {
     gx += (tx - gx) * 0.08;
     gy += (ty - gy) * 0.08;
@@ -841,7 +875,7 @@
           io.unobserve(en.target);
         }
       });
-    }, { threshold: 0.12 });
+    }, { threshold: 0.1 });
     document.querySelectorAll('.reveal').forEach(function (el) { io.observe(el); });
   } else {
     document.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('on'); });
