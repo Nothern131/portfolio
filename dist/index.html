@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nothern131 · 内部档案柜</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --amber:#f0a500;--amber-dim:#7a5400;--amber-glow:rgba(240,165,0,.15);
+  --green:#33ff88;--green-dim:rgba(51,255,136,.1);
+  --bg:#0a0a0a;--panel:#111;--border:#2a2a2a;
+  --text:#c8c8c8;--text-dim:#666;
+}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Courier New',monospace;overflow:hidden}
+
+/* ── boot overlay ─────────────────────────────────── */
+#boot{position:fixed;inset:0;z-index:999;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .8s}
+#boot.fade{opacity:0;pointer-events:none}
+#boot.off{display:none}
+.crosshair{width:4px;height:4px;background:var(--amber);border-radius:50%;box-shadow:0 0 60px 30px var(--amber-glow);animation:cpulse 1.2s ease-in-out infinite}
+@keyframes cpulse{0%,100%{transform:scale(1);opacity:.6}50%{transform:scale(1.8);opacity:1}}
+#boot-logo{margin-top:28px;font-size:13px;letter-spacing:.3em;color:var(--amber);opacity:0;animation:fadeUp .6s 1.5s forwards}
+#boot-title{font-size:clamp(20px,4vw,36px);letter-spacing:.25em;color:var(--amber);margin-top:10px;opacity:0;animation:fadeUp .5s 2s forwards}
+#boot-sub{font-size:12px;color:var(--amber-dim);margin-top:8px;letter-spacing:.15em;opacity:0;animation:fadeUp .5s 2.4s forwards}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── app shell ────────────────────────────────────── */
+#app{display:flex;flex-direction:column;height:100vh;opacity:0;transition:opacity .6s;pointer-events:none}
+#app.on{opacity:1;pointer-events:all}
+
+/* 3D canvas */
+#scene{flex:1;position:relative;overflow:hidden}
+#scene canvas{position:absolute;inset:0;width:100%;height:100%}
+
+/* top bar */
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:10px 20px;border-bottom:1px solid var(--border);background:var(--panel);flex-shrink:0;z-index:10}
+.hud-left{display:flex;align-items:center;gap:16px}
+.hud-tag{color:var(--amber);font-size:11px;letter-spacing:.15em}
+.hud-no{color:var(--text-dim);font-size:11px}
+.hud-title{color:var(--text);font-size:13px;letter-spacing:.1em}
+.hud-pos{color:var(--text-dim);font-size:11px}
+.hud-right{display:flex;align-items:center;gap:12px}
+.status-dot{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.session-clock{color:var(--text-dim);font-size:11px}
+
+/* side nav overlay */
+.side-nav{position:absolute;right:10px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:8px;z-index:10}
+.side-btn{width:32px;height:32px;display:flex;align-items:center;justify-content:center;border:1px solid var(--border);color:var(--text-dim);cursor:pointer;font-size:14px;transition:all .15s;background:var(--panel);font-family:inherit}
+.side-btn:hover{border-color:var(--amber);color:var(--amber)}
+
+/* ── detail overlay ───────────────────────────────── */
+#detail{position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.92);display:none;align-items:center;justify-content:center;padding:20px}
+#detail.show{display:flex}
+.detail-panel{width:100%;max-width:760px;max-height:88vh;background:var(--panel);border:1px solid var(--border);overflow-y:auto;position:relative;animation:dSlide .25s ease}
+@keyframes dSlide{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.detail-top{display:flex;justify-content:space-between;align-items:center;padding:14px 20px;border-bottom:1px solid var(--border)}
+.detail-no-tag{display:flex;align-items:center;gap:12px}
+.detail-no{font-size:20px;color:var(--amber);font-weight:bold}
+.detail-tag{font-size:10px;padding:2px 8px;border:1px solid var(--border);color:var(--text-dim);letter-spacing:.1em}
+.detail-close{width:28px;height:28px;display:flex;align-items:center;justify-content:center;border:1px solid var(--border);color:var(--text-dim);cursor:pointer;font-size:14px;background:transparent;transition:all .15s}
+.detail-close:hover{border-color:var(--amber);color:var(--amber)}
+.detail-body{padding:20px}
+.detail-name{font-size:18px;color:var(--text);letter-spacing:.1em;margin-bottom:4px}
+.detail-group{font-size:10px;color:var(--text-dim);margin-bottom:14px}
+.detail-divider{height:1px;background:var(--border);margin:14px 0}
+.detail-section{margin-bottom:16px}
+.detail-label{font-size:10px;color:var(--amber-dim);letter-spacing:.15em;margin-bottom:8px}
+.detail-text{font-size:12px;color:var(--text);line-height:1.8}
+.detail-links{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.detail-link{padding:5px 12px;border:1px solid var(--border);color:var(--text-dim);font-size:11px;text-decoration:none;transition:all .15s;letter-spacing:.05em}
+.detail-link:hover{border-color:var(--amber);color:var(--amber)}
+.detail-nav{display:flex;justify-content:space-between;align-items:center;padding:14px 20px;border-top:1px solid var(--border)}
+.dnav-btn{padding:5px 14px;border:1px solid var(--border);color:var(--text-dim);background:transparent;font-family:inherit;font-size:11px;cursor:pointer;transition:all .15s;letter-spacing:.05em}
+.dnav-btn:hover{border-color:var(--amber);color:var(--amber)}
+.dnav-btn:disabled{opacity:.25;cursor:default}
+.dnav-center{font-size:10px;color:var(--text-dim)}
+
+/* bottom bar */
+.bottombar{display:flex;align-items:center;justify-content:space-between;padding:8px 20px;border-top:1px solid var(--border);background:var(--panel);flex-shrink:0;font-size:10px;color:var(--text-dim)}
+.keys-hint{display:flex;gap:12px}
+.key-item{display:flex;align-items:center;gap:4px}
+.k{display:inline-block;padding:1px 5px;border:1px solid var(--border);font-size:10px;color:var(--text-dim);min-width:18px;text-align:center}
+
+/* scrollbar */
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border)}
+
+</style>
+  <script type="module" crossorigin src="./assets/index-DEKlf3w8.js"></script>
+</head>
+<body>
+
+<!-- ═══ BOOT ═══ -->
+<div id="boot">
+  <div class="crosshair"></div>
+  <div id="boot-logo">INITIALIZING</div>
+  <div id="boot-title">NORTHERN ARCHIVE</div>
+  <div id="boot-sub">内部档案系统 · 仅供授权访问</div>
+</div>
+
+<!-- ═══ APP ═══ -->
+<div id="app">
+
+  <!-- top bar -->
+  <div class="topbar">
+    <div class="hud-left">
+      <span class="hud-tag">NORTHERN</span>
+      <span class="hud-no" id="hud-no">—</span>
+      <span class="hud-title" id="hud-title">待命</span>
+      <span class="hud-pos" id="hud-pos">—</span>
+    </div>
+    <div class="hud-right">
+      <div class="status-dot"></div>
+      <span class="session-clock" id="clock">00:00</span>
+    </div>
+  </div>
+
+  <!-- 3D scene -->
+  <div class="main">
+    <div id="scene">
+      <div class="side-nav">
+        <button class="side-btn" id="side-prev">‹</button>
+        <button class="side-btn" id="side-next">›</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- bottom bar -->
+  <div class="bottombar">
+    <div class="keys-hint">
+      <div class="key-item"><span class="k">←</span><span class="k">→</span> 列</div>
+      <div class="key-item"><span class="k">↑</span><span class="k">↓</span> 卡</div>
+      <div class="key-item"><span class="k">Enter</span> 打开</div>
+      <div class="key-item"><span class="k">Esc</span> 关闭</div>
+    </div>
+    <span id="footer-info">Nothern131 · 内部档案柜 v1.0</span>
+  </div>
+</div>
+
+<!-- ═══ DETAIL ═══ -->
+<div id="detail">
+  <div class="detail-panel">
+    <div class="detail-top">
+      <div class="detail-no-tag">
+        <span class="detail-no" id="detail-no">—</span>
+        <span class="detail-tag" id="detail-tag">—</span>
+      </div>
+      <div class="detail-close" id="detail-close">✕</div>
+    </div>
+    <div class="detail-body">
+      <div class="detail-name" id="detail-name"></div>
+      <div class="detail-group" id="detail-group"></div>
+      <div class="detail-divider"></div>
+      <div class="detail-section">
+        <div class="detail-label">档案摘要</div>
+        <div class="detail-text" id="detail-summary"></div>
+      </div>
+      <div class="detail-section">
+        <div class="detail-label">技术栈</div>
+        <div class="detail-text" id="detail-tech"></div>
+      </div>
+      <div class="detail-section">
+        <div class="detail-label">核心成果</div>
+        <div class="detail-text" id="detail-metrics"></div>
+      </div>
+      <div class="detail-section">
+        <div class="detail-label">详细说明</div>
+        <div class="detail-text" id="detail-content"></div>
+      </div>
+      <div class="detail-links" id="detail-links"></div>
+    </div>
+    <div class="detail-nav">
+      <button class="dnav-btn" id="detail-prev">← 上一个</button>
+      <span class="dnav-center" id="detail-center"></span>
+      <button class="dnav-btn" id="detail-next">下一个 →</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
