@@ -280,9 +280,10 @@
       backdrop-filter: blur(10px);
       opacity: 0;
       visibility: hidden;
+      pointer-events: none;
       transition: opacity .45s var(--ease), visibility .45s;
     }
-    #detail.on { opacity: 1; visibility: visible; }
+    #detail.on { opacity: 1; visibility: visible; pointer-events: auto; }
     #detail .panel {
       position: absolute;
       inset: 4vh 5vw;
@@ -700,7 +701,7 @@
     #nav-prev, #nav-next {
       position: fixed;
       top: 50%;
-      z-index: 30;
+      z-index: 50;
       width: 58px;
       height: 58px;
       transform: translateY(-50%);
@@ -781,7 +782,7 @@
       border-radius: 4px;
     }
   </style>
-  <script type="module" crossorigin src="./assets/index-BGoHyiKq.js"></script>
+  <script type="module" crossorigin src="./assets/index-CfyPeBZU.js"></script>
 </head>
 <body>
 
