@@ -525,22 +525,32 @@
       border-left: 1px solid var(--rule);
     }
 
-    /* ── 过场动画：详情页打开/关闭 + 翻页淡入 ── */
+    /* ── 过场动画：详情页打开/关闭（弹性 overshoot）+ 翻页淡入 ── */
     #detail .panel {
       animation: detail-panel-in .4s var(--ease) forwards;
     }
     @keyframes detail-panel-in {
-      from { opacity: 0; transform: translateY(20px) scale(0.98); }
+      from { opacity: 0; transform: translateY(24px) scale(0.97); }
       to { opacity: 1; transform: translateY(0) scale(1); }
     }
-    #detail.on .panel { animation: detail-panel-in .4s var(--ease) forwards; }
-
-    /* 翻页淡入（bar-nav 按钮点击时重触发） */
-    #detail .meta, #detail .stage, #detail .bar {
-      transition: opacity .25s var(--ease), transform .25s var(--ease);
+    #detail.on .panel { animation: detail-panel-in .48s cubic-bezier(.22,.61,.36,1) forwards; }
+    /* 关闭时反向弹回（带轻微回弹） */
+    #detail.close .panel {
+      animation: detail-panel-out .42s cubic-bezier(.55,.06,.68,.19) forwards;
     }
-    #detail.paging .meta { opacity: 0; transform: translateX(-12px); }
-    #detail.paging .stage { opacity: 0; transform: translateX(12px); }
+    @keyframes detail-panel-out {
+      from { opacity: 1; transform: translateY(0) scale(1); }
+      to { opacity: 0; transform: translateY(16px) scale(0.975); }
+    }
+
+    /* 翻页淡入（bar-nav 按钮点击时重触发，含方向感） */
+    #detail .meta, #detail .stage, #detail .bar {
+      transition: opacity .22s var(--ease), transform .22s var(--ease);
+    }
+    #detail.paging[data-dir="next"] .meta { opacity: 0; transform: translateX(-14px); }
+    #detail.paging[data-dir="next"] .stage { opacity: 0; transform: translateX(14px); }
+    #detail.paging[data-dir="prev"] .meta { opacity: 0; transform: translateX(14px); }
+    #detail.paging[data-dir="prev"] .stage { opacity: 0; transform: translateX(-14px); }
     #detail.paging .bar { opacity: 0; }
     #detail:not(.paging) .meta { opacity: 1; transform: translateX(0); }
     #detail:not(.paging) .stage { opacity: 1; transform: translateX(0); }
@@ -667,6 +677,25 @@
       border-radius: 2px;
       background: var(--rule);
     }
+    /* 关闭按钮 */
+    #detail .bar .bar-close {
+      width: 32px; height: 32px;
+      display: grid; place-items: center;
+      font-family: var(--mono);
+      font-size: 13px;
+      color: var(--parchment-mute);
+      background: transparent;
+      border: 1px solid var(--rule);
+      border-radius: 7px;
+      cursor: pointer;
+      transition: all .2s var(--ease);
+      flex-shrink: 0;
+    }
+    #detail .bar .bar-close:hover {
+      color: var(--cinnabar);
+      border-color: var(--cinnabar-dim);
+      background: rgba(181, 52, 47, 0.08);
+    }
     /* ── 屏幕左右方向键（常驻） ── */
     #nav-prev, #nav-next {
       position: fixed;
@@ -752,7 +781,7 @@
       border-radius: 4px;
     }
   </style>
-  <script type="module" crossorigin src="./assets/index-LEzhayTq.js"></script>
+  <script type="module" crossorigin src="./assets/index-BGoHyiKq.js"></script>
 </head>
 <body>
 
