@@ -471,6 +471,81 @@
       line-height: 1.4;
     }
 
+    /* ── 详细介绍段落 ── */
+    #detail .meta .details {
+      margin-top: 28px;
+      border-top: 1px solid var(--rule);
+      padding-top: 20px;
+    }
+    #detail .meta .details h3 {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.24em;
+      color: var(--gold-deep);
+      text-transform: uppercase;
+      margin-bottom: 14px;
+      font-weight: 500;
+    }
+    #detail .meta .detail-item {
+      margin-bottom: 16px;
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    #detail.on .meta .detail-item {
+      animation: detail-item-in .4s var(--ease) forwards;
+    }
+    #detail.on .meta .detail-item:nth-child(1) { animation-delay: .08s; }
+    #detail.on .meta .detail-item:nth-child(2) { animation-delay: .16s; }
+    #detail.on .meta .detail-item:nth-child(3) { animation-delay: .24s; }
+    @keyframes detail-item-in {
+      to { opacity: 1; transform: translateY(0); }
+    }
+    #detail .meta .detail-h {
+      font-family: var(--song);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--parchment);
+      margin-bottom: 5px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    #detail .meta .detail-h::before {
+      content: '';
+      width: 6px; height: 6px;
+      background: var(--cinnabar);
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    #detail .meta .detail-p {
+      font-size: 12.5px;
+      line-height: 1.85;
+      color: var(--parchment-mute);
+      padding-left: 14px;
+      border-left: 1px solid var(--rule);
+    }
+
+    /* ── 过场动画：详情页打开/关闭 + 翻页淡入 ── */
+    #detail .panel {
+      animation: detail-panel-in .4s var(--ease) forwards;
+    }
+    @keyframes detail-panel-in {
+      from { opacity: 0; transform: translateY(20px) scale(0.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    #detail.on .panel { animation: detail-panel-in .4s var(--ease) forwards; }
+
+    /* 翻页淡入（bar-nav 按钮点击时重触发） */
+    #detail .meta, #detail .stage, #detail .bar {
+      transition: opacity .25s var(--ease), transform .25s var(--ease);
+    }
+    #detail.paging .meta { opacity: 0; transform: translateX(-12px); }
+    #detail.paging .stage { opacity: 0; transform: translateX(12px); }
+    #detail.paging .bar { opacity: 0; }
+    #detail:not(.paging) .meta { opacity: 1; transform: translateX(0); }
+    #detail:not(.paging) .stage { opacity: 1; transform: translateX(0); }
+    #detail:not(.paging) .bar { opacity: 1; }
+
     #detail .stage {
       position: relative;
       display: grid;
@@ -677,7 +752,7 @@
       border-radius: 4px;
     }
   </style>
-  <script type="module" crossorigin src="./assets/index-DoPE7Teg.js"></script>
+  <script type="module" crossorigin src="./assets/index-LEzhayTq.js"></script>
 </head>
 <body>
 
