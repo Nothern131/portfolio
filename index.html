@@ -285,9 +285,9 @@
     #detail.on { opacity: 1; visibility: visible; }
     #detail .panel {
       position: absolute;
-      inset: 6vh 6vw;
+      inset: 4vh 5vw;
       display: grid;
-      grid-template-columns: 340px 1fr;
+      grid-template-rows: minmax(0, 1.5fr) minmax(0, 1fr) auto;
       gap: 0;
       border: 1px solid var(--rule-strong);
       border-radius: 14px;
@@ -299,13 +299,54 @@
     }
     #detail.on .panel { transform: translateY(0) scale(1); }
 
+    /* 主视觉区（舞台，全宽铺满，作为详情页主体） */
+    #detail .stage {
+      grid-row: 1;
+      position: relative;
+      display: grid;
+      place-items: center;
+      background:
+        radial-gradient(ellipse at center, rgba(201, 162, 94, 0.07), transparent 68%),
+        #0b0806;
+      overflow: hidden;
+    }
+    #detail .stage .fallback {
+      width: 100%;
+      height: 100%;
+      display: grid;
+      place-items: center;
+      text-align: center;
+    }
+    #detail .stage .fallback .glyph {
+      font-family: var(--brush);
+      font-size: clamp(72px, 12vh, 150px);
+      color: var(--gold-deep);
+      opacity: 0.6;
+      line-height: 1;
+      text-shadow: 0 0 60px rgba(201, 162, 94, 0.35);
+    }
+    #detail .stage .fallback .label {
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: 0.32em;
+      color: var(--parchment-mute);
+      text-transform: uppercase;
+      margin-top: 22px;
+    }
+
+    /* 详情要点区（位于主视觉下方） */
     #detail .meta {
-      padding: 36px 30px;
-      border-right: 1px solid var(--rule);
-      display: flex;
-      flex-direction: column;
+      grid-row: 2;
+      padding: 24px 30px;
+      border-top: 1px solid var(--rule);
+      display: grid;
+      grid-template-columns: 1.5fr 1fr;
+      gap: 0 36px;
       overflow-y: auto;
-      background: linear-gradient(180deg, rgba(201, 162, 94, 0.05), transparent 40%);
+    }
+    #detail .meta .meta-main {
+      padding-right: 28px;
+      border-right: 1px solid var(--rule);
     }
     #detail .meta .no {
       font-family: var(--mono);
@@ -376,7 +417,7 @@
       background: rgba(201, 162, 94, 0.05);
     }
     #detail .meta .hls { margin-bottom: 24px; }
-    #detail .meta .hls h3, #detail .meta .metrics h3 {
+    #detail .meta .meta-side h3, #detail .meta .meta-main .hls h3 {
       font-family: var(--mono);
       font-size: 10px;
       letter-spacing: 0.24em;
@@ -401,11 +442,14 @@
       color: var(--cinnabar);
       font-size: 11px;
     }
+    #detail .meta .meta-side {
+      padding-left: 28px;
+      border-left: 1px solid var(--rule);
+    }
     #detail .meta .metrics {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-      margin-bottom: 24px;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
     }
     #detail .meta .metrics .m {
       background: rgba(201, 162, 94, 0.05);
@@ -548,7 +592,83 @@
       border-radius: 2px;
       background: var(--rule);
     }
-    #detail .bar .col-dots i.active { background: var(--cinnabar); }
+    /* ── 屏幕左右方向键（常驻） ── */
+    #nav-prev, #nav-next {
+      position: fixed;
+      top: 50%;
+      z-index: 30;
+      width: 58px;
+      height: 58px;
+      transform: translateY(-50%);
+      display: grid;
+      place-items: center;
+      font-family: var(--mono);
+      font-size: 22px;
+      color: var(--gold-bright);
+      background: rgba(20, 16, 12, 0.55);
+      border: 1px solid var(--rule-strong);
+      border-radius: 50%;
+      cursor: pointer;
+      backdrop-filter: blur(4px);
+      transition: all .25s var(--ease);
+      opacity: 0;
+      pointer-events: none;
+    }
+    #hud.on ~ #nav-prev, #hud.on ~ #nav-next {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    #nav-prev { left: 26px; }
+    #nav-next { right: 26px; }
+    #nav-prev:hover, #nav-next:hover {
+      background: rgba(201, 162, 94, 0.14);
+      border-color: var(--gold);
+      transform: translateY(-50%) scale(1.06);
+      box-shadow: 0 6px 20px rgba(201, 162, 94, 0.18);
+    }
+    #nav-prev:focus-visible, #nav-next:focus-visible {
+      outline: 2px solid var(--gold-bright);
+      outline-offset: 3px;
+    }
+
+    /* ── 详情页栏：翻页 + 链接 ── */
+    #detail .bar .bar-nav {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-right: auto;
+    }
+    #detail .bar .bar-nav button {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      font-family: var(--mono);
+      font-size: 15px;
+      color: var(--gold-bright);
+      background: transparent;
+      border: 1px solid var(--rule-strong);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all .2s var(--ease);
+    }
+    #detail .bar .bar-nav button:hover {
+      background: rgba(201, 162, 94, 0.12);
+      border-color: var(--gold);
+    }
+    #detail .bar .bar-nav .pos {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      color: var(--parchment-mute);
+      min-width: 46px;
+      text-align: center;
+    }
+    #detail .bar .links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
 
     ::-webkit-scrollbar { width: 8px; }
     ::-webkit-scrollbar-track { background: transparent; }
@@ -557,7 +677,7 @@
       border-radius: 4px;
     }
   </style>
-  <script type="module" crossorigin src="./assets/index-CV-o39DS.js"></script>
+  <script type="module" crossorigin src="./assets/index-DoPE7Teg.js"></script>
 </head>
 <body>
 
@@ -569,14 +689,18 @@
     <span class="mark">内部数据库 · Internal Archive</span>
     <span class="rod"></span>
     <span class="state" id="hud-state">
-      <b id="hud-cat">算法引擎</b>
+      <b id="hud-no">001</b>
+      <span id="hud-title"> 灵魂工坊</span>
       <span class="cinnabar"> · </span>
-      <span id="hud-no">X-001</span>
-      <span id="hud-title"> 天机阁</span>
+      <span id="hud-pos">1 / 4</span>
     </span>
     <span class="rod"></span>
     <span class="mark">Internal Archive · 2026</span>
   </header>
+
+  <!-- 屏幕左右方向键（常驻，开机后随 HUD 淡入） -->
+  <button id="nav-prev" type="button" aria-label="上一卷">←</button>
+  <button id="nav-next" type="button" aria-label="下一卷">→</button>
 
   <!-- CRT 扫描线（常驻，开机后淡入） -->
   <div id="crt">
