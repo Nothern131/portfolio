@@ -29,8 +29,12 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Courie
 #app{display:flex;flex-direction:column;height:100vh;opacity:0;transition:opacity .6s;pointer-events:none}
 #app.on{opacity:1;pointer-events:all}
 
+/* 3D canvas */
+#scene{flex:1;position:relative;overflow:hidden}
+#scene canvas{position:absolute;inset:0;width:100%;height:100%}
+
 /* top bar */
-.topbar{display:flex;align-items:center;justify-content:space-between;padding:10px 20px;border-bottom:1px solid var(--border);background:var(--panel);flex-shrink:0}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:10px 20px;border-bottom:1px solid var(--border);background:var(--panel);flex-shrink:0;z-index:10}
 .hud-left{display:flex;align-items:center;gap:16px}
 .hud-tag{color:var(--amber);font-size:11px;letter-spacing:.15em}
 .hud-no{color:var(--text-dim);font-size:11px}
@@ -41,53 +45,10 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Courie
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
 .session-clock{color:var(--text-dim);font-size:11px}
 
-/* main area */
-.main{flex:1;display:flex;overflow:hidden}
-
-/* column group labels */
-.group-label{padding:10px 16px;font-size:10px;letter-spacing:.2em;color:var(--text-dim);border-bottom:1px solid var(--border);background:var(--panel);flex-shrink:0;display:flex;align-items:center;gap:8px}
-.group-label::before{content:'';display:inline-block;width:8px;height:2px;background:var(--amber-dim)}
-
-/* columns container */
-.columns-wrap{flex:1;display:flex;overflow:hidden}
-.columns{display:flex;flex:1;overflow:hidden}
-.column{flex:1;display:flex;flex-direction:column;border-right:1px solid var(--border);overflow:hidden;transition:background .3s}
-.column:last-child{border-right:none}
-.column.active-col{background:rgba(240,165,0,.03)}
-
-/* preview panel (top half of column) */
-.preview-panel{flex:1;display:flex;align-items:center;justify-content:center;padding:20px;position:relative;overflow:hidden}
-.archive-card{width:100%;max-width:320px;padding:20px 24px;border:1px solid var(--border);background:var(--panel);position:relative;cursor:pointer;transition:all .25s;opacity:.45;transform:scale(.96)}
-.archive-card:hover{opacity:.7;border-color:#444}
-.archive-card.focused{opacity:1;border-color:var(--amber);box-shadow:0 0 20px var(--amber-glow),inset 0 0 30px rgba(240,165,0,.03);transform:scale(1)}
-.card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
-.card-no{font-size:22px;font-weight:bold;color:var(--amber);letter-spacing:.05em}
-.card-tag{font-size:9px;padding:2px 6px;border:1px solid var(--border);color:var(--text-dim);letter-spacing:.1em}
-.card-name{font-size:15px;color:var(--text);letter-spacing:.1em;margin-bottom:8px}
-.card-brief{font-size:11px;color:var(--text-dim);line-height:1.6}
-.card-divider{height:1px;background:var(--border);margin:12px 0}
-.card-meta{display:flex;justify-content:space-between;font-size:10px;color:var(--text-dim)}
-.card-status{color:var(--green)}
-
-/* card list (bottom half) */
-.card-list{flex-shrink:0;border-top:1px solid var(--border);max-height:45%;overflow-y:auto}
-.card-item{display:flex;align-items:center;gap:10px;padding:8px 14px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;font-size:11px}
-.card-item:hover{background:rgba(255,255,255,.03)}
-.card-item.ci-focused{background:var(--amber-glow);border-left:2px solid var(--amber)}
-.ci-no{color:var(--amber);font-size:12px;min-width:28px}
-.ci-name{color:var(--text);flex:1}
-.ci-tag{color:var(--text-dim);font-size:10px}
-.ci-dot{width:4px;height:4px;border-radius:50%;background:var(--text-dim);flex-shrink:0}
-.ci-focused .ci-dot{background:var(--amber);box-shadow:0 0 4px var(--amber)}
-
-/* side nav */
-.side-nav{width:36px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;background:var(--panel);border-left:1px solid var(--border);border-right:1px solid var(--border);flex-shrink:0}
-.side-btn{width:24px;height:24px;display:flex;align-items:center;justify-content:center;border:1px solid var(--border);color:var(--text-dim);cursor:pointer;font-size:12px;transition:all .15s;background:transparent}
+/* side nav overlay */
+.side-nav{position:absolute;right:10px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:8px;z-index:10}
+.side-btn{width:32px;height:32px;display:flex;align-items:center;justify-content:center;border:1px solid var(--border);color:var(--text-dim);cursor:pointer;font-size:14px;transition:all .15s;background:var(--panel);font-family:inherit}
 .side-btn:hover{border-color:var(--amber);color:var(--amber)}
-
-/* open button */
-.open-btn{display:block;margin:0 auto;padding:6px 16px;border:1px solid var(--amber-dim);background:transparent;color:var(--amber);font-family:inherit;font-size:11px;cursor:pointer;letter-spacing:.15em;transition:all .2s}
-.open-btn:hover{background:var(--amber-glow);box-shadow:0 0 10px var(--amber-glow)}
 
 /* ── detail overlay ───────────────────────────────── */
 #detail{position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.92);display:none;align-items:center;justify-content:center;padding:20px}
@@ -107,7 +68,6 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Courie
 .detail-section{margin-bottom:16px}
 .detail-label{font-size:10px;color:var(--amber-dim);letter-spacing:.15em;margin-bottom:8px}
 .detail-text{font-size:12px;color:var(--text);line-height:1.8}
-.detail-text blockquote{border-left:2px solid var(--amber-dim);padding-left:12px;margin:8px 0;color:var(--text-dim);font-style:normal}
 .detail-links{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
 .detail-link{padding:5px 12px;border:1px solid var(--border);color:var(--text-dim);font-size:11px;text-decoration:none;transition:all .15s;letter-spacing:.05em}
 .detail-link:hover{border-color:var(--amber);color:var(--amber)}
@@ -129,7 +89,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Courie
 ::-webkit-scrollbar-thumb{background:var(--border)}
 
 </style>
-  <script type="module" crossorigin src="./assets/index-CnPfburH.js"></script>
+  <script type="module" crossorigin src="./assets/index-DEKlf3w8.js"></script>
 </head>
 <body>
 
@@ -158,16 +118,13 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Courie
     </div>
   </div>
 
-  <!-- main -->
+  <!-- 3D scene -->
   <div class="main">
-    <div class="columns-wrap">
-      <div class="columns" id="columns">
-        <!-- columns injected by JS -->
+    <div id="scene">
+      <div class="side-nav">
+        <button class="side-btn" id="side-prev">‹</button>
+        <button class="side-btn" id="side-next">›</button>
       </div>
-    </div>
-    <div class="side-nav">
-      <div class="side-btn" id="side-prev" title="← 上一个">‹</div>
-      <div class="side-btn" id="side-next" title="→ 下一个">›</div>
     </div>
   </div>
 
