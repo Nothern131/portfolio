@@ -573,7 +573,77 @@ option{background:#1a1a2e;color:#e0e0e0}
 .dialogue-empty .deicon{font-size:24px;opacity:.1;margin-bottom:2px}
 .panel-dialogue .panel-overlay{position:absolute;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.65);border-radius:var(--radius);opacity:0;pointer-events:none;transition:opacity .5s var(--ease)}
 .panel-dialogue .panel-overlay.visible{opacity:1;pointer-events:auto}
-</style>
+
+/* ═══════════════ Agent 对话推理面板 ═══════════════ */
+.panel-agent{
+  left:56px;bottom:60px;width:400px;max-height:calc(100vh - 170px);
+  display:none;flex-direction:column;overflow:hidden;animation:panelIn .4s var(--ease);
+}
+.panel-agent.visible{display:flex}
+.panel-agent-head{display:flex;align-items:center;gap:6px;padding:12px 16px 8px;flex-shrink:0;border-bottom:1px solid var(--rule-subtle)}
+.panel-agent-title{font-weight:600;font-size:13px;color:var(--text-primary);letter-spacing:.06em;display:flex;align-items:center;gap:5px}
+.panel-agent-title .pti{font-size:14px}
+.panel-agent-body{flex:1;overflow-y:auto;padding:8px;min-height:0}
+.agent-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px;gap:6px;color:var(--text-muted);font-size:12px;text-align:center;flex:1}
+.agent-empty .deicon{font-size:24px;opacity:.1;margin-bottom:2px}
+.agent-step{padding:8px 10px;border-radius:8px;margin-bottom:6px;background:var(--rule-subtle);border-left:2px solid var(--jade);animation:fadeUp .3s var(--ease)}
+.agent-step.system{border-left-color:var(--purple)}
+.agent-step.tool{border-left-color:var(--amber)}
+.agent-step.reflex{border-left-color:var(--crimson)}
+.agent-step.decision{border-left-color:var(--gold)}
+.agent-step-label{font-size:9px;font-weight:700;letter-spacing:.1em;margin-bottom:3px}
+.agent-step-label.sys{color:var(--purple)}
+.agent-step-label.tool{color:var(--amber)}
+.agent-step-label.reflex{color:var(--crimson)}
+.agent-step-label.decision{color:var(--gold)}
+.agent-step-label.percept{color:var(--jade)}
+.agent-step-text{font-size:11px;color:var(--text-secondary);line-height:1.5}
+.agent-step-meta{font-family:var(--mono);font-size:9px;color:var(--text-muted);margin-top:3px}
+.agent-kv{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+.agent-kv-item{font-size:9px;padding:2px 6px;border-radius:4px;background:oklch(100% 0 0/.04);color:var(--text-muted);font-family:var(--mono)}
+.agent-kv-key{color:var(--jade)}
+
+/* ═══════════════ Pipeline 编排面板 ═══════════════ */
+.panel-pipeline{
+  right:16px;bottom:60px;width:440px;max-height:calc(100vh - 170px);
+  display:none;flex-direction:column;overflow:hidden;animation:panelIn .4s var(--ease);
+}
+.panel-pipeline.visible{display:flex}
+.panel-pipeline-head{display:flex;align-items:center;gap:6px;padding:12px 16px 8px;flex-shrink:0;border-bottom:1px solid var(--rule-subtle)}
+.panel-pipeline-title{font-weight:600;font-size:13px;color:var(--text-primary);letter-spacing:.06em;display:flex;align-items:center;gap:5px}
+.panel-pipeline-title .pti{font-size:14px}
+.panel-pipeline-body{flex:1;overflow-y:auto;padding:10px;min-height:0}
+.pipeline-layers{display:flex;flex-direction:column;gap:4px;margin-bottom:14px}
+.pl-layer{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;background:var(--rule-subtle);border:1px solid transparent;transition:all .3s var(--ease)}
+.pl-layer.active{border-color:var(--jade);background:rgba(34,197,94,.04)}
+.pl-layer.processing{border-color:var(--amber);background:rgba(245,158,11,.04);animation:layerPulse 1s infinite}
+.pl-layer.done{border-color:var(--jade);opacity:.6}
+@keyframes layerPulse{0%,100%{box-shadow:0 0 0 rgba(245,158,11,0)}50%{box-shadow:0 0 8px rgba(245,158,11,.15)}}
+.pl-num{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:9px;font-weight:700;flex-shrink:0;background:var(--rule);color:var(--text-muted)}
+.pl-layer.active .pl-num{background:var(--jade);color:#1a1a1a}
+.pl-layer.processing .pl-num{background:var(--amber);color:#1a1a1a}
+.pl-info{flex:1;min-width:0}
+.pl-name{font-size:11px;font-weight:600;color:var(--text-primary);letter-spacing:.04em}
+.pl-desc{font-size:9px;color:var(--text-muted);margin-top:1px}
+.pl-status{font-family:var(--mono);font-size:8px;padding:2px 6px;border-radius:4px;background:oklch(100% 0 0/.04);color:var(--text-muted);white-space:nowrap}
+.pl-layer.active .pl-status{background:rgba(34,197,94,.1);color:var(--jade)}
+.pl-layer.processing .pl-status{background:rgba(245,158,11,.1);color:var(--amber);animation:dotPulse 1s infinite}
+.pl-arrow{text-align:center;color:var(--text-muted);font-size:10px;opacity:.3;padding:1px 0}
+.pipeline-log-section{border-top:1px solid var(--rule-subtle);padding-top:10px}
+.pipeline-log-title{font-size:10px;font-weight:600;color:var(--text-muted);letter-spacing:.08em;margin-bottom:6px}
+.pipeline-log{max-height:160px;overflow-y:auto;display:flex;flex-direction:column;gap:2px}
+.pl-entry{font-family:var(--mono);font-size:9px;padding:3px 6px;border-radius:4px;background:oklch(100% 0 0/.02);color:var(--text-muted);line-height:1.4;animation:fadeUp .2s var(--ease)}
+.pl-entry.percept{color:var(--jade)}
+.pl-entry.semantic{color:var(--blue)}
+.pl-entry.memory{color:var(--purple)}
+.pl-entry.mood{color:var(--amber)}
+.pl-entry.decision{color:var(--gold)}
+.pl-entry.behavior{color:var(--teal)}
+.pl-entry.chain{color:var(--crimson)}
+.panel-agent .panel-overlay{position:absolute;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.65);border-radius:var(--radius);opacity:0;pointer-events:none;transition:opacity .5s var(--ease)}
+.panel-agent .panel-overlay.visible{opacity:1;pointer-events:auto}
+.panel-pipeline .panel-overlay{position:absolute;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.65);border-radius:var(--radius);opacity:0;pointer-events:none;transition:opacity .5s var(--ease)}
+.panel-pipeline .panel-overlay.visible{opacity:1;pointer-events:auto}
 </head>
 <body>
 <canvas id="three-canvas"></canvas>
@@ -600,6 +670,8 @@ option{background:#1a1a2e;color:#e0e0e0}
   <div class="sb-btn active" data-view="console" onclick="route('console')" title="意识矩阵 · 主视图">◈<span class="sb-btn-label">矩阵</span></div>
   <div class="sb-btn" data-view="sandbox" onclick="route('sandbox')" title="沙盒测试 · 诊断面板">◆<span class="sb-btn-label">沙盒</span></div>
   <div class="sb-btn" data-view="dialogue" onclick="route('dialogue')" title="NPC对话 · 互动记录">💬<span class="sb-btn-label">对话</span></div>
+  <div class="sb-btn" data-view="agent-console" onclick="route('agent-console')" title="AI Agent · 对话推理可视化">🤖<span class="sb-btn-label">Agent</span></div>
+  <div class="sb-btn" data-view="pipeline" onclick="route('pipeline')" title="Pipeline编排 · 6层工作流实时状态">⚙<span class="sb-btn-label">Pipeline</span></div>
   <div class="sb-logo">SW</div>
   <span class="sb-tip">灵 魂 工 坊</span>
 </div>
@@ -705,6 +777,34 @@ option{background:#1a1a2e;color:#e0e0e0}
     <div class="dialogue-empty"><span class="deicon">💬</span>引擎启动后，NPC 对话将在此浮现</div>
   </div>
   <div class="panel-overlay" id="dlg-overlay"><span class="panel-overlay-text">⏸ 引擎暂停</span></div>
+</div>
+
+<!-- AI Agent 对话推理面板 -->
+<div class="glass panel-agent" id="agent-panel">
+  <div class="panel-agent-head panel-drag-handle" data-drag-handle>
+    <span class="panel-agent-title"><span class="pti">🤖</span>AI Agent · 推理可视化</span>
+    <span class="panel-feed-badge" id="agent-badge">SIM</span>
+  </div>
+  <div class="panel-agent-body" id="agent-body">
+    <div class="agent-empty"><span class="deicon">🤖</span>事件触发后，Agent 推理链将在此展示</div>
+  </div>
+  <div class="panel-overlay" id="agent-overlay"><span class="panel-overlay-text">⏸ 引擎暂停</span></div>
+</div>
+
+<!-- Pipeline 编排面板 -->
+<div class="glass panel-pipeline" id="pipeline-panel">
+  <div class="panel-pipeline-head panel-drag-handle" data-drag-handle>
+    <span class="panel-pipeline-title"><span class="pti">⚙</span>Agent Pipeline · 工作流编排</span>
+    <span class="panel-feed-badge" id="pipeline-badge">6层</span>
+  </div>
+  <div class="panel-pipeline-body" id="pipeline-body">
+    <div class="pipeline-layers" id="pipeline-layers"></div>
+    <div class="pipeline-log-section">
+      <div class="pipeline-log-title">📋 推理日志</div>
+      <div class="pipeline-log" id="pipeline-log"></div>
+    </div>
+  </div>
+  <div class="panel-overlay" id="pipeline-overlay"><span class="panel-overlay-text">⏸ 引擎暂停</span></div>
 </div>
 
 <!-- NPC 详情面板 -->
@@ -3607,6 +3707,8 @@ function processEvent(event,perc,isChain){
         lockAttention(npc,event,10);
       }
       var r=buildThoughtChain(npc,event);
+      simulateAgentChain(event,npc,r);
+      triggerPipelineForEvent(event,npc,r);
       var prevMood=npc.mood;
       npc.anger=r.newE.anger;npc.trust=r.newE.trust;npc.happiness=r.newE.happiness;
       npc.mood=npc.anger>50?'angry':npc.happiness>60?'happy':npc.happiness<30?'sad':'neutral';
@@ -4109,6 +4211,8 @@ function toggleEngine(){
     document.getElementById('feed-overlay').classList.remove('visible');
     document.getElementById('sb-overlay').classList.remove('visible');
     document.getElementById('dlg-overlay').classList.remove('visible');
+    document.getElementById('agent-overlay').classList.remove('visible');
+    document.getElementById('pipeline-overlay').classList.remove('visible');
     document.getElementById('msb-dot').classList.remove('idle');document.getElementById('msb-dot').classList.add('active');
     scheduleNextTick();
   }else{
@@ -4121,6 +4225,8 @@ function toggleEngine(){
     document.getElementById('feed-overlay').classList.add('visible');
     document.getElementById('sb-overlay').classList.add('visible');
     document.getElementById('dlg-overlay').classList.add('visible');
+    document.getElementById('agent-overlay').classList.add('visible');
+    document.getElementById('pipeline-overlay').classList.add('visible');
     document.getElementById('msb-dot').classList.remove('active');document.getElementById('msb-dot').classList.add('idle');
     if(engineTimer)clearTimeout(engineTimer);
   }
@@ -4474,6 +4580,16 @@ function resetCamera(){
 // ═══════════════ 路由 ═══════════════
 var currentView='console';
 var _legendTimer=null;
+var _agentLog=[];
+var _pipelineState={activeLayer:-1,log:[]};
+var _pipelineLayers=[
+  {id:'perception',name:'感知层',desc:'事件捕获·感知范围检测',icon:'👁'},
+  {id:'semantic',name:'语义理解层',desc:'关键词提取·概念激活·性格透镜',icon:'🧠'},
+  {id:'memory',name:'记忆反馈层',desc:'长期记忆检索·意见形成',icon:'💾'},
+  {id:'emotion',name:'情绪空间层',desc:'六维情绪映射·情感传染',icon:'💓'},
+  {id:'decision',name:'决策引擎层',desc:'System1直觉/System2理性·权衡评分',icon:'⚖'},
+  {id:'behavior',name:'行为生成层',desc:'动作文本生成·承诺队列·世界线防御',icon:'🎯'}
+];
 function route(view){
   currentView=view;
   document.querySelectorAll('.sb-btn').forEach(function(b){b.classList.remove('active');});
@@ -4482,6 +4598,8 @@ function route(view){
   document.getElementById('feed-panel').style.display='none';
   document.getElementById('sandbox-panel').classList.remove('visible');
   document.getElementById('dialogue-panel').classList.remove('visible');
+  document.getElementById('agent-panel').classList.remove('visible');
+  document.getElementById('pipeline-panel').classList.remove('visible');
   if(view==='console'){
     document.getElementById('feed-panel').style.display='flex';
   }else if(view==='sandbox'){
@@ -4489,7 +4607,196 @@ function route(view){
     renderSandboxMatrix();updateSandboxStats();
   }else if(view==='dialogue'){
     document.getElementById('dialogue-panel').classList.add('visible');
+  }else if(view==='agent-console'){
+    document.getElementById('agent-panel').classList.add('visible');
+    renderAgentConsole();
+  }else if(view==='pipeline'){
+    document.getElementById('pipeline-panel').classList.add('visible');
+    renderPipelineLayers();
+    renderPipelineLog();
   }
+}
+
+// ═══════════════ AI Agent 对话推理系统 (Option A) ═══════════════
+var _agentSteps=[];
+var _agentSimulating=false;
+var _agentTimer=null;
+var _agentNpcName='—';
+
+function logAgentStep(type,text,meta){
+  _agentSteps.push({t:type,txt:text,meta:meta||null,time:now()});
+  if(_agentSteps.length>50)_agentSteps.shift();
+  if(currentView==='agent-console'){
+    var body=document.getElementById('agent-body');
+    if(body){
+      var empty=body.querySelector('.agent-empty');
+      if(empty)empty.remove();
+      var stepHtml='';
+      var labelMap={system:'SYSTEM',tool:'TOOL CALL',reflex:'REFLEX',decision:'DECISION',percept:'PERCEPT'};
+      var clsMap={system:'system',tool:'tool',reflex:'reflex',decision:'decision',percept:''};
+      stepHtml+='<div class="agent-step '+(clsMap[type]||'')+'">';
+      stepHtml+='<div class="agent-step-label '+(clsMap[type]||'')+'">'+(labelMap[type]||type).toUpperCase()+'</div>';
+      stepHtml+='<div class="agent-step-text">'+text+'</div>';
+      if(meta&&meta.length>0){
+        stepHtml+='<div class="agent-kv">';
+        meta.forEach(function(m){stepHtml+='<span class="agent-kv-item"><span class="agent-kv-key">'+m.k+'</span> '+m.v+'</span>';});
+        stepHtml+='</div>';
+      }
+      stepHtml+='<div class="agent-step-meta">'+(type==='decision'?'⚖ 决策输出':type==='reflex'?'⚡ 直觉反射':type==='tool'?'🔧 工具调用':'🤖 Agent')+' · '+now()+'</div>';
+      stepHtml+='</div>';
+      body.insertAdjacentHTML('beforeend',stepHtml);
+      body.scrollTop=body.scrollHeight;
+    }
+  }
+}
+
+function simulateAgentChain(event,npc,thoughtResult){
+  _agentNpcName=npc.name;
+  var npcId=npc.id;
+  // 1. Perception
+  logAgentStep('percept',npc.name+' 感知到事件：「'+(event.text||'未知事件')+'」',[{k:'severity',v:event.severity||'—'},{k:'type',v:event.type||'—'}]);
+  // 2. Semantic Understanding
+  var tags=getEventTags(event);
+  var conceptLabel=tags.slice(0,3).map(function(t){return t}).join('·');
+  logAgentStep('tool','语义理解引擎：关键词提取→概念激活',[{k:'concepts',v:conceptLabel||'无激活'}]);
+  // 3. Memory Feedback
+  logAgentStep('tool','记忆反馈层：检索相关长期记忆',[{k:'npc',v:npc.name},{k:'memories',v:(npc.memories||[]).length+'条'}]);
+  // 4. Emotion Space
+  var newE=thoughtResult.newE;
+  logAgentStep('tool','情绪空间映射：计算情绪偏移',[{k:'anger',v:newE.anger},{k:'trust',v:newE.trust},{k:'happy',v:newE.happiness}]);
+  // 5. Decision
+  if(thoughtResult.reflex){
+    logAgentStep('reflex','System 1 直觉反射：'+(thoughtResult.reflexReason||'反射触发'),[{k:'action',v:(thoughtResult.chosen||{}).name||'?'}]);
+  }else{
+    var top3=thoughtResult.chosen;
+    logAgentStep('decision','System 2 理性决策：多方案权衡评分',[{k:'choice',v:top3.name},{k:'score',v:top3.score}]);
+  }
+  // 6. Behavior Generation
+  logAgentStep('decision','行为生成：「'+npc.name+'」决定'+((thoughtResult.chosen||{}).name||'观察')+'',[{k:'worldline',v:'已校验'}]);
+}
+
+function renderAgentConsole(){
+  var body=document.getElementById('agent-body');
+  if(!body)return;
+  if(_agentSteps.length===0){
+    body.innerHTML='<div class="agent-empty"><span class="deicon">🤖</span>事件触发后，Agent 推理链将在此展示</div>';
+    return;
+  }
+  var html='';
+  _agentSteps.forEach(function(s){
+    var labelMap={system:'SYSTEM',tool:'TOOL CALL',reflex:'REFLEX',decision:'DECISION',percept:'PERCEPT'};
+    var clsMap={system:'system',tool:'tool',reflex:'reflex',decision:'decision',percept:''};
+    html+='<div class="agent-step '+(clsMap[s.t]||'')+'">';
+    html+='<div class="agent-step-label '+(clsMap[s.t]||'')+'">'+(labelMap[s.t]||s.t).toUpperCase()+'</div>';
+    html+='<div class="agent-step-text">'+s.txt+'</div>';
+    if(s.meta&&s.meta.length>0){
+      html+='<div class="agent-kv">';
+      s.meta.forEach(function(m){html+='<span class="agent-kv-item"><span class="agent-kv-key">'+m.k+'</span> '+m.v+'</span>';});
+      html+='</div>';
+    }
+    html+='<div class="agent-step-meta">'+(s.t==='decision'?'⚖ 决策输出':s.t==='reflex'?'⚡ 直觉反射':s.t==='tool'?'🔧 工具调用':'🤖 Agent')+' · '+s.time+'</div>';
+    html+='</div>';
+  });
+  body.innerHTML=html;
+  body.scrollTop=body.scrollHeight;
+}
+
+// Agent console auto refresh
+setInterval(function(){
+  if(currentView==='agent-console'&&_agentSteps.length>0){
+    var body=document.getElementById('agent-body');
+    if(body)body.scrollTop=body.scrollHeight;
+  }
+},1500);
+
+// ═══════════════ Agent Pipeline 工作流编排 (Option C) ═══════════════
+var _pipelineLayersState=[{id:'perception',state:'idle'},{id:'semantic',state:'idle'},{id:'memory',state:'idle'},{id:'emotion',state:'idle'},{id:'decision',state:'idle'},{id:'behavior',state:'idle'}];
+var _pipelineLogs=[];
+var _pipelineLastEvent=null;
+
+function initPipelineState(){
+  _pipelineLayersState.forEach(function(l){l.state='idle';});
+  _pipelineLogs=[];
+  _pipelineLastEvent=null;
+}
+
+function updatePipelineLayer(id,state,logText){
+  var layer=_pipelineLayersState.find(function(l){return l.id===id;});
+  if(layer)layer.state=state;
+  if(logText){
+    _pipelineLogs.push({layer:id,text:logText,time:now()});
+    if(_pipelineLogs.length>80)_pipelineLogs.shift();
+  }
+  if(currentView==='pipeline'){
+    renderPipelineLayers();
+    renderPipelineLog();
+  }
+}
+
+function triggerPipelineForEvent(event,npc,thoughtResult){
+  _pipelineLastEvent={npc:npc.name,event:event};
+  // 重置并保留静态展示（面板打开时能看到上次事件的最终状态）
+  _pipelineLayersState.forEach(function(l){l.state='idle';});
+  _pipelineLastEvent.done=true;
+  updatePipelineLayer('perception','active','感知：'+npc.name+' 捕获事件「'+(event.text||'—').substring(0,20)+'」');
+  setTimeout(function(){
+    updatePipelineLayer('perception','done','✓ 感知完成，事件进入理解队列');
+    updatePipelineLayer('semantic','active','理解：提取关键词→激活概念→性格透镜加权');
+  },600);
+  setTimeout(function(){
+    var tags=getEventTags(event);
+    updatePipelineLayer('semantic','done','✓ 激活概念：'+(tags.slice(0,3).join('·')||'无'));
+    updatePipelineLayer('memory','active','记忆：检索 '+npc.name+' 相关记忆');
+  },1200);
+  setTimeout(function(){
+    updatePipelineLayer('memory','done','✓ 回忆完成，形成判断');
+    updatePipelineLayer('emotion','active','情绪：计算 6 维情绪偏移');
+  },1800);
+  setTimeout(function(){
+    var ne=thoughtResult.newE;
+    updatePipelineLayer('emotion','done','✓ 情绪更新：anger='+ne.anger+' trust='+ne.trust+' happy='+ne.happiness);
+    updatePipelineLayer('decision','active','决策：'+(thoughtResult.reflex?'System1 直觉反射':'System2 理性评分'));
+  },2400);
+  setTimeout(function(){
+    var chosen=(thoughtResult.chosen||{});
+    updatePipelineLayer('decision','done','✓ 选择行为：'+(chosen.name||'?'));
+    updatePipelineLayer('behavior','active','行为：生成具体动作文本');
+  },3000);
+  setTimeout(function(){
+    updatePipelineLayer('behavior','done','✓ 执行完成：'+npc.name+' → '+(chosen.name||'观察'));
+    // 不再重置，保留静态最终状态供面板查看
+  },3600);
+}
+
+function renderPipelineLayers(){
+  var el=document.getElementById('pipeline-layers');
+  if(!el)return;
+  var html='';
+  _pipelineLayers.forEach(function(layer,i){
+    var state=_pipelineLayersState.find(function(l){return l.id===layer.id;});
+    var st=state?state.state:'idle';
+    html+='<div class="pl-layer '+(st==='idle'?'':st)+'" id="pl-'+layer.id+'">';
+    html+='<span class="pl-num">'+(i+1)+'</span>';
+    html+='<div class="pl-info"><div class="pl-name">'+layer.icon+' '+layer.name+'</div><div class="pl-desc">'+layer.desc+'</div></div>';
+    var stLabel=st==='processing'?'⚙ 执行中':st==='active'?'▶ 活跃':st==='done'?'✓ 完成':'· 待机';
+    html+='<span class="pl-status">'+stLabel+'</span></div>';
+    if(i<_pipelineLayers.length-1)html+='<div class="pl-arrow">↓</div>';
+  });
+  el.innerHTML=html;
+}
+
+function renderPipelineLog(){
+  var el=document.getElementById('pipeline-log');
+  if(!el)return;
+  if(_pipelineLogs.length===0){
+    el.innerHTML='<div style="font-size:10px;color:var(--text-muted);padding:8px;text-align:center;opacity:.4">等待引擎事件…</div>';
+    return;
+  }
+  var html='';
+  _pipelineLogs.slice().reverse().forEach(function(log){
+    html+='<div class="pl-entry '+log.layer+'">['+log.time+'] '+(log.text||'')+'</div>';
+  });
+  el.innerHTML=html;
 }
 
 // ═══════════════ 状态栏 ═══════════════
@@ -4681,6 +4988,8 @@ window.openCreatePanel=openCreatePanel;window.closeCreatePanel=closeCreatePanel;
 window.createNPC=createNPC;window.deleteNPC=deleteNPC;window.whisper=whisper;
 window.updateCreatePreview=updateCreatePreview;window.randomizeTraits=randomizeTraits;window.applyPreset=applyPreset;
 window.hideDetail=hideDetail;window.resetCamera=resetCamera;
+window.logAgentStep=logAgentStep;window.simulateAgentChain=simulateAgentChain;window.renderAgentConsole=renderAgentConsole;
+window.triggerPipelineForEvent=triggerPipelineForEvent;window.renderPipelineLayers=renderPipelineLayers;window.renderPipelineLog=renderPipelineLog;
 window.getNPC=getNPC;window.NPCS=NPCS;
 window.getAllNPCs=function(){return NPCS;};
 window.getState=function(){return{engineTick:engineTick,TEMPERATURE:TEMPERATURE,CHAOS:CHAOS,engineRunning:engineRunning,isProcessing:isProcessing,_tickInProgress:_tickInProgress,gameTime:gameTime,weather:weather,selectedNPC:selectedNPC,actionCount:actionCount,health:window.healthCheck(false)};};
