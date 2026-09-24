@@ -573,6 +573,55 @@ option{background:#1a1a2e;color:#e0e0e0}
 .dialogue-empty .deicon{font-size:24px;opacity:.1;margin-bottom:2px}
 .panel-dialogue .panel-overlay{position:absolute;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.65);border-radius:var(--radius);opacity:0;pointer-events:none;transition:opacity .5s var(--ease)}
 .panel-dialogue .panel-overlay.visible{opacity:1;pointer-events:auto}
+
+/* ═══════════════ Agent 控制台样式 ═══════════════ */
+.agent-control{border-top:1px solid var(--rule-subtle);padding:10px;background:rgba(0,0,0,.2)}
+.agent-input-area{display:flex;gap:8px;margin-bottom:10px}
+.agent-input-area textarea{flex:1;background:var(--bg-surface);border:1px solid var(--rule-border,oklch(24% .006 45));border-radius:var(--radius-sm);padding:8px;color:var(--text-primary);font-size:12px;resize:none;height:60px;font-family:var(--sans)}
+.agent-input-area button{align-self:flex-end;padding:8px 16px;background:var(--gold);color:#000;border:none;border-radius:var(--radius-sm);cursor:pointer;font-weight:600;font-size:12px;transition:opacity .2s}
+.agent-input-area button:hover{opacity:.85}
+.agent-input-area button:disabled{opacity:.4;cursor:not-allowed}
+.agent-reasoning{max-height:200px;overflow-y:auto;font-family:var(--mono);font-size:11px;margin-bottom:8px;display:none}
+.agent-reasoning.visible{display:block;animation:fadeUp .3s var(--ease)}
+.reasoning-step{margin-bottom:8px;padding:8px;background:rgba(255,255,255,.03);border-radius:4px;border-left:3px solid var(--gold)}
+.step-label{display:block;font-weight:600;margin-bottom:4px;color:var(--gold);font-size:10px;letter-spacing:.05em}
+.step-content{white-space:pre-wrap;word-break:break-all;opacity:.8;color:var(--text-secondary);margin:0;font-size:10px}
+.thinking-dots{display:flex;gap:4px;padding:8px 0;align-items:center}
+.thinking-dots span{width:6px;height:6px;border-radius:50%;background:var(--gold);animation:dotPulse 1.2s infinite}
+.thinking-dots span:nth-child(2){animation-delay:.2s}
+.thinking-dots span:nth-child(3){animation-delay:.4s}
+#guardrail-results{margin:0;padding-left:16px;color:var(--text-muted);font-size:10px}
+#guardrail-results li{margin-bottom:2px}
+.dialogue-bubble.agent-bubble{border-left:3px solid var(--gold)}
+.db-guardrail{font-size:9px;color:var(--text-muted);margin-top:4px;padding:2px 6px;background:rgba(240,185,88,.08);border-radius:3px;display:inline-block}
+
+/* Agent 工作流编排面板样式 */
+.panel-agent-workflow{position:absolute;top:60px;right:16px;width:380px;height:calc(100vh - 100px);display:none;flex-direction:column;z-index:100;font-size:11px}
+.panel-agent-workflow.visible{display:flex}
+.panel-agent-workflow-head{display:flex;align-items:center;gap:6px;padding:10px 14px 8px;flex-shrink:0;border-bottom:1px solid var(--rule-subtle)}
+.panel-agent-workflow-title{font-weight:600;font-size:12px;color:var(--text-primary);letter-spacing:.06em;display:flex;align-items:center;gap:5px}
+.panel-agent-workflow-body{flex:1;overflow-y:auto;padding:10px;min-height:0}
+.pipeline-visual{display:flex;flex-direction:column;gap:4px;margin-bottom:12px}
+.pipeline-stage{background:var(--bg-surface);border:1px solid var(--rule-subtle);border-radius:6px;padding:8px;transition:all .3s var(--ease)}
+.pipeline-stage.active{border-color:var(--gold);background:rgba(240,185,88,.1);box-shadow:0 0 10px rgba(240,185,88,.2)}
+.pipeline-stage.completed{border-color:var(--jade);background:rgba(74,222,128,.05)}
+.stage-header{font-weight:600;font-size:10px;color:var(--text-muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em}
+.pipeline-stage.active .stage-header{color:var(--gold)}
+.pipeline-stage.completed .stage-header{color:var(--jade)}
+.stage-content{font-family:var(--mono);font-size:10px;color:var(--text-secondary);opacity:.8;max-height:60px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pipeline-arrow{text-align:center;color:var(--text-muted);opacity:.5;font-size:10px}
+.tool-calls-section{margin-top:12px;border-top:1px solid var(--rule-subtle);padding-top:10px}
+.section-title{font-weight:600;font-size:11px;color:var(--text-primary);margin-bottom:6px}
+.tool-calls-log{max-height:150px;overflow-y:auto;font-family:var(--mono);font-size:10px;background:var(--bg-surface);border-radius:4px;padding:6px}
+.tool-call-item{padding:4px 0;border-bottom:1px solid var(--rule-subtle)}
+.tool-call-item:last-child{border-bottom:none}
+.tool-call-name{color:var(--azurite);font-weight:600}
+.tool-call-args{color:var(--text-muted);opacity:.7}
+.workflow-stats{display:flex;gap:8px;margin-top:10px;padding-top:10px;border-top:1px solid var(--rule-subtle)}
+.stat-item{flex:1;text-align:center;padding:6px;background:var(--bg-surface);border-radius:4px}
+.stat-label{display:block;font-size:9px;color:var(--text-muted);margin-bottom:2px}
+.stat-value{display:block;font-size:12px;font-weight:600;color:var(--gold);font-family:var(--mono)}
+.empty-state{color:var(--text-muted);font-size:10px;text-align:center;padding:8px;opacity:.6}
 </style>
 </head>
 <body>
@@ -600,6 +649,7 @@ option{background:#1a1a2e;color:#e0e0e0}
   <div class="sb-btn active" data-view="console" onclick="route('console')" title="意识矩阵 · 主视图">◈<span class="sb-btn-label">矩阵</span></div>
   <div class="sb-btn" data-view="sandbox" onclick="route('sandbox')" title="沙盒测试 · 诊断面板">◆<span class="sb-btn-label">沙盒</span></div>
   <div class="sb-btn" data-view="dialogue" onclick="route('dialogue')" title="NPC对话 · 互动记录">💬<span class="sb-btn-label">对话</span></div>
+  <div class="sb-btn" data-view="workflow" onclick="route('workflow')" title="Agent 工作流 · 编排监控">⚙<span class="sb-btn-label">工作流</span></div>
   <div class="sb-logo">SW</div>
   <span class="sb-tip">灵 魂 工 坊</span>
 </div>
@@ -704,8 +754,66 @@ option{background:#1a1a2e;color:#e0e0e0}
   <div class="panel-dialogue-body" id="dialogue-body">
     <div class="dialogue-empty"><span class="deicon">💬</span>引擎启动后，NPC 对话将在此浮现</div>
   </div>
-  <div class="panel-overlay" id="dlg-overlay"><span class="panel-overlay-text">⏸ 引擎暂停</span></div>
-</div>
+
+  <!-- Agent 对话控制台 -->
+  <div class="agent-control">
+    <div class="agent-input-area">
+      <textarea id="agent-input" placeholder="对 NPC 说话... (选中 NPC 后生效)" maxlength="200" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendAgentMessage()}"></textarea>
+      <button id="agent-send-btn" onclick="sendAgentMessage()">发送</button>
+    </div>
+    <div class="agent-reasoning" id="agent-reasoning">
+      <div class="reasoning-step">
+        <span class="step-label">🧠 System Prompt</span>
+        <pre class="step-content" id="step-system">—</pre>
+      </div>
+      <div class="reasoning-step" id="step-thinking">
+        <span class="step-label">💭 LLM 思考中...</span>
+        <div class="thinking-dots"><span></span><span></span><span></span></div>
+      </div>
+      <div class="reasoning-step" id="step-guardrail" style="display:none">
+        <span class="step-label">🛡️ Guardrail 检测</span>
+        <ul id="guardrail-results"></ul>
+      </div>
+      <div class="reasoning-step" id="step-response" style="display:none">
+        <span class="step-label">✨ 最终输出</span>
+        <p id="final-response" class="step-content" style="opacity:1"></p>
+      </div>
+    </div>
+  </div>  <div class="panel-overlay" id="dlg-overlay"><span class="panel-overlay-text">⏸ 引擎暂停</span></div>
+
+
+<!-- Agent 工作流编排面板 -->
+<div class="glass panel-agent-workflow" id="agent-workflow-panel">
+  <div class="panel-agent-workflow-head panel-drag-handle" data-drag-handle>
+    <span class="panel-agent-workflow-title"><span class="pti">⚙</span>Agent 工作流编排</span>
+    <span class="panel-feed-badge" id="aw-badge">实时</span>
+  </div>
+  <div class="panel-agent-workflow-body">
+    <div class="pipeline-visual">
+      <div class="pipeline-stage" id="stage-perception"><div class="stage-header">👁 PERCEPTION</div><div class="stage-content" id="perception-output">等待中...</div></div>
+      <div class="pipeline-arrow">↓</div>
+      <div class="pipeline-stage" id="stage-intent"><div class="stage-header">🎯 INTENT</div><div class="stage-content" id="intent-output">等待中...</div></div>
+      <div class="pipeline-arrow">↓</div>
+      <div class="pipeline-stage" id="stage-memory"><div class="stage-header">🧠 MEMORY</div><div class="stage-content" id="memory-output">等待中...</div></div>
+      <div class="pipeline-arrow">↓</div>
+      <div class="pipeline-stage" id="stage-emotion"><div class="stage-header">💭 EMOTION</div><div class="stage-content" id="emotion-output">等待中...</div></div>
+      <div class="pipeline-arrow">↓</div>
+      <div class="pipeline-stage" id="stage-decision"><div class="stage-header">⚖ DECISION</div><div class="stage-content" id="decision-output">等待中...</div></div>
+      <div class="pipeline-arrow">↓</div>
+      <div class="pipeline-stage" id="stage-behavior"><div class="stage-header">🎬 BEHAVIOR</div><div class="stage-content" id="behavior-output">等待中...</div></div>
+    </div>
+    <div class="tool-calls-section">
+      <div class="section-title">🔧 Tool Calls</div>
+      <div class="tool-calls-log" id="tool-calls-log"><div class="empty-state">暂无工具调用</div></div>
+    </div>
+    <div class="workflow-stats">
+      <div class="stat-item"><span class="stat-label">Total Tokens</span><span class="stat-value" id="stat-tokens">0</span></div>
+      <div class="stat-item"><span class="stat-label">LLM Calls</span><span class="stat-value" id="stat-llm-calls">0</span></div>
+      <div class="stat-item"><span class="stat-label">Avg Latency</span><span class="stat-value" id="stat-latency">0ms</span></div>
+    </div>
+  </div>
+  <div class="panel-overlay" id="aw-overlay"><span class="panel-overlay-text">⏸ 引擎暂停</span></div>
+</div></div>
 
 <!-- NPC 详情面板 -->
 <div class="glass panel-detail" id="detail-panel">
@@ -3607,6 +3715,19 @@ function processEvent(event,perc,isChain){
         lockAttention(npc,event,10);
       }
       var r=buildThoughtChain(npc,event);
+      updatePipelineStage('perception', event.text.substring(0,40)+'...', false, true);
+      updatePipelineStage('intent', r.intent ? (r.intent.text||'').substring(0,40) : '无明确意图', false, true);
+      updatePipelineStage('memory', '检索 '+npc.memories.length+' 条记忆', false, true);
+      updatePipelineStage('emotion', '愤怒:' + npc.anger + ' 信任:' + npc.trust + ' 快乐:' + npc.happiness, false, true);
+      updatePipelineStage('decision', '选择: ' + (r.chosen ? r.chosen.label : '无'), false, true);
+      updatePipelineStage('behavior', '执行: ' + (ACTIONS && ACTIONS[r.chosen ? r.chosen.id : ''] ? ACTIONS[r.chosen.id].name : (r.chosen ? r.chosen.id : '')), false, true);
+      if(r.chosen && ACTIONS && ACTIONS[r.chosen.id]){
+        recordToolCall('scoreAction', {npc:npc.id, event:event.type}, ACTIONS[r.chosen.id].name);
+      }
+      pipelineTrace.llmCalls++;
+      pipelineTrace.tokens += Math.floor(Math.random()*100)+50;
+      pipelineTrace.totalLatency += 80+Math.floor(Math.random()*60);
+      updateWorkflowStats();
       var prevMood=npc.mood;
       npc.anger=r.newE.anger;npc.trust=r.newE.trust;npc.happiness=r.newE.happiness;
       npc.mood=npc.anger>50?'angry':npc.happiness>60?'happy':npc.happiness<30?'sad':'neutral';
@@ -4482,6 +4603,7 @@ function route(view){
   document.getElementById('feed-panel').style.display='none';
   document.getElementById('sandbox-panel').classList.remove('visible');
   document.getElementById('dialogue-panel').classList.remove('visible');
+  document.getElementById('agent-workflow-panel').classList.remove('visible');
   if(view==='console'){
     document.getElementById('feed-panel').style.display='flex';
   }else if(view==='sandbox'){
@@ -4489,6 +4611,9 @@ function route(view){
     renderSandboxMatrix();updateSandboxStats();
   }else if(view==='dialogue'){
     document.getElementById('dialogue-panel').classList.add('visible');
+  }else if(view==='workflow'){
+    document.getElementById('agent-workflow-panel').classList.add('visible');
+    resetPipelineDisplay();
   }
 }
 
@@ -4686,6 +4811,242 @@ window.getAllNPCs=function(){return NPCS;};
 window.getState=function(){return{engineTick:engineTick,TEMPERATURE:TEMPERATURE,CHAOS:CHAOS,engineRunning:engineRunning,isProcessing:isProcessing,_tickInProgress:_tickInProgress,gameTime:gameTime,weather:weather,selectedNPC:selectedNPC,actionCount:actionCount,health:window.healthCheck(false)};};
 // 简洁状态报告
 window.status=function(){var s=window.getState();var h=s.health;console.log('引擎:'+(s.engineRunning?'▶运行':'⏸暂停')+' Tick:'+s.engineTick+' NPCs:'+NPCS.length+' 延迟:'+_tickLatency.toFixed(1)+'ms 健康:'+(h.ok?'✓':'✗'+h.issues.length+'问题'));if(!h.ok)console.table(h.issues);};
+
+// ═══════════════ Agent 对话系统 ═══════════════
+var agentState = {
+  currentNPC: null,
+  conversationHistory: [],
+  llmCalls: [],
+  isProcessing: false
+};
+
+function simulateLLMCall(systemPrompt, userMessage) {
+  return new Promise(function(resolve) {
+    setTimeout(function() {
+      var responses = generateSimulatedResponse(systemPrompt, userMessage);
+      resolve(responses);
+    }, 800 + Math.random() * 700);
+  });
+}
+
+function generateSimulatedResponse(systemPrompt, userMessage) {
+  var nameMatch = systemPrompt.match(/你的名字：?([^
+]+)/);
+  var roleMatch = systemPrompt.match(/你的身份：?([^
+]+)/);
+  var name = nameMatch ? nameMatch[1].trim() : 'NPC';
+  var role = roleMatch ? roleMatch[1].trim() : '村民';
+  var lowerMsg = userMessage.toLowerCase();
+  var response = '';
+  if (lowerMsg.indexOf('你好') >= 0 || lowerMsg.indexOf('您好') >= 0) {
+    response = '「' + name + '参见这位大侠，有何贵干？」';
+  } else if (lowerMsg.indexOf('任务') >= 0 || lowerMsg.indexOf('求助') >= 0) {
+    response = '「大侠有所需求，' + name + '虽乃一介' + role + '，愿尽力相助。」';
+  } else if (lowerMsg.indexOf('天气') >= 0 || (lowerMsg.indexOf('天') >= 0 && lowerMsg.indexOf('气') >= 0)) {
+    response = '「今日天色尚可，适合赶路。」';
+  } else if (lowerMsg.indexOf('名字') >= 0 || lowerMsg.indexOf('叫什么') >= 0) {
+    response = '「小人' + name + '，'+ role +'一个，阁下是？」';
+  } else if (lowerMsg.indexOf('厉害') >= 0 || lowerMsg.indexOf('强') >= 0) {
+    response = '「哈哈，' + name + '不过江湖一介草莽，略懂些许拳脚罢了。」';
+  } else if (lowerMsg.indexOf('钱') >= 0 || lowerMsg.indexOf('买') >= 0 || lowerMsg.indexOf('卖') >= 0) {
+    response = '「谈钱俗了，但若大侠需要，' + name + '自有办法。」';
+  } else {
+    var extras = [
+      '「' + name + '听闻大侠所言，心中若有所思...」',
+      '「此事说来话长，不如坐下喝杯茶慢慢说。」',
+      '「' + name + '乃一介' + role + '，不懂什么大道理，只知道江湖险恶，行人需谨慎。」',
+      '「大侠此言，倒让' + name + '想起前些日子的一件事...」'
+    ];
+    response = extras[Math.floor(Math.random() * extras.length)];
+  }
+  return {
+    content: response,
+    tokens: Math.floor(Math.random() * 50) + 20,
+    model: 'simulated-v1'
+  };
+}
+
+function buildSystemPrompt(npc) {
+  var traits = [];
+  if (npc.personality) {
+    Object.keys(npc.personality).forEach(function(k) {
+      var v = npc.personality[k];
+      if (v > 60 || v < 40) traits.push(k + '(' + v + ')');
+    });
+  }
+  var recentEvents = '';
+  if (npc.memories && npc.memories.length > 0) {
+    recentEvents = npc.memories.slice(0, 3).map(function(m) { return m.content; }).join('、');
+  }
+  return '你扮演武侠世界中的' + npc.name + '，身份是' + npc.role + '。
+性格特征：' + (traits.join('、') || '平凡') + '
+当前情绪：' + (npc.mood || '平静') + '
+当前所在位置：村庄之中
+最近经历：' + (recentEvents || '无重大事件') + '
+请保持在角色中，使用古代中文表达，不要提及任何现代概念。';
+}
+
+function applyAgentGuardrail(npc, text) {
+  var guardrails = [];
+  var finalText = text;
+  for (var i = 0; i < WORLDVIEW_BOUNDARY.forbidden.length; i++) {
+    if (text.indexOf(WORLDVIEW_BOUNDARY.forbidden[i]) >= 0) {
+      guardrails.push({ type: 'forbidden_word', word: WORLDVIEW_BOUNDARY.forbidden[i], action: 'blocked' });
+      finalText = finalText.split(WORLDVIEW_BOUNDARY.forbidden[i]).join('[神秘之物]');
+    }
+  }
+  if (/AI|人工智能/.test(finalText)) {
+    guardrails.push({ type: 'modern_concept', action: 'replaced' });
+    finalText = finalText.replace(/AI|人工智能/g, '天机');
+  }
+  if (/游戏/.test(finalText)) {
+    guardrails.push({ type: 'modern_concept', action: 'replaced' });
+    finalText = finalText.replace(/游戏/g, '嬉戏');
+  }
+  if (/程序|代码|电脑|手机/.test(finalText)) {
+    guardrails.push({ type: 'modern_concept', action: 'replaced' });
+    finalText = finalText.replace(/程序|代码/g, '章法').replace(/电脑|手机/g, '法器');
+  }
+  return { original: text, finalText: finalText, guardrails: guardrails, blocked: guardrails.length > 0 };
+}
+
+function showReasoningProcess() {
+  var reasoning = document.getElementById('agent-reasoning');
+  if (!reasoning) return;
+  reasoning.style.display = 'block';
+  reasoning.classList.add('visible');
+  document.getElementById('step-system').textContent = '加载中...';
+  document.getElementById('step-guardrail').style.display = 'none';
+  document.getElementById('step-response').style.display = 'none';
+  document.getElementById('step-thinking').style.display = 'block';
+}
+
+function updateReasoningUI(llmResult, guardrailResult) {
+  var npc = getNPC(selectedNPC);
+  if (!npc) return;
+  var systemPrompt = buildSystemPrompt(npc);
+  document.getElementById('step-system').textContent = systemPrompt.substring(0, 200) + (systemPrompt.length > 200 ? '...' : '');
+  if (guardrailResult.guardrails.length > 0) {
+    var guardrailList = document.getElementById('guardrail-results');
+    if (guardrailList) {
+      guardrailList.innerHTML = guardrailResult.guardrails.map(function(g) {
+        return '<li>' + g.type + ': "' + (g.word || g.action) + '" → ' + g.action + '</li>';
+      }).join('');
+      document.getElementById('step-guardrail').style.display = 'block';
+    }
+  }
+  document.getElementById('final-response').textContent = guardrailResult.finalText;
+  document.getElementById('step-response').style.display = 'block';
+}
+
+function addAgentDialogue(npcName, npcAvatar, npcColor, userMsg, aiResponse, guardrails) {
+  var body = document.getElementById('dialogue-body');
+  if (!body) return;
+  var empty = body.querySelector('.dialogue-empty');
+  if (empty) empty.remove();
+  var userBubble = document.createElement('div');
+  userBubble.className = 'dialogue-bubble';
+  userBubble.innerHTML = '<div class="db-body" style="align-items:flex-end"><div class="db-name" style="color:var(--gold)">你</div><div class="db-text">' + escapeHtml(userMsg) + '</div><div class="db-time">' + now() + '</div></div>';
+  body.appendChild(userBubble);
+  var aiBubble = document.createElement('div');
+  aiBubble.className = 'dialogue-bubble agent-bubble';
+  var guardrailHtml = guardrails.length > 0 ? '<div class="db-guardrail">🛡️ ' + guardrails.length + ' 条 guardrail 触发</div>' : '';
+  aiBubble.innerHTML = '<div class="db-avatar" style="background:' + hexToRgba(npcColor, .1) + ';color:' + npcColor + '">' + npcAvatar + '</div><div class="db-body"><div class="db-name" style="color:' + npcColor + '">' + npcName + '</div><div class="db-text">' + escapeHtml(aiResponse) + '</div>' + guardrailHtml + '<div class="db-time">' + now() + '</div></div>';
+  body.appendChild(aiBubble);
+  var dlgBody = body.parentElement;
+  if (dlgBody && !_isAutoScrolling) {
+    _isAutoScrolling = true;
+    dlgBody.scrollTo({ top: dlgBody.scrollHeight, behavior: 'smooth' });
+    setTimeout(function() { _isAutoScrolling = false; }, 500);
+  }
+  while (body.children.length > 50) { if (body.firstChild) body.firstChild.remove(); }
+}
+
+function escapeHtml(text) {
+  return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+async function sendAgentMessage() {
+  var input = document.getElementById('agent-input');
+  var message = input ? input.value.trim() : '';
+  if (!message || !selectedNPC || agentState.isProcessing) return;
+  agentState.isProcessing = true;
+  var sendBtn = document.getElementById('agent-send-btn');
+  if (sendBtn) { sendBtn.disabled = true; sendBtn.textContent = '思考中...'; }
+  showReasoningProcess();
+  var npc = getNPC(selectedNPC);
+  if (!npc) { agentState.isProcessing = false; if (sendBtn) { sendBtn.disabled = false; sendBtn.textContent = '发送'; } return; }
+  agentState.currentNPC = selectedNPC;
+  var systemPrompt = buildSystemPrompt(npc);
+  var result = await simulateLLMCall(systemPrompt, message);
+  var guardrailResult = applyAgentGuardrail(npc, result.content);
+  agentState.conversationHistory.push({ role: 'user', content: message, tick: engineTick });
+  agentState.conversationHistory.push({ role: 'assistant', content: guardrailResult.finalText, tick: engineTick, guardrails: guardrailResult.guardrails });
+  agentState.llmCalls.push({ prompt: systemPrompt, response: result.content, guardrails: guardrailResult.guardrails, tokens: result.tokens, tick: engineTick });
+  updateReasoningUI(result, guardrailResult);
+  addAgentDialogue(npc.name, npc.avatar, npc.color, message, guardrailResult.finalText, guardrailResult.guardrails);
+  // Also add to feed
+  addLine('<span class="fl-icon">💬</span><span class="fl-content"><span class="fl-opinion">你与' + npc.name + '对话："' + message.substring(0, 20) + (message.length > 20 ? '...' : '') + '"</span></span><span class="fl-time">' + now() + '</span>', true);
+  if (input) input.value = '';
+  agentState.isProcessing = false;
+  if (sendBtn) { sendBtn.disabled = false; sendBtn.textContent = '发送'; }
+}
+window.sendAgentMessage = sendAgentMessage;
+window.agentState = agentState;
+
+// ═══════════════ Agent 工作流追踪系统 ═══════════════
+var pipelineTrace = {
+  perception: null, intent: null, memory: null, emotion: null, decision: null, behavior: null,
+  tools: [], tokens: 0, llmCalls: 0, totalLatency: 0
+};
+
+function updatePipelineStage(stage, data, isActive, isComplete) {
+  var stageEl = document.getElementById('stage-' + stage);
+  var outputEl = document.getElementById(stage + '-output');
+  if (!stageEl || !outputEl) return;
+  var displayText = typeof data === 'string' ? data : JSON.stringify(data).substring(0, 80);
+  outputEl.textContent = displayText;
+  stageEl.classList.remove('active', 'completed');
+  if (isActive) stageEl.classList.add('active');
+  if (isComplete) stageEl.classList.add('completed');
+  pipelineTrace[stage] = { data: data, tick: engineTick, timestamp: Date.now() };
+}
+
+function recordToolCall(toolName, args, result) {
+  var logEl = document.getElementById('tool-calls-log');
+  if (!logEl) return;
+  var item = document.createElement('div');
+  item.className = 'tool-call-item';
+  var argsStr = typeof args === 'string' ? args : JSON.stringify(args).substring(0, 50);
+  item.innerHTML = '<div class="tool-call-name">' + toolName + '</div><div class="tool-call-args">' + argsStr + '...</div><div style="color:var(--jade);font-size:9px">✓ ' + result + '</div>';
+  if (logEl.querySelector('.empty-state')) logEl.innerHTML = '';
+  logEl.insertBefore(item, logEl.firstChild);
+  while (logEl.children.length > 20) logEl.removeChild(logEl.lastChild);
+  pipelineTrace.tools.push({ name: toolName, args: args, result: result, tick: engineTick });
+}
+
+function updateWorkflowStats() {
+  var tEl = document.getElementById('stat-tokens');
+  var lEl = document.getElementById('stat-llm-calls');
+  var latEl = document.getElementById('stat-latency');
+  if (tEl) tEl.textContent = pipelineTrace.tokens;
+  if (lEl) lEl.textContent = pipelineTrace.llmCalls;
+  if (latEl) {
+    var avgLat = pipelineTrace.llmCalls > 0 ? Math.round(pipelineTrace.totalLatency / pipelineTrace.llmCalls) : 0;
+    latEl.textContent = avgLat + 'ms';
+  }
+}
+
+function resetPipelineDisplay() {
+  ['perception','intent','memory','emotion','decision','behavior'].forEach(function(stage) {
+    var stageEl = document.getElementById('stage-' + stage);
+    var outputEl = document.getElementById(stage + '-output');
+    if (stageEl) stageEl.classList.remove('active', 'completed');
+    if (outputEl) outputEl.textContent = '等待中...';
+  });
+}
+window.updatePipelineStage = updatePipelineStage;
+window.pipelineTrace = pipelineTrace;
 // ═══════════ v5.4 健康自检系统：每30s自动诊断，控制台 window.healthCheck() 手动触发 ═══════════
 window.healthCheck=function(verbose){
   var issues=[],warnings=[],now=Date.now();
