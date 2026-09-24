@@ -780,7 +780,7 @@ option{background:#1a1a2e;color:#e0e0e0}
       </div>
     </div>
   </div>  <div class="panel-overlay" id="dlg-overlay"><span class="panel-overlay-text">⏸ 引擎暂停</span></div>
-
+</div>
 
 <!-- Agent 工作流编排面板 -->
 <div class="glass panel-agent-workflow" id="agent-workflow-panel">
@@ -813,7 +813,7 @@ option{background:#1a1a2e;color:#e0e0e0}
     </div>
   </div>
   <div class="panel-overlay" id="aw-overlay"><span class="panel-overlay-text">⏸ 引擎暂停</span></div>
-</div></div>
+</div>
 
 <!-- NPC 详情面板 -->
 <div class="glass panel-detail" id="detail-panel">
@@ -5127,11 +5127,41 @@ function _startHealthMonitor(){
   },30000);
 }
 _startHealthMonitor();
+_checkCriticalDeps();
 requestAnimationFrame(animate);
-// 全局错误捕获：记录未捕获的错误以便诊断
+// 全局错误捕获 + 错误码系统
+var _errorLog=[];
+function _logError(code,msg,ctx){
+  var entry={code:code,msg:msg,ctx:ctx||'',ts:Date.now()};
+  _errorLog.push(entry);
+  console.error('[灵魂工坊] ['+code+'] '+msg+(ctx?' | '+ctx:''));
+  // 显示在页面上（可选）
+  var errBanner=document.getElementById('error-banner');
+  if(errBanner){errBanner.style.display='flex';errBanner.textContent='⚠ '+code+': '+msg;}
+  else{
+    var b=document.createElement('div');b.id='error-banner';b.style.cssText='position:fixed;top:10px;left:50%;transform:translateX(-50%);z-index:9999;padding:6px 14px;background:rgba(192,57,43,.9);color:#fff;font-size:12px;border-radius:4px;display:flex;align-items:center;gap:8px;';
+    b.innerHTML='⚠ <span>'+code+': '+msg+'</span><button onclick="this.parentElement.style.display=\'none\'" style="margin-left:8px;background:none;border:none;color:#fff;cursor:pointer;font-size:11px">✕</button>';
+    document.body.appendChild(b);
+  }
+}
 window.addEventListener('error',function(e){
-  console.error('[灵魂工坊] 未捕获错误:',e.message,'@',e.filename,'line',e.lineno,'col',e.colno);
+  _logError('SW-500',e.message,(e.filename||'')+':'+e.lineno);
 });
+window.addEventListener('unhandledrejection',function(e){
+  _logError('SW-501',e.reason&&e.reason.message?e.reason.message:String(e.reason),'');
+});
+// 关键模块自检
+function _checkCriticalDeps(){
+  if(typeof THREE==='undefined'||!THREE){_logError('SW-100','Three.js 未加载','');return;}
+  if(typeof engineTick==='undefined'){_logError('SW-200','引擎 tick 未初始化','');return;}
+  if(typeof processEvent==='undefined'){_logError('SW-300','processEvent 未定义','');return;}
+  if(typeof route==='undefined'){_logError('SW-301','route 未定义','');return;}
+  var canvas=document.getElementById('three-canvas');
+  if(!canvas){_logError('SW-101','three-canvas 不存在','');return;}
+  if(!window.WebGLRenderingContext){_logError('SW-102','WebGL 不受支持','');return;}
+  var renderer=null;try{renderer=new THREE.WebGLRenderer({canvas:canvas});}catch(e){_logError('SW-103','WebGL 初始化失败:'+e.message,'');}
+  if(renderer&&renderer.getContext()===null){_logError('SW-104','WebGL context 为 null','');}
+}
 </script>
 </body>
 </html>
