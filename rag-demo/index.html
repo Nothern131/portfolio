@@ -31,6 +31,12 @@ body{font-family:-apple-system,'Segoe UI','PingFang SC','Microsoft YaHei',sans-s
 body::after{content:'';position:fixed;inset:0;z-index:9999;pointer-events:none;opacity:.03;
   background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
 
+/* 粒子背景 */
+#particle-canvas{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.6}
+#cursor-glow{position:fixed;width:300px;height:300px;border-radius:50%;pointer-events:none;z-index:1;
+  background:radial-gradient(circle,oklch(55% 0.12 85/0.04) 0%,transparent 70%);
+  transform:translate(-50%,-50%);transition:opacity .3s var(--ease);opacity:0;will-change:transform}
+
 /* 顶部 */
 #top-bar{position:sticky;top:0;z-index:100;padding:12px 24px;background:oklch(11% 0.01 30/0.9);backdrop-filter:blur(12px);border-bottom:1px solid oklch(25% 0.012 30/0.5);display:flex;align-items:center;gap:16px}
 #top-bar h1{font-size:16px;font-weight:700;letter-spacing:.08em;background:linear-gradient(90deg,var(--gold),var(--jade));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
@@ -40,7 +46,7 @@ body::after{content:'';position:fixed;inset:0;z-index:9999;pointer-events:none;o
 #kb-stats b{color:var(--jade)}
 
 /* 主体布局 */
-#main{display:grid;grid-template-columns:1fr 400px;gap:0;min-height:calc(100vh - 52px)}
+#main{position:relative;z-index:2;display:grid;grid-template-columns:1fr 400px;gap:0;min-height:calc(100vh - 52px)}
 #left-panel{padding:20px;overflow-y:auto;max-height:calc(100vh - 52px)}
 #right-panel{border-left:1px solid oklch(25% 0.012 30/0.5);padding:16px;overflow-y:auto;max-height:calc(100vh - 52px);background:var(--bg-surface)}
 
@@ -67,10 +73,11 @@ body::after{content:'';position:fixed;inset:0;z-index:9999;pointer-events:none;o
 .npc-kb-tag{font-size:9px;padding:1px 6px;background:var(--azurite-dim);color:var(--azurite);border-radius:3px;font-family:var(--mono)}
 .npc-kb-count{margin-left:auto;font-size:10px;font-family:var(--mono);color:var(--text-muted)}
 .npc-kb-items{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.kb-entry{padding:10px;background:var(--bg-surface);border-radius:var(--radius-xs);border:1px solid oklch(25% 0.012 30/0.3);transition:all .25s var(--ease);animation:entryIn .4s var(--ease-bounce) both;cursor:default}
-.kb-entry:nth-child(1){animation-delay:.05s}.kb-entry:nth-child(2){animation-delay:.1s}.kb-entry:nth-child(3){animation-delay:.15s}.kb-entry:nth-child(4){animation-delay:.2s}
+.kb-entry{padding:10px;background:var(--bg-surface);border-radius:var(--radius-xs);border:1px solid oklch(25% 0.012 30/0.3);transition:transform .3s var(--ease-bounce),box-shadow .3s var(--ease),border-color .25s;animation:entryIn .4s var(--ease-bounce) both;cursor:default;will-change:transform}
+.kb-entry:nth-child(1){animation-delay:.05s}.kb-entry:nth-child(2){animation-delay:.1s}.kb-entry:nth-child(3){animation-delay:.15s}.kb-entry:nth-child(4){animation-delay:.2s}.kb-entry:nth-child(5){animation-delay:.25s}.kb-entry:nth-child(6){animation-delay:.3s}
 @keyframes entryIn{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}
-.kb-entry:hover{border-color:var(--gold);background:var(--bg-elevated);transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,.3)}
+.kb-entry:hover{border-color:var(--gold);background:var(--bg-elevated);transform:translateY(-4px) scale(1.03);
+  box-shadow:2px 0 0 rgba(255,71,87,.25),-2px 0 0 rgba(0,217,255,.25),0 12px 24px rgba(0,0,0,.35)}
 .kb-entry-title{font-size:12px;font-weight:600;color:var(--gold);margin-bottom:4px;display:flex;align-items:center;gap:4px}
 .kb-entry-source{font-size:9px;color:var(--text-muted);font-family:var(--mono)}
 .kb-entry-content{font-size:11px;color:var(--text-secondary);line-height:1.5;margin-top:4px;max-height:0;overflow:hidden;transition:max-height .3s var(--ease),margin .3s}
@@ -112,12 +119,13 @@ body::after{content:'';position:fixed;inset:0;z-index:9999;pointer-events:none;o
 #results-section{margin-bottom:20px}
 #results-title{font-size:12px;font-weight:600;color:var(--text-muted);letter-spacing:.08em;margin-bottom:10px;text-transform:uppercase}
 #results-list{display:flex;flex-direction:column;gap:10px}
-.result-card{padding:14px;background:var(--bg-card);border-radius:var(--radius-sm);border:1px solid oklch(25% 0.012 30/0.4);border-left:3px solid var(--gold);transition:all .25s var(--ease);animation:cardIn .4s var(--ease-bounce) both;cursor:default;position:relative;overflow:hidden}
+.result-card{padding:14px;background:var(--bg-card);border-radius:var(--radius-sm);border:1px solid oklch(25% 0.012 30/0.4);border-left:3px solid var(--gold);transition:transform .3s var(--ease-bounce),box-shadow .3s var(--ease);animation:cardIn .4s var(--ease-bounce) both;cursor:default;position:relative;overflow:hidden;will-change:transform}
 .result-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--jade),transparent);opacity:0;transition:opacity .3s}
 .result-card:nth-child(1){animation-delay:.05s}
 .result-card:nth-child(2){animation-delay:.15s}
 .result-card:nth-child(3){animation-delay:.25s}
-.result-card:hover{transform:translateX(3px);border-left-color:var(--jade);box-shadow:var(--shadow)}
+.result-card:hover{transform:translateY(-6px) scale(1.02);border-left-color:var(--jade);
+  box-shadow:2px 0 0 rgba(255,71,87,.3),-2px 0 0 rgba(0,217,255,.3),0 20px 40px rgba(0,0,0,.3)}
 .result-card:hover::before{opacity:1}
 @keyframes cardIn{from{opacity:0;transform:translateY(12px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
 .result-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
@@ -183,12 +191,19 @@ body::after{content:'';position:fixed;inset:0;z-index:9999;pointer-events:none;o
 #chat-send-btn:hover{transform:translateY(-1px);box-shadow:0 4px 12px var(--jade-dim)}
 #chat-send-btn:active{transform:scale(.95)}
 
+/* 对话快捷标签 */
+.chat-quick-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.chat-quick-tag{font-size:10px;padding:3px 10px;background:var(--bg-card);border:1px solid oklch(25% 0.012 30/0.5);border-radius:12px;color:var(--text-muted);cursor:pointer;transition:all .2s var(--ease-bounce)}
+.chat-quick-tag:hover{border-color:var(--jade);color:var(--jade);background:var(--jade-dim);transform:scale(1.05)}
+.chat-quick-tag:active{transform:scale(.95)}
+
 /* 知识库浏览 */
 #kb-section{margin-top:16px}
 #kb-section h3{font-size:11px;font-weight:600;color:var(--text-muted);letter-spacing:.08em;margin-bottom:10px;text-transform:uppercase}
 .kb-list{display:flex;flex-direction:column;gap:6px}
-.kb-item{padding:8px 10px;background:var(--bg-card);border-radius:var(--radius-xs);border:1px solid oklch(25% 0.012 30/0.3);transition:all .2s;cursor:default}
-.kb-item:hover{border-color:var(--gold);background:var(--bg-elevated);transform:translateX(3px)}
+.kb-item{padding:8px 10px;background:var(--bg-card);border-radius:var(--radius-xs);border:1px solid oklch(25% 0.012 30/0.3);transition:transform .25s var(--ease-bounce),box-shadow .25s,border-color .2s;cursor:default}
+.kb-item:hover{border-color:var(--gold);background:var(--bg-elevated);transform:translateX(3px) scale(1.01);
+  box-shadow:2px 0 0 rgba(255,71,87,.15),-2px 0 0 rgba(0,217,255,.15)}
 .kb-item-title{font-size:11px;font-weight:600;color:var(--gold);margin-bottom:2px}
 .kb-item-meta{font-size:9px;color:var(--text-muted)}
 .kb-item-cat{display:inline-block;font-size:9px;padding:0 4px;background:var(--azurite-dim);color:var(--azurite);border-radius:3px;margin-left:4px}
@@ -209,6 +224,9 @@ body::after{content:'';position:fixed;inset:0;z-index:9999;pointer-events:none;o
 </style>
 </head>
 <body>
+
+<canvas id="particle-canvas"></canvas>
+<div id="cursor-glow"></div>
 
 <div id="top-bar">
   <h1>📚 江湖知识库</h1>
@@ -309,6 +327,7 @@ body::after{content:'';position:fixed;inset:0;z-index:9999;pointer-events:none;o
           <div class="chat-bubble">选择左侧 NPC 身份，输入问题即可开始对话。每位 NPC 拥有专属知识库，检索时会优先命中其知识领域。</div>
         </div>
       </div>
+      <div class="chat-quick-tags" id="chat-quick-tags"></div>
       <div id="chat-input-row">
         <input id="chat-input" type="text" placeholder="向 NPC 提问..." onkeydown="if(event.key==='Enter')sendChat()">
         <button id="chat-send-btn" onclick="sendChat()">发送</button>
@@ -345,40 +364,50 @@ var NPC_KB = {
     {id:'a001',category:'武功',title:'青云剑法',content:'青云剑法乃云溪家传绝学，共十三式，剑走偏锋，讲究后发先至。云溪自幼随父修习，已至第十一式。',keywords:['青云','剑法','家传','云溪'],severity:82,source:'《云氏家谱》'},
     {id:'a002',category:'武功',title:'轻功·踏雪无痕',content:'踏雪无痕乃江湖罕见轻功，落地无声，行于水面而不湿鞋。云溪以此功闻名江湖。',keywords:['踏雪无痕','轻功','云溪'],severity:78,source:'《武林秘闻》'},
     {id:'a003',category:'江湖',title:'独行侠客',content:'云溪行走江湖二十年，独来独往，不拜山头，不结帮派。江湖人称"独行侠"。',keywords:['独行侠','云溪','江湖'],severity:68,source:'《江湖见闻录》'},
-    {id:'a004',category:'武功',title:'破风刀法',content:'破风刀法以刀代剑，大开大合。云溪虽主修剑法，亦通晓此刀路，可临阵切换。',keywords:['破风刀','刀法','云溪'],severity:72,source:'《兵器谱》'}
+    {id:'a004',category:'武功',title:'破风刀法',content:'破风刀法以刀代剑，大开大合。云溪虽主修剑法，亦通晓此刀路，可临阵切换。',keywords:['破风刀','刀法','云溪'],severity:72,source:'《兵器谱》'},
+    {id:'a005',category:'江湖',title:'夜探镖局',content:'三年前云溪夜探黑风镖局，单枪匹马救出被扣押的白面书生。此役后"独行侠"之名更加响亮。',keywords:['黑风镖局','夜探','云溪','书生'],severity:74,source:'《江湖见闻录》'},
+    {id:'a006',category:'武功',title:'内功·听雨心法',content:'听雨心法为云溪独创内功，需在雨夜静坐三时辰，以雨声引动内力周天运转。练至大成可听辨十丈之外滴漏声。',keywords:['听雨心法','内功','云溪','雨夜'],severity:76,source:'云溪手札'}
   ],
   B:[
     {id:'b001',category:'民俗',title:'村中禁忌',content:'本村有三不忌：不忌打雷、不忌上坟、不忌说鬼。但忌讳初一十五不可动土。',keywords:['禁忌','村庄','民俗'],severity:58,source:'《乡野风俗志》'},
     {id:'b002',category:'民俗',title:'赶集日',content:'每逢三六九，村集开市。卖货郎从早摆到晚，阿福最爱在集上买些小玩意儿。',keywords:['赶集','村集','阿福'],severity:52,source:'《乡野风俗志》'},
     {id:'b003',category:'地理',title:'后山小路',content:'村后有条隐秘小路通往山寨，平日村民不走，只有打猎时才用。阿福从小跟着祖父走过。',keywords:['后山','小路','山寨'],severity:62,source:'《村中口述》'},
-    {id:'b004',category:'民俗',title:'年俗·贴春联',content:'除夕前一日，全村贴春联。阿福家的春联由书生代写，年年如此。',keywords:['春联','除夕','年俗'],severity:55,source:'《乡野风俗志》'}
+    {id:'b004',category:'民俗',title:'年俗·贴春联',content:'除夕前一日，全村贴春联。阿福家的春联由书生代写，年年如此。',keywords:['春联','除夕','年俗'],severity:55,source:'《乡野风俗志》'},
+    {id:'b005',category:'地理',title:'村口老槐树',content:'村口那棵老槐树已有两百余年，粗需三人合抱。阿福小时候常爬上去看日落，树干上刻着历代村民的名字。',keywords:['老槐树','村口','阿福','两百'],severity:56,source:'《村中口述》'},
+    {id:'b006',category:'民俗',title:'中秋·放河灯',content:'中秋之夜，全村沿溪放河灯。阿福记得小时候和伙伴一起折纸船放灯，灯上有名字，愿望随水漂流。',keywords:['中秋','河灯','纸船','阿福'],severity:54,source:'《乡野风俗志》'}
   ],
   C:[
     {id:'c001',category:'医道',title:'草药辨识',content:'小翠通晓三百余味草药，尤精辨识毒草与药草之别。田间行走，一眼即知。',keywords:['草药','辨识','小翠','药草'],severity:88,source:'《药草图谱》'},
     {id:'c002',category:'医道',title:'自制伤药',content:'小翠自创"翠心散"，以何首乌、当归、川芎研磨而成，止血效果比金创药更强。',keywords:['翠心散','小翠','伤药','自制'],severity:90,source:'小翠手记'},
     {id:'c003',category:'医道',title:'解毒配方',content:'小翠调配解毒汤方：雄黄、甘草、绿豆同煎，可解百毒之七成。但断肠散无解。',keywords:['解毒','配方','小翠','雄黄'],severity:85,source:'《江湖药典·增补》'},
-    {id:'c004',category:'民俗',title:'药农规矩',content:'采药须晨起带露水，避开正午阳气最盛时。小翠每回进山都循此规矩。',keywords:['药农','采药','小翠'],severity:55,source:'《药农笔记》'}
+    {id:'c004',category:'民俗',title:'药农规矩',content:'采药须晨起带露水，避开正午阳气最盛时。小翠每回进山都循此规矩。',keywords:['药农','采药','小翠'],severity:55,source:'《药农笔记》'},
+    {id:'c005',category:'医道',title:'针灸秘传',content:'小翠师承游方医翁，学得针灸秘传。以银针封穴可止剧痛，但需精准取穴，差之毫厘则伤经脉。',keywords:['针灸','银针','小翠','取穴'],severity:86,source:'小翠手记'},
+    {id:'c006',category:'医道',title:'四季养生',content:'小翠按四时配药：春取疏肝、夏取清心、秋取润肺、冬取温肾。村中百姓皆信"小翠的方子灵"。',keywords:['四季','养生','小翠','配药'],severity:78,source:'《药农笔记》'}
   ],
   D:[
     {id:'d001',category:'历史',title:'村庄三十年',content:'老村长见证本村三十年变迁：从荒村到集市，从三户到四十户。他记得每一户人家的旧事。',keywords:['村庄','三十年','老村长','变迁'],severity:72,source:'老村长的记忆'},
     {id:'d002',category:'历史',title:'门派恩怨',content:'少林与武当恩怨始于三十年前一场论剑。老村长当年在场，记得每位高手的招式。',keywords:['少林','武当','恩怨','老村长'],severity:80,source:'老村长的记忆'},
     {id:'d003',category:'江湖',title:'老村长的江湖',content:'老村长年轻时也是江湖中人，因一场变故金盆洗手，隐姓埋名在此村定居。',keywords:['老村长','江湖','隐姓埋名'],severity:75,source:'《江湖见闻录》'},
-    {id:'d004',category:'历史',title:'朝廷更迭',content:'本朝立国四十年，老村长亲历三次宫廷政变，对朝中局势了如指掌。',keywords:['朝廷','政变','老村长'],severity:68,source:'老村长的记忆'}
+    {id:'d004',category:'历史',title:'朝廷更迭',content:'本朝立国四十年，老村长亲历三次宫廷政变，对朝中局势了如指掌。',keywords:['朝廷','政变','老村长'],severity:68,source:'老村长的记忆'},
+    {id:'d005',category:'江湖',title:'老村长的刀',content:'老村长腰间挂着一把不出鞘的刀。村中孩子都知道：那刀二十年没开过刃，但无人敢小看他。',keywords:['刀','老村长','不出鞘'],severity:70,source:'《江湖见闻录》'},
+    {id:'d006',category:'历史',title:'旧盟约',content:'三十年前少林、武当、丐帮曾立旧盟约，约定十年内不动刀兵。老村长是当年唯一的民间见证人。',keywords:['旧盟约','少林','武当','老村长'],severity:82,source:'老村长的记忆'}
   ],
   E:[
     {id:'e001',category:'历史',title:'史书笔记',content:'书生通读史书二十卷，对前朝掌故、本朝制度烂熟于心。常以史为鉴，点评时局。',keywords:['史书','书生','前朝'],severity:82,source:'书生手批'},
     {id:'e002',category:'地理',title:'山川志略',content:'书生遍访名山大川，撰《山川志略》三卷，记载百余处山水名胜与隐秘路径。',keywords:['山川志','书生','地理'],severity:78,source:'《山川志略》'},
     {id:'e003',category:'历史',title:'九阴真经考',content:'书生对九阴真经流传史有深入研究，考证出七次转手记录，与江湖传言多有出入。',keywords:['九阴真经','书生','考证'],severity:90,source:'《九阴考》'},
-    {id:'e004',category:'江湖',title:'侠客评传',content:'书生撰《侠客评传》，点评当代十二位侠客，文笔犀利，江湖上流传甚广。',keywords:['侠客评传','书生','点评'],severity:70,source:'《侠客评传》'}
+    {id:'e004',category:'江湖',title:'侠客评传',content:'书生撰《侠客评传》，点评当代十二位侠客，文笔犀利，江湖上流传甚广。',keywords:['侠客评传','书生','点评'],severity:70,source:'《侠客评传》'},
+    {id:'e005',category:'地理',title:'密道图',content:'书生手绘三幅村寨密道图，标注了十七处可藏身的山洞与暗道。江湖中人暗藏于此。',keywords:['密道图','山洞','暗道','书生'],severity:74,source:'《山川志略》'},
+    {id:'e006',category:'历史',title:'武学源流图',content:'书生绘制武学源流图，将天下功夫归为十三派，标注了各派源流与传承脉络。',keywords:['武学源流','十三派','书生','图谱'],severity:76,source:'《武学源流考》'}
   ]
 };
 
 var NPC_LIST = [
-  {id:'A',name:'云溪',role:'侠客',icon:'⚔️',cats:['武功','江湖'],kb:4},
-  {id:'B',name:'阿福',role:'村民',icon:'🍞',cats:['民俗','地理'],kb:4},
-  {id:'C',name:'小翠',role:'药师',icon:'🌿',cats:['医道','民俗'],kb:4},
-  {id:'D',name:'老村长',role:'长者',icon:'🏮',cats:['历史','江湖'],kb:4},
-  {id:'E',name:'书生',role:'儒生',icon:'📜',cats:['历史','地理'],kb:4}
+  {id:'A',name:'云溪',role:'侠客',icon:'⚔️',cats:['武功','江湖'],kb:6},
+  {id:'B',name:'阿福',role:'村民',icon:'🍞',cats:['民俗','地理'],kb:6},
+  {id:'C',name:'小翠',role:'药师',icon:'🌿',cats:['医道','民俗'],kb:6},
+  {id:'D',name:'老村长',role:'长者',icon:'🏮',cats:['历史','江湖'],kb:6},
+  {id:'E',name:'书生',role:'儒生',icon:'📜',cats:['历史','地理'],kb:6}
 ];
 
 var selectedNPC='A';
@@ -733,6 +762,104 @@ function sendChat(){
   },500+Math.random()*600);
 }
 
+/* ═══════════════ 粒子背景（§三·D 代码动画） ═══════════════ */
+function initParticles(){
+  var canvas=document.getElementById('particle-canvas');
+  var ctx=canvas.getContext('2d');
+  var W,H,particles=[];
+  function resize(){W=canvas.width=innerWidth;H=canvas.height=innerHeight;}
+  resize();addEventListener('resize',resize);
+  var SEED=42;
+  function hash(n){var s=Math.sin(n*127.1+311.7)*43758.5453;return s-Math.floor(s);}
+  for(var i=0;i<60;i++){
+    particles.push({
+      x:hash(i*SEED)*W,y:hash(i*SEED+0.5)*H,
+      vx:(hash(i*SEED+1)-0.5)*0.3,vy:(hash(i*SEED+2)-0.5)*0.3,
+      r:hash(i*SEED+3)*2+0.5
+    });
+  }
+  var mouse={x:W/2,y:H/2};
+  addEventListener('mousemove',function(e){mouse.x=e.clientX;mouse.y=e.clientY;});
+  var t=0;
+  (function loop(){
+    t++;
+    ctx.clearRect(0,0,W,H);
+    for(var i=0;i<particles.length;i++){
+      var p=particles[i];
+      p.x+=p.vx;p.y+=p.vy;
+      if(p.x<0)p.x=W;if(p.x>W)p.x=0;
+      if(p.y<0)p.y=H;if(p.y>H)p.y=0;
+      var dx=mouse.x-p.x,dy=mouse.y-p.y;
+      var dist=Math.sqrt(dx*dx+dy*dy);
+      var influence=Math.max(0,1-dist/200)*2;
+      p.x-=dx*influence*0.01;p.y-=dy*influence*0.01;
+      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle='rgba(244,193,90,0.3)';ctx.fill();
+      for(var j=i+1;j<particles.length;j++){
+        var p2=particles[j];
+        var dx2=p.x-p2.x,dy2=p.y-p2.y;
+        var d2=Math.sqrt(dx2*dx2+dy2*dy2);
+        if(d2<100){
+          ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(p2.x,p2.y);
+          ctx.strokeStyle='rgba(52,211,153,'+(0.15*(1-d2/100))+')';
+          ctx.lineWidth=0.5;ctx.stroke();
+        }
+      }
+    }
+    requestAnimationFrame(loop);
+  })();
+}
+
+/* ═══════════════ 光标跟随光晕 ═══════════════ */
+function initCursorGlow(){
+  var glow=document.getElementById('cursor-glow');
+  if(!glow)return;
+  var cx=0,cy=0,tx=0,ty=0;
+  addEventListener('mousemove',function(e){tx=e.clientX;ty=e.clientY;glow.style.opacity='1';});
+  document.addEventListener('mouseleave',function(){glow.style.opacity='0';});
+  (function loop(){
+    cx+=(tx-cx)*.08;cy+=(ty-cy)*.08;
+    glow.style.left=cx+'px';glow.style.top=cy+'px';
+    requestAnimationFrame(loop);
+  })();
+}
+
+/* ═══════════════ 磁性按钮（弹簧物理） ═══════════════ */
+function initMagneticButtons(){
+  var btns=document.querySelectorAll('#search-btn,#compare-toggle,#chat-send-btn');
+  for(var i=0;i<btns.length;i++){
+    (function(btn){
+      btn.addEventListener('mousemove',function(e){
+        var rect=btn.getBoundingClientRect();
+        var x=e.clientX-rect.left-rect.width/2;
+        var y=e.clientY-rect.top-rect.height/2;
+        btn.style.transform='translate('+x*.2+'px,'+y*.3+'px) scale(1.03)';
+      });
+      btn.addEventListener('mouseleave',function(){btn.style.transform='';});
+      btn.addEventListener('mousedown',function(){btn.style.transform='scale(.95)';});
+      btn.addEventListener('mouseup',function(){btn.style.transform='';});
+    })(btns[i]);
+  }
+}
+
+/* ═══════════════ 对话快捷标签 ═══════════════ */
+var QUICK_QUESTIONS=['太极拳怎么练','金创药配方','少林七十二绝技','九阴真经下落','桃花岛在哪','华山论剑经过','村中禁忌','武林大会'];
+function renderQuickTags(){
+  var el=document.getElementById('chat-quick-tags');
+  if(!el)return;
+  el.innerHTML='';
+  QUICK_QUESTIONS.slice(0,4).forEach(function(q){
+    var tag=document.createElement('span');
+    tag.className='chat-quick-tag';
+    tag.textContent=q;
+    tag.onclick=function(){
+      document.getElementById('chat-input').value=q;
+      sendChat();
+    };
+    el.appendChild(tag);
+  });
+}
+
 /* ═══════════════ 初始化 ═══════════════ */
 function init(){
   renderNPCOptions();
@@ -741,6 +868,10 @@ function init(){
   var npc=getNPC(selectedNPC);
   document.getElementById('chat-npc-badge').textContent=npc.icon+' '+npc.name+' · '+npc.role;
   renderNPCKBPanel(npc);
+  initParticles();
+  initCursorGlow();
+  initMagneticButtons();
+  renderQuickTags();
 }
 init();
 </script>
