@@ -28,8 +28,6 @@
 }
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:-apple-system,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;background:var(--bg-deep);color:var(--text-primary);min-height:100vh;overflow-x:hidden}
-
-/* 全局噪点 */
 body::after{content:'';position:fixed;inset:0;z-index:9999;pointer-events:none;opacity:.03;
   background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
 
@@ -38,12 +36,45 @@ body::after{content:'';position:fixed;inset:0;z-index:9999;pointer-events:none;o
 #top-bar h1{font-size:16px;font-weight:700;letter-spacing:.08em;background:linear-gradient(90deg,var(--gold),var(--jade));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 #top-bar .subtitle{font-size:11px;color:var(--text-muted);letter-spacing:.05em}
 #kb-stats{margin-left:auto;display:flex;gap:12px;font-size:11px;font-family:var(--mono);color:var(--text-muted)}
-#kb-stats span{padding:2px 8px;background:var(--bg-card);border-radius:4px}
+#kb-stats span{padding:2px 8px;background:var(--bg-card);border-radius:4px;transition:background .3s}
+#kb-stats b{color:var(--jade)}
 
 /* 主体布局 */
-#main{display:grid;grid-template-columns:1fr 380px;gap:0;min-height:calc(100vh - 52px)}
+#main{display:grid;grid-template-columns:1fr 400px;gap:0;min-height:calc(100vh - 52px)}
 #left-panel{padding:20px;overflow-y:auto;max-height:calc(100vh - 52px)}
 #right-panel{border-left:1px solid oklch(25% 0.012 30/0.5);padding:16px;overflow-y:auto;max-height:calc(100vh - 52px);background:var(--bg-surface)}
+
+/* NPC 选择 */
+.npc-selector{margin-bottom:20px;padding:14px;background:var(--bg-card);border-radius:var(--radius-sm);border:1px solid oklch(25% 0.012 30/0.4)}
+.npc-selector h3{font-size:11px;font-weight:600;color:var(--text-muted);letter-spacing:.08em;margin-bottom:10px;text-transform:uppercase}
+.npc-options{display:flex;gap:8px;flex-wrap:wrap}
+.npc-chip{padding:8px 16px;border-radius:20px;font-size:12px;cursor:pointer;border:1px solid oklch(25% 0.012 30/0.6);color:var(--text-secondary);transition:all .25s var(--ease);user-select:none;position:relative;overflow:hidden}
+.npc-chip::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% 50%,var(--jade-dim),transparent 70%);opacity:0;transition:opacity .3s}
+.npc-chip:hover{border-color:var(--jade);color:var(--jade);transform:translateY(-1px)}
+.npc-chip:hover::before{opacity:1}
+.npc-chip.selected{background:var(--jade-dim);border-color:var(--jade);color:var(--jade);font-weight:600;box-shadow:0 0 12px var(--jade-dim)}
+.npc-role{font-size:9px;opacity:.6;margin-left:4px}
+
+/* NPC 专属知识面板 */
+#npc-kb-panel{margin-bottom:20px;padding:16px;background:linear-gradient(135deg,var(--bg-card) 0%,var(--bg-elevated) 100%);border-radius:var(--radius);border:1px solid oklch(25% 0.012 30/0.4);transition:all .4s var(--ease);opacity:0;transform:translateY(12px)}
+#npc-kb-panel.visible{opacity:1;transform:translateY(0)}
+.npc-kb-header{display:flex;align-items:center;gap:10px;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid oklch(25% 0.012 30/0.3)}
+.npc-kb-avatar{font-size:28px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;background:var(--bg-elevated);border:2px solid var(--jade-dim);border-radius:12px;animation:avatarPulse 3s ease-in-out infinite}
+@keyframes avatarPulse{0%,100%{box-shadow:0 0 0 0 var(--jade-dim)}50%{box-shadow:0 0 16px 4px var(--jade-dim)}}
+.npc-kb-name{font-size:14px;font-weight:700;color:var(--text-primary)}
+.npc-kb-role{font-size:10px;color:var(--text-muted)}
+.npc-kb-tags{display:flex;gap:4px;margin-top:2px;flex-wrap:wrap}
+.npc-kb-tag{font-size:9px;padding:1px 6px;background:var(--azurite-dim);color:var(--azurite);border-radius:3px;font-family:var(--mono)}
+.npc-kb-count{margin-left:auto;font-size:10px;font-family:var(--mono);color:var(--text-muted)}
+.npc-kb-items{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.kb-entry{padding:10px;background:var(--bg-surface);border-radius:var(--radius-xs);border:1px solid oklch(25% 0.012 30/0.3);transition:all .25s var(--ease);animation:entryIn .4s var(--ease-bounce) both;cursor:default}
+.kb-entry:nth-child(1){animation-delay:.05s}.kb-entry:nth-child(2){animation-delay:.1s}.kb-entry:nth-child(3){animation-delay:.15s}.kb-entry:nth-child(4){animation-delay:.2s}
+@keyframes entryIn{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}
+.kb-entry:hover{border-color:var(--gold);background:var(--bg-elevated);transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,.3)}
+.kb-entry-title{font-size:12px;font-weight:600;color:var(--gold);margin-bottom:4px;display:flex;align-items:center;gap:4px}
+.kb-entry-source{font-size:9px;color:var(--text-muted);font-family:var(--mono)}
+.kb-entry-content{font-size:11px;color:var(--text-secondary);line-height:1.5;margin-top:4px;max-height:0;overflow:hidden;transition:max-height .3s var(--ease),margin .3s}
+.kb-entry:hover .kb-entry-content{max-height:80px}
 
 /* 检索区 */
 .search-section{margin-bottom:20px}
@@ -52,52 +83,68 @@ body::after{content:'';position:fixed;inset:0;z-index:9999;pointer-events:none;o
 #search-input:focus{border-color:var(--jade);box-shadow:0 0 12px var(--jade-dim)}
 #search-input::placeholder{color:var(--text-muted)}
 .search-actions{display:flex;gap:8px;margin-top:10px}
-#search-btn{padding:8px 20px;background:linear-gradient(135deg,var(--jade),var(--azurite));color:oklch(8% 0.01 145);border:none;border-radius:var(--radius-sm);font-size:12px;font-weight:600;cursor:pointer;transition:all .2s var(--ease)}
+#search-btn{padding:8px 20px;background:linear-gradient(135deg,var(--jade),var(--azurite));color:oklch(8% 0.01 145);border:none;border-radius:var(--radius-sm);font-size:12px;font-weight:600;cursor:pointer;transition:all .2s var(--ease);position:relative;overflow:hidden}
+#search-btn::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.15),transparent);transform:translateX(-100%);transition:transform .5s var(--ease)}
 #search-btn:hover{transform:translateY(-1px);box-shadow:0 4px 16px var(--jade-dim)}
+#search-btn:hover::after{transform:translateX(100%)}
 #search-btn:active{transform:scale(.96)}
-#compare-toggle{padding:8px 16px;background:var(--bg-card);border:1px solid oklch(25% 0.012 30/0.6);border-radius:var(--radius-sm);color:var(--text-secondary);font-size:12px;cursor:pointer;transition:all .2s}
-#compare-toggle:hover{border-color:var(--gold);color:var(--gold)}
+#compare-toggle{padding:8px 16px;background:var(--bg-card);border:1px solid oklch(25% 0.012 30/0.6);border-radius:var(--radius-sm);color:var(--text-secondary);font-size:12px;cursor:pointer;transition:all .25s var(--ease)}
+#compare-toggle:hover{border-color:var(--gold);color:var(--gold);transform:translateY(-1px)}
 #compare-toggle.active{border-color:var(--gold);background:var(--gold-dim);color:var(--gold)}
 
-/* NPC 选择 */
-.npc-selector{margin-bottom:20px;padding:12px;background:var(--bg-card);border-radius:var(--radius-sm);border:1px solid oklch(25% 0.012 30/0.4)}
-.npc-selector h3{font-size:11px;font-weight:600;color:var(--text-muted);letter-spacing:.08em;margin-bottom:8px;text-transform:uppercase}
-.npc-options{display:flex;gap:8px;flex-wrap:wrap}
-.npc-chip{padding:6px 14px;border-radius:20px;font-size:12px;cursor:pointer;border:1px solid oklch(25% 0.012 30/0.6);color:var(--text-secondary);transition:all .2s var(--ease);user-select:none}
-.npc-chip:hover{border-color:var(--jade);color:var(--jade)}
-.npc-chip.selected{background:var(--jade-dim);border-color:var(--jade);color:var(--jade);font-weight:600}
-.npc-role{font-size:9px;opacity:.6;margin-left:4px}
+/* 检索进度条 */
+.search-progress{height:3px;background:var(--rule-subtle,oklch(25% 0.012 30/0.4));border-radius:2px;overflow:hidden;margin-top:8px;opacity:0;transition:opacity .3s}
+.search-progress.active{opacity:1}
+.search-progress-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--jade),var(--azurite));transition:width .6s var(--ease);border-radius:2px;box-shadow:0 0 8px var(--jade-dim)}
+
+/* 流程动画 */
+.flow-container{display:flex;align-items:center;gap:6px;margin:12px 0;padding:10px;background:var(--bg-card);border-radius:var(--radius-sm);border:1px solid oklch(25% 0.012 30/0.3);overflow:hidden}
+.flow-step{flex:1;text-align:center;padding:6px 4px;border-radius:4px;font-size:9px;color:var(--text-muted);transition:all .35s var(--ease);position:relative}
+.flow-step.active{background:var(--jade-dim);color:var(--jade);font-weight:600;animation:flowPulse 1s ease-in-out infinite}
+.flow-step.active::after{content:'';position:absolute;bottom:0;left:20%;right:20%;height:2px;background:var(--jade);border-radius:1px;animation:shimmer 1s linear infinite}
+.flow-step.done{background:var(--gold-dim);color:var(--gold);transform:scale(1.05)}
+@keyframes flowPulse{0%,100%{opacity:.7}50%{opacity:1}}
+@keyframes shimmer{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+.flow-arrow{color:var(--text-muted);font-size:10px;flex-shrink:0;transition:color .3s}
+.flow-arrow.active{color:var(--jade)}
 
 /* 检索结果 */
 #results-section{margin-bottom:20px}
 #results-title{font-size:12px;font-weight:600;color:var(--text-muted);letter-spacing:.08em;margin-bottom:10px;text-transform:uppercase}
 #results-list{display:flex;flex-direction:column;gap:10px}
-.result-card{padding:14px;background:var(--bg-card);border-radius:var(--radius-sm);border:1px solid oklch(25% 0.012 30/0.4);border-left:3px solid var(--gold);transition:all .25s var(--ease);animation:cardIn .4s var(--ease-bounce) both;cursor:default}
+.result-card{padding:14px;background:var(--bg-card);border-radius:var(--radius-sm);border:1px solid oklch(25% 0.012 30/0.4);border-left:3px solid var(--gold);transition:all .25s var(--ease);animation:cardIn .4s var(--ease-bounce) both;cursor:default;position:relative;overflow:hidden}
+.result-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--jade),transparent);opacity:0;transition:opacity .3s}
 .result-card:nth-child(1){animation-delay:.05s}
 .result-card:nth-child(2){animation-delay:.15s}
 .result-card:nth-child(3){animation-delay:.25s}
 .result-card:hover{transform:translateX(3px);border-left-color:var(--jade);box-shadow:var(--shadow)}
-@keyframes cardIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.result-card:hover::before{opacity:1}
+@keyframes cardIn{from{opacity:0;transform:translateY(12px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
 .result-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
 .result-title{font-size:13px;font-weight:600;color:var(--gold)}
-.result-score{font-size:10px;font-family:var(--mono);color:var(--jade);background:var(--jade-dim);padding:2px 8px;border-radius:4px}
+.result-score{font-size:10px;font-family:var(--mono);color:var(--jade);background:var(--jade-dim);padding:2px 8px;border-radius:4px;animation:scoreIn .5s var(--ease-bounce) .3s both}
+@keyframes scoreIn{from{opacity:0;transform:scale(.5)}to{opacity:1;transform:scale(1)}}
 .result-category{font-size:10px;color:var(--text-muted);margin-bottom:6px}
 .result-content{font-size:12px;color:var(--text-secondary);line-height:1.6;opacity:.85}
 .result-source{font-size:10px;color:var(--text-muted);margin-top:8px;font-family:var(--mono);opacity:.6}
 .result-keywords{display:flex;gap:4px;flex-wrap:wrap;margin-top:8px}
 .result-kw{font-size:9px;padding:1px 6px;background:var(--purple-dim);color:var(--purple);border-radius:3px;font-family:var(--mono)}
+.result-owner{font-size:10px;color:var(--azurite);margin-top:4px;display:flex;align-items:center;gap:4px}
 
 /* 空状态 */
 .empty-state{text-align:center;padding:32px;color:var(--text-muted)}
-.empty-state .eicon{font-size:36px;margin-bottom:8px;opacity:.5}
+.empty-state .eicon{font-size:36px;margin-bottom:8px;opacity:.5;animation:float 3s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
 .empty-state .etext{font-size:13px;margin-bottom:4px}
 .empty-state .ehint{font-size:10px;opacity:.5}
 
 /* 对比区 */
 #comparison-section{display:none;margin-bottom:20px}
-#comparison-section.visible{display:block}
+#comparison-section.visible{display:block;animation:compareIn .4s var(--ease-bounce)}
+@keyframes compareIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 .comparison-container{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.comparison-panel{padding:14px;background:var(--bg-card);border-radius:var(--radius-sm);border:1px solid oklch(25% 0.012 30/0.4)}
+.comparison-panel{padding:14px;background:var(--bg-card);border-radius:var(--radius-sm);border:1px solid oklch(25% 0.012 30/0.4);transition:border-color .3s}
+.comparison-panel:hover{border-color:oklch(30% 0.015 30/0.5)}
 .comparison-label{font-size:10px;font-weight:600;letter-spacing:.06em;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid oklch(25% 0.012 30/0.4)}
 .comparison-label.no-rag{color:var(--crimson)}
 .comparison-label.with-rag{color:var(--jade)}
@@ -107,25 +154,32 @@ body::after{content:'';position:fixed;inset:0;z-index:9999;pointer-events:none;o
 
 /* 右侧面板：对话 */
 #chat-section h2{font-size:12px;font-weight:600;color:var(--text-secondary);letter-spacing:.06em;margin-bottom:12px;display:flex;align-items:center;gap:6px}
-#chat-section h2 .badge{font-size:9px;padding:1px 6px;background:var(--jade-dim);color:var(--jade);border-radius:3px;font-weight:500}
-#chat-messages{flex:1;overflow-y:auto;max-height:400px;margin-bottom:12px;display:flex;flex-direction:column;gap:10px;padding-right:4px}
-.chat-msg{animation:msgIn .3s var(--ease-bounce) both}
-@keyframes msgIn{from{opacity:0;transform:translateY(8px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}
+#chat-section h2 .badge{font-size:9px;padding:1px 6px;background:var(--jade-dim);color:var(--jade);border-radius:3px;font-weight:500;transition:all .3s}
+#chat-messages{flex:1;overflow-y:auto;max-height:420px;margin-bottom:12px;display:flex;flex-direction:column;gap:10px;padding-right:4px}
+.chat-msg{animation:msgIn .35s var(--ease-bounce) both}
+@keyframes msgIn{from{opacity:0;transform:translateY(10px) scale(.95)}40%{transform:translateY(-2px) scale(1.005)}to{opacity:1;transform:translateY(0) scale(1)}}
 .chat-msg.user .chat-bubble{background:var(--bg-elevated);border:1px solid oklch(25% 0.012 30/0.5);align-self:flex-end;max-width:85%}
 .chat-msg.agent .chat-bubble{background:var(--jade-dim);border:1px solid oklch(55% 0.15 145/0.25);align-self:flex-start;max-width:85%}
+.chat-msg.agent:hover .chat-bubble{transform:translateY(-1px);box-shadow:0 4px 16px rgba(0,0,0,.3);transition:all .2s}
 .chat-bubble{padding:10px 14px;border-radius:10px;font-size:12px;line-height:1.6;color:var(--text-secondary)}
 .chat-meta{font-size:9px;color:var(--text-muted);margin-top:4px;font-family:var(--mono)}
 .chat-msg.user .chat-meta{text-align:right}
-.chat-agent-avatar{font-size:16px}
-.chat-rag-indicator{font-size:10px;color:var(--azurite);margin-top:4px}
-.chat-rag-indicator::before{content:'📚 ';opacity:.7}
+.chat-agent-avatar{font-size:18px}
+.chat-rag-indicator{font-size:10px;color:var(--azurite);margin-top:4px;display:flex;align-items:center;gap:4px}
+.chat-rag-indicator .rag-dot{width:6px;height:6px;border-radius:50%;background:var(--jade);animation:ragDotPulse 1.5s ease-in-out infinite}
+@keyframes ragDotPulse{0%,100%{opacity:.5;transform:scale(.8)}50%{opacity:1;transform:scale(1.2)}}
+.chat-typing{display:flex;gap:4px;padding:8px 12px}
+.chat-typing span{width:6px;height:6px;border-radius:50%;background:var(--text-muted);animation:typingBounce 1s ease-in-out infinite}
+.chat-typing span:nth-child(2){animation-delay:.15s}
+.chat-typing span:nth-child(3){animation-delay:.3s}
+@keyframes typingBounce{0%,100%{transform:translateY(0);opacity:.4}50%{transform:translateY(-4px);opacity:1}}
 
 /* 对话输入 */
 #chat-input-row{display:flex;gap:8px}
-#chat-input{flex:1;padding:8px 12px;background:var(--bg-card);border:1px solid oklch(25% 0.012 30/0.6);border-radius:var(--radius-sm);color:var(--text-primary);font-size:12px;outline:none;transition:border-color .2s}
+#chat-input{flex:1;padding:8px 12px;background:var(--bg-card);border:1px solid oklch(25% 0.012 30/0.6);border-radius:var(--radius-sm);color:var(--text-primary);font-size:12px;outline:none;transition:border-color .2s,box-shadow .2s}
 #chat-input:focus{border-color:var(--jade);box-shadow:0 0 8px var(--jade-dim)}
 #chat-input::placeholder{color:var(--text-muted)}
-#chat-send-btn{padding:8px 14px;background:linear-gradient(135deg,var(--jade),var(--azurite));color:oklch(8% 0.01 145);border:none;border-radius:var(--radius-sm);font-size:12px;font-weight:600;cursor:pointer;transition:all .2s var(--ease);flex-shrink:0}
+#chat-send-btn{padding:8px 14px;background:linear-gradient(135deg,var(--jade),var(--azurite));color:oklch(8% 0.01 145);border:none;border-radius:var(--radius-sm);font-size:12px;font-weight:600;cursor:pointer;transition:all .2s var(--ease);flex-shrink:0;position:relative}
 #chat-send-btn:hover{transform:translateY(-1px);box-shadow:0 4px 12px var(--jade-dim)}
 #chat-send-btn:active{transform:scale(.95)}
 
@@ -133,25 +187,18 @@ body::after{content:'';position:fixed;inset:0;z-index:9999;pointer-events:none;o
 #kb-section{margin-top:16px}
 #kb-section h3{font-size:11px;font-weight:600;color:var(--text-muted);letter-spacing:.08em;margin-bottom:10px;text-transform:uppercase}
 .kb-list{display:flex;flex-direction:column;gap:6px}
-.kb-item{padding:8px 10px;background:var(--bg-card);border-radius:var(--radius-xs);border:1px solid oklch(25% 0.012 30/0.3);transition:all .2s}
-.kb-item:hover{border-color:var(--gold);background:var(--bg-elevated)}
+.kb-item{padding:8px 10px;background:var(--bg-card);border-radius:var(--radius-xs);border:1px solid oklch(25% 0.012 30/0.3);transition:all .2s;cursor:default}
+.kb-item:hover{border-color:var(--gold);background:var(--bg-elevated);transform:translateX(3px)}
 .kb-item-title{font-size:11px;font-weight:600;color:var(--gold);margin-bottom:2px}
 .kb-item-meta{font-size:9px;color:var(--text-muted)}
 .kb-item-cat{display:inline-block;font-size:9px;padding:0 4px;background:var(--azurite-dim);color:var(--azurite);border-radius:3px;margin-left:4px}
-
-/* 流程动画 */
-.flow-container{display:flex;align-items:center;gap:6px;margin:12px 0;padding:10px;background:var(--bg-card);border-radius:var(--radius-sm);border:1px solid oklch(25% 0.012 30/0.3)}
-.flow-step{flex:1;text-align:center;padding:6px 4px;border-radius:4px;font-size:9px;color:var(--text-muted);transition:all .3s var(--ease)}
-.flow-step.active{background:var(--jade-dim);color:var(--jade);font-weight:600;animation:flowPulse 1s ease-in-out infinite}
-.flow-step.done{background:var(--gold-dim);color:var(--gold)}
-@keyframes flowPulse{0%,100%{opacity:.7}50%{opacity:1}}
-.flow-arrow{color:var(--text-muted);font-size:10px;flex-shrink:0}
 
 /* 响应式 */
 @media(max-width:900px){
   #main{grid-template-columns:1fr}
   #right-panel{border-left:none;border-top:1px solid oklch(25% 0.012 30/0.5)}
   .comparison-container{grid-template-columns:1fr}
+  .npc-kb-items{grid-template-columns:1fr}
 }
 
 /* 滚动条 */
@@ -168,7 +215,7 @@ body::after{content:'';position:fixed;inset:0;z-index:9999;pointer-events:none;o
   <span class="subtitle">RAG 检索增强生成 · 武侠世界专属</span>
   <div id="kb-stats">
     <span>条目: <b id="stat-entries">0</b></span>
-    <span>分类: <b id="stat-categories">0</b></span>
+    <span>专属: <b id="stat-exclusive">0</b></span>
     <span>检索: <b id="stat-searches">0</b></span>
   </div>
 </div>
@@ -181,6 +228,20 @@ body::after{content:'';position:fixed;inset:0;z-index:9999;pointer-events:none;o
       <div class="npc-options" id="npc-options"></div>
     </div>
 
+    <!-- NPC 专属知识库 -->
+    <div id="npc-kb-panel">
+      <div class="npc-kb-header">
+        <div class="npc-kb-avatar" id="npc-kb-avatar">⚔️</div>
+        <div>
+          <div class="npc-kb-name" id="npc-kb-name">云溪</div>
+          <div class="npc-kb-role" id="npc-kb-role">侠客</div>
+          <div class="npc-kb-tags" id="npc-kb-tags"></div>
+        </div>
+        <div class="npc-kb-count" id="npc-kb-count">4 条专属知识</div>
+      </div>
+      <div class="npc-kb-items" id="npc-kb-items"></div>
+    </div>
+
     <!-- 检索区 -->
     <div class="search-section">
       <h2>🔍 知识库检索</h2>
@@ -189,17 +250,18 @@ body::after{content:'';position:fixed;inset:0;z-index:9999;pointer-events:none;o
         <button id="search-btn" onclick="performSearch()">检索知识库</button>
         <button id="compare-toggle" onclick="toggleComparison()">对比 RAG 效果</button>
       </div>
+      <div class="search-progress" id="search-progress"><div class="search-progress-fill" id="search-progress-fill"></div></div>
       <div class="flow-container" id="flow-container" style="display:none">
         <div class="flow-step" id="flow-keywords">关键词</div>
-        <span class="flow-arrow">→</span>
+        <span class="flow-arrow" id="arrow-1">→</span>
         <div class="flow-step" id="flow-retrieve">检索</div>
-        <span class="flow-arrow">→</span>
+        <span class="flow-arrow" id="arrow-2">→</span>
         <div class="flow-step" id="flow-rank">排序</div>
-        <span class="flow-arrow">→</span>
+        <span class="flow-arrow" id="arrow-3">→</span>
         <div class="flow-step" id="flow-inject">注入</div>
-        <span class="flow-arrow">→</span>
+        <span class="flow-arrow" id="arrow-4">→</span>
         <div class="flow-step" id="flow-generate">生成</div>
-        <span class="flow-arrow">→</span>
+        <span class="flow-arrow" id="arrow-5">→</span>
         <div class="flow-step" id="flow-guard">Guardrail</div>
       </div>
     </div>
@@ -232,9 +294,9 @@ body::after{content:'';position:fixed;inset:0;z-index:9999;pointer-events:none;o
       </div>
     </div>
 
-    <!-- 知识库浏览 -->
+    <!-- 全部知识库浏览 -->
     <div id="kb-section">
-      <h3>知识库条目（<span id="kb-count">0</span>）</h3>
+      <h3>全部知识条目（<span id="kb-count">0</span>）</h3>
       <div class="kb-list" id="kb-list"></div>
     </div>
   </div>
@@ -244,7 +306,7 @@ body::after{content:'';position:fixed;inset:0;z-index:9999;pointer-events:none;o
       <h2>💬 NPC 对话 <span class="badge" id="chat-npc-badge">选择 NPC</span></h2>
       <div id="chat-messages">
         <div class="chat-msg agent" style="opacity:.6">
-          <div class="chat-bubble">选择左侧 NPC 身份，输入问题即可开始对话。开启 RAG 对比可看到知识增强效果。</div>
+          <div class="chat-bubble">选择左侧 NPC 身份，输入问题即可开始对话。每位 NPC 拥有专属知识库，检索时会优先命中其知识领域。</div>
         </div>
       </div>
       <div id="chat-input-row">
@@ -257,105 +319,134 @@ body::after{content:'';position:fixed;inset:0;z-index:9999;pointer-events:none;o
 
 <script>
 /* ═══════════════ 知识库数据 ═══════════════ */
-var KB = {
-  entries: [
-    {id:'k001',category:'武功',title:'太极拳',content:'太极拳乃武当派祖太极祖师张三丰所创，讲究以柔克刚，后发制人。练至深处可四两拨千斤，化解千军万马之势。拳法圆融无断，行云流水。',keywords:['太极','武当','张三丰','以柔克刚','拳法'],severity:85,source:'《武当武学谱》'},
-    {id:'k002',category:'武功',title:'独孤九剑',content:'独孤九剑由剑魔独孤求败所创，共九式：破剑式、破刀式、破枪式、破鞭式、破索式、破掌式、破箭式、破气式。讲究以无招胜有招，天下无敌。',keywords:['独孤','剑法','无招','独孤求败','九剑'],severity:90,source:'《独孤剑谱》'},
-    {id:'k003',category:'武功',title:'降龙十八掌',content:'降龙十八掌乃天下第一刚猛掌法，招式刚烈无匹。每一掌都蕴含龙之威势，掌风所及，山石俱碎。传自逍遥派，后归丐帮。',keywords:['降龙','掌法','刚猛','乔峰','丐帮'],severity:88,source:'《丐帮秘典》'},
-    {id:'k004',category:'武功',title:'易筋经',content:'易筋经乃少林镇派之宝，由达摩祖师面壁九年所悟。练成可脱胎换骨，内力精进一日千里，百毒不侵。',keywords:['易筋经','少林','达摩','内力','脱胎换骨'],severity:86,source:'《少林武学考》'},
-    {id:'k005',category:'武功',title:'六脉神剑',content:'六脉神剑乃大理段氏绝学，以道家真气运行于手臂六脉，凝聚成无形剑气。六脉为少冲、少泽、商阳、关冲、少商、少冲。',keywords:['六脉神剑','大理','段氏','剑气'],severity:84,source:'《大理段氏武功录》'},
-    {id:'k006',category:'医道',title:'清凉散',content:'清凉散乃江湖常见解毒良方，主要成分为金银花、菊花、薄荷、连翘。可清热解毒，治疗发烧中暑，是江湖医者必备之药。',keywords:['清凉散','解毒','发烧','金银花','中暑'],severity:60,source:'《江湖药典》'},
-    {id:'k007',category:'医道',title:'金创药',content:'金创药用于治疗刀剑外伤，主要成分为三七、血竭、麝香。敷于伤口可止血生肌，加速愈合。江湖侠客必备之物。',keywords:['金创药','外伤','止血','三七','伤口'],severity:65,source:'《医宗金鉴》'},
-    {id:'k008',category:'医道',title:'九转还魂丹',content:'九转还魂丹乃失传已久的续命神药，以九味药材历经九转炼制。可令重伤者死而复生，但炼制极难，百年难得一见。',keywords:['九转还魂丹','续命','死而复生','神药'],severity:95,source:'《丹道秘录》'},
-    {id:'k009',category:'医道',title:'断肠散',content:'断肠散乃江湖毒门秘传剧毒，无色无味，入口即溶。中毒者肠断身死，无药可解。常出现在武林仇杀之中。',keywords:['断肠散','剧毒','毒门','仇杀'],severity:72,source:'《百毒图》'},
-    {id:'k010',category:'江湖',title:'武林大会',content:'武林大会每十年举办一次，由各门派推选高手参加，争夺武林盟主之位。历届盟主多出自少林、武当、丐帮三大派。',keywords:['武林大会','盟主','少林','丐帮','十年'],severity:75,source:'《江湖见闻录》'},
-    {id:'k011',category:'江湖',title:'少林七十二绝技',content:'少林七十二绝技乃天下武学之冠，包含般若掌、大韦驮杵、罗汉拳等。少林弟子需按部就班修习，不可躐等。',keywords:['少林','七十二绝技','武功','绝技'],severity:80,source:'《少林武学考》'},
-    {id:'k012',category:'江湖',title:'丐帮帮规',content:'丐帮乃江湖最大帮会，分九袋长老、四大弟子。帮规第一条：不得滥杀无辜。帮主由棍棒功与降龙掌传位。',keywords:['丐帮','帮规','长老','帮主'],severity:70,source:'《丐帮家法》'},
-    {id:'k013',category:'地理',title:'武当山',content:'武当山位于湖广行省，乃道教圣地，太极拳发源地。山中有紫霄宫、金顶等著名景点。武当派弟子多在此地修炼。',keywords:['武当','山','道教','紫霄宫','湖广'],severity:70,source:'《江湖地理志》'},
-    {id:'k014',category:'地理',title:'少林寺',content:'少林寺位于河南嵩山少室山下，乃佛门祖庭。寺内藏有易筋经、洗髓经等绝世武学典籍，历代住持皆为武林高手。',keywords:['少林寺','嵩山','河南','佛门'],severity:78,source:'《江湖地理志》'},
-    {id:'k015',category:'地理',title:'桃花岛',content:'桃花岛位于东海之滨，岛上遍植桃花，美若仙境。岛上藏有奇门阵法与绝顶武学，乃东邪黄药师的居所。',keywords:['桃花岛','东海','黄药师','奇门'],severity:74,source:'《江湖地理志》'},
-    {id:'k016',category:'历史',title:'华山论剑',content:'华山论剑乃武林盛事，东邪西毒南帝北丐中神通五绝争锋。第一次论剑王重阳胜出，第二次东邪黄药师夺魁。',keywords:['华山论剑','五绝','东邪','西毒'],severity:82,source:'《武林秘闻》'},
-    {id:'k017',category:'历史',title:'九阴真经',content:'九阴真经乃天下武学总纲，分内功外功两部分。相传为前朝皇后所著，经多次转手，引发无数江湖血案。',keywords:['九阴真经','武学总纲','内功','外功'],severity:92,source:'《武林秘闻》'},
-    {id:'k018',category:'民俗',title:'屠狗少年',content:'丐帮规矩：入门弟子须先以屠狗为业三年，洗去尘世心，方能习武。此为"屠狗少年"典故之源。',keywords:['屠狗','丐帮','入门','弟子'],severity:55,source:'《江湖见闻录》'}
+var SHARED_KB = [
+  {id:'s001',category:'武功',title:'太极拳',content:'太极拳乃武当派祖太极祖师张三丰所创，讲究以柔克刚，后发制人。练至深处可四两拨千斤，化解千军万马之势。',keywords:['太极','武当','张三丰','以柔克刚','拳法'],severity:85,source:'《武当武学谱》'},
+  {id:'s002',category:'武功',title:'独孤九剑',content:'独孤九剑由剑魔独孤求败所创，共九式。讲究以无招胜有招，天下无敌。',keywords:['独孤','剑法','无招','独孤求败'],severity:90,source:'《独孤剑谱》'},
+  {id:'s003',category:'武功',title:'降龙十八掌',content:'降龙十八掌乃天下第一刚猛掌法，掌风所及，山石俱碎。传自逍遥派，后归丐帮。',keywords:['降龙','掌法','刚猛','丐帮'],severity:88,source:'《丐帮秘典》'},
+  {id:'s004',category:'武功',title:'易筋经',content:'易筋经乃少林镇派之宝，由达摩祖师面壁九年所悟。练成可脱胎换骨，内力精进一日千里。',keywords:['易筋经','少林','达摩','内力'],severity:86,source:'《少林武学考》'},
+  {id:'s005',category:'武功',title:'六脉神剑',content:'六脉神剑乃大理段氏绝学，以道家真气运行于手臂六脉，凝聚成无形剑气。',keywords:['六脉神剑','大理','段氏','剑气'],severity:84,source:'《大理段氏武功录》'},
+  {id:'s006',category:'医道',title:'清凉散',content:'清凉散乃江湖常见解毒良方，金银花、菊花、薄荷、连翘。清热解毒，治疗发烧中暑。',keywords:['清凉散','解毒','发烧','金银花'],severity:60,source:'《江湖药典》'},
+  {id:'s007',category:'医道',title:'金创药',content:'金创药治疗刀剑外伤，三七、血竭、麝香。敷于伤口可止血生肌。',keywords:['金创药','外伤','止血','三七'],severity:65,source:'《医宗金鉴》'},
+  {id:'s008',category:'医道',title:'九转还魂丹',content:'九转还魂丹乃失传续命神药，九味药材历经九转炼制，可令重伤者死而复生。',keywords:['九转还魂丹','续命','神药'],severity:95,source:'《丹道秘录》'},
+  {id:'s009',category:'医道',title:'断肠散',content:'断肠散乃毒门秘传剧毒，无色无味，入口即溶。中毒者肠断身死。',keywords:['断肠散','剧毒','毒门'],severity:72,source:'《百毒图》'},
+  {id:'s010',category:'江湖',title:'武林大会',content:'武林大会每十年举办一次，争夺武林盟主。历届盟主多出自少林、武当、丐帮。',keywords:['武林大会','盟主','少林','丐帮'],severity:75,source:'《江湖见闻录》'},
+  {id:'s011',category:'江湖',title:'少林七十二绝技',content:'少林七十二绝技乃天下武学之冠，含般若掌、大韦驮杵、罗汉拳等。',keywords:['少林','七十二绝技','武功'],severity:80,source:'《少林武学考》'},
+  {id:'s012',category:'江湖',title:'丐帮帮规',content:'丐帮分九袋长老、四大弟子。帮规第一条：不得滥杀无辜。',keywords:['丐帮','帮规','长老'],severity:70,source:'《丐帮家法》'},
+  {id:'s013',category:'地理',title:'武当山',content:'武当山位于湖广行省，道教圣地，太极拳发源地。有紫霄宫、金顶。',keywords:['武当','山','道教','紫霄宫'],severity:70,source:'《江湖地理志》'},
+  {id:'s014',category:'地理',title:'少林寺',content:'少林寺位于河南嵩山少室山下，佛门祖庭。藏有易筋经、洗髓经等典籍。',keywords:['少林寺','嵩山','河南','佛门'],severity:78,source:'《江湖地理志》'},
+  {id:'s015',category:'地理',title:'桃花岛',content:'桃花岛位于东海之滨，遍植桃花。藏有奇门阵法与绝顶武学，乃东邪居所。',keywords:['桃花岛','东海','黄药师'],severity:74,source:'《江湖地理志》'},
+  {id:'s016',category:'历史',title:'华山论剑',content:'华山论剑乃武林盛事，东邪西毒南帝北丐中神通五绝争锋。',keywords:['华山论剑','五绝','东邪','西毒'],severity:82,source:'《武林秘闻》'},
+  {id:'s017',category:'历史',title:'九阴真经',content:'九阴真经乃天下武学总纲，分内功外功。经多次转手，引发无数江湖血案。',keywords:['九阴真经','武学总纲','内功'],severity:92,source:'《武林秘闻》'},
+  {id:'s018',category:'民俗',title:'屠狗少年',content:'丐帮规矩：入门弟子须先以屠狗为业三年，洗去尘世心，方能习武。',keywords:['屠狗','丐帮','入门'],severity:55,source:'《江湖见闻录》'}
+];
+
+var NPC_KB = {
+  A:[
+    {id:'a001',category:'武功',title:'青云剑法',content:'青云剑法乃云溪家传绝学，共十三式，剑走偏锋，讲究后发先至。云溪自幼随父修习，已至第十一式。',keywords:['青云','剑法','家传','云溪'],severity:82,source:'《云氏家谱》'},
+    {id:'a002',category:'武功',title:'轻功·踏雪无痕',content:'踏雪无痕乃江湖罕见轻功，落地无声，行于水面而不湿鞋。云溪以此功闻名江湖。',keywords:['踏雪无痕','轻功','云溪'],severity:78,source:'《武林秘闻》'},
+    {id:'a003',category:'江湖',title:'独行侠客',content:'云溪行走江湖二十年，独来独往，不拜山头，不结帮派。江湖人称"独行侠"。',keywords:['独行侠','云溪','江湖'],severity:68,source:'《江湖见闻录》'},
+    {id:'a004',category:'武功',title:'破风刀法',content:'破风刀法以刀代剑，大开大合。云溪虽主修剑法，亦通晓此刀路，可临阵切换。',keywords:['破风刀','刀法','云溪'],severity:72,source:'《兵器谱》'}
   ],
-  keywordIndex: {},
-  categoryIndex: {}
+  B:[
+    {id:'b001',category:'民俗',title:'村中禁忌',content:'本村有三不忌：不忌打雷、不忌上坟、不忌说鬼。但忌讳初一十五不可动土。',keywords:['禁忌','村庄','民俗'],severity:58,source:'《乡野风俗志》'},
+    {id:'b002',category:'民俗',title:'赶集日',content:'每逢三六九，村集开市。卖货郎从早摆到晚，阿福最爱在集上买些小玩意儿。',keywords:['赶集','村集','阿福'],severity:52,source:'《乡野风俗志》'},
+    {id:'b003',category:'地理',title:'后山小路',content:'村后有条隐秘小路通往山寨，平日村民不走，只有打猎时才用。阿福从小跟着祖父走过。',keywords:['后山','小路','山寨'],severity:62,source:'《村中口述》'},
+    {id:'b004',category:'民俗',title:'年俗·贴春联',content:'除夕前一日，全村贴春联。阿福家的春联由书生代写，年年如此。',keywords:['春联','除夕','年俗'],severity:55,source:'《乡野风俗志》'}
+  ],
+  C:[
+    {id:'c001',category:'医道',title:'草药辨识',content:'小翠通晓三百余味草药，尤精辨识毒草与药草之别。田间行走，一眼即知。',keywords:['草药','辨识','小翠','药草'],severity:88,source:'《药草图谱》'},
+    {id:'c002',category:'医道',title:'自制伤药',content:'小翠自创"翠心散"，以何首乌、当归、川芎研磨而成，止血效果比金创药更强。',keywords:['翠心散','小翠','伤药','自制'],severity:90,source:'小翠手记'},
+    {id:'c003',category:'医道',title:'解毒配方',content:'小翠调配解毒汤方：雄黄、甘草、绿豆同煎，可解百毒之七成。但断肠散无解。',keywords:['解毒','配方','小翠','雄黄'],severity:85,source:'《江湖药典·增补》'},
+    {id:'c004',category:'民俗',title:'药农规矩',content:'采药须晨起带露水，避开正午阳气最盛时。小翠每回进山都循此规矩。',keywords:['药农','采药','小翠'],severity:55,source:'《药农笔记》'}
+  ],
+  D:[
+    {id:'d001',category:'历史',title:'村庄三十年',content:'老村长见证本村三十年变迁：从荒村到集市，从三户到四十户。他记得每一户人家的旧事。',keywords:['村庄','三十年','老村长','变迁'],severity:72,source:'老村长的记忆'},
+    {id:'d002',category:'历史',title:'门派恩怨',content:'少林与武当恩怨始于三十年前一场论剑。老村长当年在场，记得每位高手的招式。',keywords:['少林','武当','恩怨','老村长'],severity:80,source:'老村长的记忆'},
+    {id:'d003',category:'江湖',title:'老村长的江湖',content:'老村长年轻时也是江湖中人，因一场变故金盆洗手，隐姓埋名在此村定居。',keywords:['老村长','江湖','隐姓埋名'],severity:75,source:'《江湖见闻录》'},
+    {id:'d004',category:'历史',title:'朝廷更迭',content:'本朝立国四十年，老村长亲历三次宫廷政变，对朝中局势了如指掌。',keywords:['朝廷','政变','老村长'],severity:68,source:'老村长的记忆'}
+  ],
+  E:[
+    {id:'e001',category:'历史',title:'史书笔记',content:'书生通读史书二十卷，对前朝掌故、本朝制度烂熟于心。常以史为鉴，点评时局。',keywords:['史书','书生','前朝'],severity:82,source:'书生手批'},
+    {id:'e002',category:'地理',title:'山川志略',content:'书生遍访名山大川，撰《山川志略》三卷，记载百余处山水名胜与隐秘路径。',keywords:['山川志','书生','地理'],severity:78,source:'《山川志略》'},
+    {id:'e003',category:'历史',title:'九阴真经考',content:'书生对九阴真经流传史有深入研究，考证出七次转手记录，与江湖传言多有出入。',keywords:['九阴真经','书生','考证'],severity:90,source:'《九阴考》'},
+    {id:'e004',category:'江湖',title:'侠客评传',content:'书生撰《侠客评传》，点评当代十二位侠客，文笔犀利，江湖上流传甚广。',keywords:['侠客评传','书生','点评'],severity:70,source:'《侠客评传》'}
+  ]
 };
 
 var NPC_LIST = [
-  {id:'A',name:'云溪',role:'侠客',icon:'⚔️',cats:['武功','江湖']},
-  {id:'B',name:'阿福',role:'村民',icon:'🍞',cats:['民俗','地理']},
-  {id:'C',name:'小翠',role:'药师',icon:'🌿',cats:['医道','民俗']},
-  {id:'D',name:'老村长',role:'长者',icon:'🏮',cats:['历史','江湖']},
-  {id:'E',name:'书生',role:'儒生',icon:'📜',cats:['历史','地理']}
+  {id:'A',name:'云溪',role:'侠客',icon:'⚔️',cats:['武功','江湖'],kb:4},
+  {id:'B',name:'阿福',role:'村民',icon:'🍞',cats:['民俗','地理'],kb:4},
+  {id:'C',name:'小翠',role:'药师',icon:'🌿',cats:['医道','民俗'],kb:4},
+  {id:'D',name:'老村长',role:'长者',icon:'🏮',cats:['历史','江湖'],kb:4},
+  {id:'E',name:'书生',role:'儒生',icon:'📜',cats:['历史','地理'],kb:4}
 ];
-var selectedNPC = null;
-var searchCount = 0;
-var lastSearchQuery = '';
-var lastRetrievedDocs = [];
 
-/* ═══════════════ 索引构建 ═══════════════ */
-function initKnowledgeIndex(){
-  KB.keywordIndex = {};
-  KB.categoryIndex = {};
-  KB.entries.forEach(function(entry){
-    entry.keywords.forEach(function(kw){
-      if(!KB.keywordIndex[kw])KB.keywordIndex[kw]=[];
-      KB.keywordIndex[kw].push(entry);
-    });
-    if(!KB.categoryIndex[entry.category])KB.categoryIndex[entry.category]=[];
-    KB.categoryIndex[entry.category].push(entry);
-  });
+var selectedNPC='A';
+var searchCount=0;
+var lastSearchQuery='';
+var lastRetrievedDocs=[];
+
+/* ═══════════════ 工具函数 ═══════════════ */
+function escHtml(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+function nowStr(){var d=new Date();return d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0')+':'+d.getSeconds().toString().padStart(2,'0');}
+function getNPC(id){return NPC_LIST.find(function(n){return n.id===id;});}
+function getAllEntries(){
+  var list = SHARED_KB.slice();
+  for(var k in NPC_KB){list = list.concat(NPC_KB[k]);}
+  return list;
 }
 
 /* ═══════════════ 检索引擎 ═══════════════ */
 function extractKeywords(text){
-  var stopWords=['的','了','是','在','我','你','他','她','它','们','这','那','什么','怎么','如何','请问','告诉','一下','能否','可以','能不能'];
-  var cleaned = text.replace(/[^\u4e00-\u9fa5a-zA-Z]/g,' ').split(/\s+/).filter(function(w){return w.length>1&&stopWords.indexOf(w)===-1;});
+  var stopWords=['的','了','是','在','我','你','他','她','它','们','这','那','什么','怎么','如何','请问','告诉','一下','能否','可以','能不能','有没有','哪里'];
+  var cleaned=text.replace(/[^\u4e00-\u9fa5a-zA-Z]/g,' ').split(/\s+/).filter(function(w){return w.length>1&&stopWords.indexOf(w)===-1;});
   return cleaned.slice(0,8);
 }
 
 function getRelevantCats(){
-  if(!selectedNPC)return ['武功','医道','江湖'];
-  var npc = NPC_LIST.find(function(n){return n.id===selectedNPC;});
-  return npc ? npc.cats : ['武功','医道','江湖'];
+  var npc=getNPC(selectedNPC);
+  return npc?npc.cats:['武功','医道','江湖'];
 }
 
-function retrieveKnowledge(query, topK){
-  topK = topK || 3;
-  var queryKws = extractKeywords(query);
-  var candidates = [];
-  var querySet = {};
+function retrieveKnowledge(query,topK){
+  topK=topK||3;
+  var allEntries=getAllEntries();
+  var queryKws=extractKeywords(query);
+  var querySet={};
   queryKws.forEach(function(kw){querySet[kw]=true;});
+  var relCats=getRelevantCats();
+  var npcKB=selectedNPC?NPC_KB[selectedNPC]:[];
+  var candidates=[];
 
-  KB.entries.forEach(function(entry){
-    var score = 0;
-    var matchedKw = 0;
+  allEntries.forEach(function(entry){
+    var score=0;
+    var matchedKw=0;
     entry.keywords.forEach(function(kw){
       if(querySet[kw]){score+=15;matchedKw++;}
     });
-    entry.title.split(' ').forEach(function(word){
-      if(word.length>1 && query.indexOf(word)!==-1){score+=8;}
+    entry.title.split('').forEach(function(word){
+      if(word.length>1&&query.indexOf(word)!==-1){score+=8;}
     });
-    var qParts = query.replace(/[^\u4e00-\u9fa5a-zA-Z]/g,' ').split(/\s+/);
+    var qParts=query.replace(/[^\u4e00-\u9fa5a-zA-Z]/g,' ').split(/\s+/);
     qParts.forEach(function(qp){
-      if(qp.length>1 && entry.content.indexOf(qp)!==-1){score+=5;matchedKw++;}
+      if(qp.length>1&&entry.content.indexOf(qp)!==-1){score+=5;matchedKw++;}
     });
-    var relCats = getRelevantCats();
     if(relCats.indexOf(entry.category)!==-1){score+=5;}
-    if(matchedKw>0){candidates.push({entry:entry,score:score});}
+    var isNpcEntry=!!npcKB.find(function(n){return n.id===entry.id;});
+    if(isNpcEntry){score+=12;}
+    if(matchedKw>0){candidates.push({entry:entry,score:score,isNpc:isNpcEntry});}
   });
 
-  var byContent = KB.entries.map(function(e){return {entry:e,score:0};});
+  var byContent=allEntries.map(function(e){return {entry:e,score:0,isNpc:!!npcKB.find(function(n){return n.id===e.id;})};});
   byContent.forEach(function(c){
-    var hits = 0;
+    var hits=0;
     queryKws.forEach(function(kw){if(c.entry.content.indexOf(kw)!==-1)hits++;});
-    c.score = hits*10;
+    c.score=hits*10;
     if(c.score>0)candidates.push(c);
   });
 
-  var seen = {};
-  var dedup = candidates.filter(function(c){
+  var seen={};
+  var dedup=candidates.filter(function(c){
     if(seen[c.entry.id])return false;
     seen[c.entry.id]=true;return true;
   });
@@ -364,27 +455,34 @@ function retrieveKnowledge(query, topK){
 }
 
 /* ═══════════════ RAG 对话生成 ═══════════════ */
-function generatePureRoleResponse(npc, query){
-  var responses = {
-    '武功':'我略懂一些武艺，但不敢在人前逞强，您还是去问问那些江湖前辈吧。',
-    '医道':'我不懂医术，不过村里的小翠似乎挺懂药理，你要不问问她？',
-    '江湖':'我这种人一辈子没出过远门，江湖上的事实在不知，惭愧惭愧。',
-    '地理':'这些山川地理的事，我哪记得住，您还是翻翻地图吧。',
-    '历史':'旧事隔了太久，我记不清了，或许老村长知道。',
-    '民俗':'这事我倒知道一些...咱们村里老人常说，凡事有个讲究，不可马虎。',
-    '默认':'嗯...您问的这个，我一时答不上来。容我回去翻翻书卷再答复您。'
+function generatePureRoleResponse(npc,query){
+  var roleResponses={
+    '侠客':'{name}略懂一些武艺，但不敢在人前逞强，您还是去问问那些江湖前辈吧。',
+    '村民':'{name}不懂江湖事，不过村里的{npc2}似乎知道一些，你要不问问{npc2}？',
+    '药师':'{name}不懂武艺，但草药医道{name}倒有几分心得。',
+    '长者':'{name}老了，记性不好，这些事{name}记不清了。',
+    '儒生':'{name}不习武，只读圣贤书，这些事{name}或许可以从史书中找到答案。'
   };
-  for(var key in responses){
-    if(query.indexOf(key)!==-1)return npc.name+'想了想说道：「'+responses[key]+'」';
+  var npcNames=NPC_LIST.map(function(n){return n.name;}).filter(function(n){return n!==npc.name;});
+  var tpl=roleResponses[npc.role]||'{name}想了想：这事我也不太清楚，或许可以问问别人。';
+  var text=tpl.replace('{name}',npc.name).replace('{npc2}',npcNames[0]);
+  var specific={
+    '武功':'我略懂一些武艺，但不敢在人前逞强。',
+    '医道':'我不懂医术，不过村里的小翠似乎挺懂药理。',
+    '江湖':'我这种人一辈子没出过远门，江湖上的事实在不知。',
+    '地理':'这些山川地理的事，我哪记得住。',
+    '历史':'旧事隔了太久，我记不清了。',
+    '民俗':'这事我倒知道一些...咱们村里老人常说，凡事有个讲究。'
+  };
+  var hint='';
+  for(var key in specific){
+    if(query.indexOf(key)!==-1){hint=specific[key];break;}
   }
-  return npc.name+'听了你的问题，摇了摇头：「这事我也不太清楚，或许可以问问别人。」';
+  return npc.name+'想了想说道：「'+(hint||text)+'」';
 }
 
-function generateRAGResponse(npc, query, docs){
-  var context = docs.map(function(d,i){return '【资料'+(i+1)+'】'+d.title+'（'+d.source+'）：'+d.content;}).join('\n');
-  var catLabel = {武功:'武学典籍',医道:'药典方书',江湖:'江湖录',地理:'地理志',历史:'秘闻',民俗:'风俗志'};
-  var catName = catLabel[docs[0].category]||'古籍';
-  var intro = {
+function generateRAGResponse(npc,query,docs){
+  var catIntro={
     '武功':'您问的这门武艺，我恰好翻到过相关典籍。',
     '医道':'您问的这个方子，我在药典里查到过记载。',
     '江湖':'江湖上的事，我在见闻录里读到过。',
@@ -392,107 +490,173 @@ function generateRAGResponse(npc, query, docs){
     '历史':'旧事虽远，武林秘闻中倒有相关记述。',
     '民俗':'这事儿在乡野风俗志里倒有提及。'
   };
-  var lead = intro[docs[0].category]||'让我翻翻手中的典籍。';
-  var body = docs.slice(0,2).map(function(d){return d.content;}).join(' ');
-  var refs = docs.map(function(d){return '（'+d.source+'·'+d.title+'）';}).join('');
-  return npc.name+lead+'「'+body+'」'+refs+'——便是这些典籍中的说法。';
+  var lead=catIntro[docs[0].category]||'让我翻翻手中的典籍。';
+  var body=docs.slice(0,2).map(function(d){return d.content;}).join(' ');
+  var refs=docs.map(function(d){
+    var tag=d.isNpc?' · '+getNPC(NPC_KB[d.entryId||'A']? 'A':'A').name+'手记':' · '+d.source;
+    return '（'+d.source+tag+'）';
+  }).join(' ');
+  var roleFlavor={
+    '侠客':'我虽非医者，但武学典籍倒是常翻。',
+    '村民':'村里的老人说过类似的话，我记了个大概。',
+    '药师':'这正是我在药田边常念叨的方子。',
+    '长者':'老朽走南闯北，倒见过不少相关记载。',
+    '儒生':'此问题可考诸史书，我近日恰好读到。'
+  };
+  var flavor=roleFlavor[npc.role]||'让我翻翻手中的典籍。';
+  return npc.name+'：「'+flavor+' '+lead+' '+body+'」'+refs;
 }
 
 /* ═══════════════ UI 渲染 ═══════════════ */
 function renderNPCOptions(){
-  var el = document.getElementById('npc-options');
-  el.innerHTML = '';
+  var el=document.getElementById('npc-options');
+  el.innerHTML='';
   NPC_LIST.forEach(function(npc){
-    var chip = document.createElement('div');
-    chip.className = 'npc-chip'+(selectedNPC===npc.id?' selected':'');
-    chip.innerHTML = npc.icon+' '+npc.name+'<span class="npc-role">'+npc.role+'</span>';
-    chip.onclick = function(){selectNPC(npc.id);};
+    var chip=document.createElement('div');
+    chip.className='npc-chip'+(selectedNPC===npc.id?' selected':'');
+    chip.innerHTML=npc.icon+' '+npc.name+'<span class="npc-role">'+npc.role+'</span>';
+    chip.onclick=function(){selectNPC(npc.id);};
     el.appendChild(chip);
   });
 }
 
 function selectNPC(id){
-  selectedNPC = id;
+  selectedNPC=id;
   renderNPCOptions();
-  var npc = NPC_LIST.find(function(n){return n.id===id;});
-  document.getElementById('chat-npc-badge').textContent = npc.icon+' '+npc.name+' · '+npc.role;
+  var npc=getNPC(id);
+  document.getElementById('chat-npc-badge').textContent=npc.icon+' '+npc.name+' · '+npc.role;
+  renderNPCKBPanel(npc);
   if(lastSearchQuery)performSearch(false);
 }
 
+function renderNPCKBPanel(npc){
+  var panel=document.getElementById('npc-kb-panel');
+  panel.classList.remove('visible');
+  setTimeout(function(){panel.classList.add('visible');},50);
+  document.getElementById('npc-kb-avatar').textContent=npc.icon;
+  document.getElementById('npc-kb-name').textContent=npc.name;
+  document.getElementById('npc-kb-role').textContent=npc.role;
+  document.getElementById('npc-kb-tags').innerHTML=npc.cats.map(function(c){return '<span class="npc-kb-tag">'+c+'</span>';}).join('');
+  document.getElementById('npc-kb-count').textContent=(npc.kb||0)+' 条专属知识';
+  var items=document.getElementById('npc-kb-items');
+  items.innerHTML='';
+  var entries=NPC_KB[npc.id]||[];
+  entries.forEach(function(e){
+    var div=document.createElement('div');
+    div.className='kb-entry';
+    div.innerHTML='<div class="kb-entry-title">'+e.title+' <span class="kb-entry-source">'+e.source+'</span></div><div class="kb-entry-content">'+e.content+'</div>';
+    items.appendChild(div);
+  });
+}
+
 function updateStats(){
-  document.getElementById('stat-entries').textContent = KB.entries.length;
-  var cats = {};
-  KB.entries.forEach(function(e){cats[e.category]=true;});
-  document.getElementById('stat-categories').textContent = Object.keys(cats).length;
-  document.getElementById('stat-searches').textContent = searchCount;
-  document.getElementById('kb-count').textContent = KB.entries.length;
+  var all=getAllEntries();
+  document.getElementById('stat-entries').textContent=all.length;
+  var exclusive=0;
+  for(var k in NPC_KB){exclusive+=NPC_KB[k].length;}
+  document.getElementById('stat-exclusive').textContent=exclusive;
+  document.getElementById('stat-searches').textContent=searchCount;
+  document.getElementById('kb-count').textContent=all.length;
 }
 
 function renderKBList(){
-  var el = document.getElementById('kb-list');
-  el.innerHTML = '';
-  KB.entries.forEach(function(e){
-    var item = document.createElement('div');
+  var el=document.getElementById('kb-list');
+  el.innerHTML='';
+  var all=getAllEntries();
+  all.forEach(function(e){
+    var isNpc=!!(NPC_KB.A||[]).find(function(n){return n.id===e.id;})||
+      !!(NPC_KB.B||[]).find(function(n){return n.id===e.id;})||
+      !!(NPC_KB.C||[]).find(function(n){return n.id===e.id;})||
+      !!(NPC_KB.D||[]).find(function(n){return n.id===e.id;})||
+      !!(NPC_KB.E||[]).find(function(n){return n.id===e.id;});
+    var item=document.createElement('div');
     item.className='kb-item';
-    item.innerHTML = '<div class="kb-item-title">'+e.title+'<span class="kb-item-cat">'+e.category+'</span></div><div class="kb-item-meta">'+e.source+' · 相关度 '+e.severity+'</div>';
+    var ownerTag='';
+    if(isNpc){
+      for(var k in NPC_KB){
+        var found=NPC_KB[k].find(function(n){return n.id===e.id;});
+        if(found){ownerTag=' <span style="color:var(--azurite);font-size:9px">· '+getNPC(k).name+' 专属</span>';break;}
+      }
+    }
+    item.innerHTML='<div class="kb-item-title">'+e.title+'<span class="kb-item-cat">'+e.category+'</span>'+ownerTag+'</div><div class="kb-item-meta">'+e.source+' · '+e.severity+' 相关度</div>';
     el.appendChild(item);
   });
 }
 
 function animateFlow(){
-  var container = document.getElementById('flow-container');
+  var container=document.getElementById('flow-container');
   container.style.display='flex';
-  var steps = ['flow-keywords','flow-retrieve','flow-rank','flow-inject','flow-generate','flow-guard'];
+  var progress=document.getElementById('search-progress');
+  var fill=document.getElementById('search-progress-fill');
+  progress.classList.add('active');
+  fill.style.width='0%';
+  var steps=['flow-keywords','flow-retrieve','flow-rank','flow-inject','flow-generate','flow-guard'];
+  var arrows=['arrow-1','arrow-2','arrow-3','arrow-4','arrow-5'];
   steps.forEach(function(id){document.getElementById(id).className='flow-step';});
-  var delay = 0;
+  arrows.forEach(function(id){document.getElementById(id).className='flow-arrow';});
+  var delay=0;
   steps.forEach(function(id,i){
     setTimeout(function(){
       document.getElementById(id).className='flow-step active';
+      if(arrows[i])document.getElementById(arrows[i]).className='flow-arrow active';
+      fill.style.width=Math.round(((i+1)/steps.length)*100)+'%';
     },delay);
-    delay+=200;
+    delay+=250;
     setTimeout(function(){
       document.getElementById(id).className='flow-step done';
-    },delay+100);
+      if(arrows[i])document.getElementById(arrows[i]).className='flow-arrow';
+    },delay+120);
   });
+  setTimeout(function(){fill.style.width='0%';progress.classList.remove('active');},delay+800);
 }
 
 function performSearch(animate){
-  var query = document.getElementById('search-input').value.trim();
+  var query=document.getElementById('search-input').value.trim();
   if(!query)return;
-  lastSearchQuery = query;
+  lastSearchQuery=query;
   searchCount++;
   if(animate!==false)animateFlow();
-  var docs = retrieveKnowledge(query,3);
-  lastRetrievedDocs = docs;
+  var docs=retrieveKnowledge(query,3);
+  lastRetrievedDocs=docs;
   renderResults(docs,query);
   updateStats();
 }
 
 function renderResults(docs,query){
-  var el = document.getElementById('results-list');
+  var el=document.getElementById('results-list');
   if(docs.length===0){
-    el.innerHTML = '<div class="empty-state"><div class="eicon">📭</div><div class="etext">未找到相关内容</div><div class="ehint">试试其他关键词，如：太极、少林、金创药、华山</div></div>';
+    el.innerHTML='<div class="empty-state"><div class="eicon">📭</div><div class="etext">未找到相关内容</div><div class="ehint">试试其他关键词，如：太极、少林、金创药、华山</div></div>';
     return;
   }
-  el.innerHTML = '';
+  el.innerHTML='';
   docs.forEach(function(c,i){
-    var doc = c.entry;
-    var card = document.createElement('div');
+    var doc=c.entry;
+    var card=document.createElement('div');
     card.className='result-card';
-    var pct = Math.min(95,Math.max(30,Math.round(80-i*15+(c.score||0)/3)));
-    card.innerHTML =
+    var pct=Math.min(95,Math.max(30,Math.round(80-i*12+(c.score||0)/2)));
+    var ownerTag='';
+    var foundOwner='';
+    for(var k in NPC_KB){
+      var found=NPC_KB[k].find(function(n){return n.id===doc.id;});
+      if(found){foundOwner=getNPC(k);break;}
+    }
+    if(foundOwner){
+      ownerTag='<div class="result-owner">'+foundOwner.icon+' '+foundOwner.name+' 专属知识</div>';
+    }
+    card.innerHTML=
       '<div class="result-header"><span class="result-title">'+(i+1)+'. '+doc.title+'</span><span class="result-score">'+pct+'%</span></div>'+
       '<div class="result-category">'+doc.category+' · '+doc.severity+' 相关度</div>'+
       '<div class="result-content">'+doc.content+'</div>'+
       '<div class="result-source">来源：'+doc.source+'</div>'+
+      ownerTag+
       '<div class="result-keywords">'+doc.keywords.map(function(kw){return '<span class="result-kw">'+kw+'</span>';}).join('')+'</div>';
     el.appendChild(card);
   });
 }
 
 function toggleComparison(){
-  var section = document.getElementById('comparison-section');
-  var btn = document.getElementById('compare-toggle');
+  var section=document.getElementById('comparison-section');
+  var btn=document.getElementById('compare-toggle');
   if(section.classList.contains('visible')){
     section.classList.remove('visible');
     btn.classList.remove('active');
@@ -501,68 +665,82 @@ function toggleComparison(){
   if(!lastSearchQuery){document.getElementById('search-input').focus();return;}
   section.classList.add('visible');
   btn.classList.add('active');
-  var npc = selectedNPC ? NPC_LIST.find(function(n){return n.id===selectedNPC;}) : NPC_LIST[0];
-  var noRagEl = document.getElementById('no-rag-content');
-  var withRagEl = document.getElementById('with-rag-content');
-  var thinkingEl = document.getElementById('rag-thinking');
+  var npc=getNPC(selectedNPC)||NPC_LIST[0];
+  var noRagEl=document.getElementById('no-rag-content');
+  var withRagEl=document.getElementById('with-rag-content');
+  var thinkingEl=document.getElementById('rag-thinking');
   noRagEl.textContent='生成中...';noRagEl.classList.add('loading');
   withRagEl.textContent='检索 + 生成中...';withRagEl.classList.add('loading');
   thinkingEl.textContent='';
   setTimeout(function(){
     noRagEl.classList.remove('loading');
-    noRagEl.textContent = generatePureRoleResponse(npc, lastSearchQuery);
+    noRagEl.textContent=generatePureRoleResponse(npc,lastSearchQuery);
   },600);
   setTimeout(function(){
     withRagEl.classList.remove('loading');
-    var docs = lastRetrievedDocs.length>0 ? lastRetrievedDocs.map(function(c){return c.entry;}) : retrieveKnowledge(lastSearchQuery,3).map(function(c){return c.entry;});
-    withRagEl.textContent = docs.length>0 ? generateRAGResponse(npc, lastSearchQuery, docs) : '未检索到相关知识，回退为纯角色回答：'+generatePureRoleResponse(npc, lastSearchQuery);
-    thinkingEl.textContent = docs.length>0 ? '📚 注入 '+docs.length+' 条知识 · 来源: '+docs.map(function(d){return d.source;}).join(', ') : '未检索到知识';
+    var docs=lastRetrievedDocs.length>0?lastRetrievedDocs.map(function(c){return {entry:c.entry,source:c.entry.source,isNpc:c.isNpc};}):[];
+    if(docs.length===0){
+      docs=retrieveKnowledge(lastSearchQuery,3).map(function(c){return {entry:c.entry,source:c.entry.source,isNpc:c.isNpc};});
+    }
+    withRagEl.textContent=docs.length>0?generateRAGResponse(npc,lastSearchQuery,docs.map(function(d){return d.entry;})):'未检索到相关知识。';
+    thinkingEl.textContent=docs.length>0?'📚 注入 '+docs.length+' 条知识 · '+docs.map(function(d){return d.source;}).join(', '):'未检索到知识';
   },1400);
 }
 
 /* ═══════════════ 对话功能 ═══════════════ */
 function sendChat(){
-  var input = document.getElementById('chat-input');
-  var text = input.value.trim();
+  var input=document.getElementById('chat-input');
+  var text=input.value.trim();
   if(!text)return;
   input.value='';
-  var msgs = document.getElementById('chat-messages');
-  var userMsg = document.createElement('div');
+  var msgs=document.getElementById('chat-messages');
+  var userMsg=document.createElement('div');
   userMsg.className='chat-msg user';
   userMsg.innerHTML='<div class="chat-bubble">'+escHtml(text)+'</div><div class="chat-meta">你 · '+nowStr()+'</div>';
   msgs.appendChild(userMsg);
+  msgs.scrollTop=msgs.scrollHeight;
 
-  var npc = selectedNPC ? NPC_LIST.find(function(n){return n.id===selectedNPC;}) : NPC_LIST[0];
+  var typing=document.createElement('div');
+  typing.className='chat-msg agent';
+  typing.innerHTML='<div class="chat-typing"><span></span><span></span><span></span></div>';
+  msgs.appendChild(typing);
+  msgs.scrollTop=msgs.scrollHeight;
+
+  var npc=getNPC(selectedNPC)||NPC_LIST[0];
   setTimeout(function(){
-    var docs = retrieveKnowledge(text,3);
-    var isRag = docs.length>0;
-    var response = isRag ? generateRAGResponse(npc, text, docs) : generatePureRoleResponse(npc, text);
-    var agentMsg = document.createElement('div');
+    typing.remove();
+    var docs=retrieveKnowledge(text,3);
+    var isRag=docs.length>0;
+    var response=isRag?generateRAGResponse(npc,text,docs.map(function(d){return d.entry;})):generatePureRoleResponse(npc,text);
+    var agentMsg=document.createElement('div');
     agentMsg.className='chat-msg agent';
-    var ragNote = isRag ? '<div class="chat-rag-indicator">RAG 检索 · '+docs.length+' 条知识 · '+docs.map(function(d){return d.title;}).join(', ')+'</div>' : '';
-    agentMsg.innerHTML='<div class="chat-agent-avatar">'+npc.icon+'</div><div class="chat-bubble">'+escHtml(response)+' '+ragNote+'</div><div class="chat-meta">'+npc.name+' · '+npc.role+' · '+nowStr()+'</div>';
+    var ragNote='';
+    if(isRag){
+      var npcHits=docs.filter(function(d){return d.isNpc;}).length;
+      var srcNames=docs.map(function(d){
+        var foundOwner='';
+        for(var k in NPC_KB){
+          var found=NPC_KB[k].find(function(n){return n.id===d.entry.id;});
+          if(found){foundOwner=getNPC(k).name;break;}
+        }
+        return foundOwner?foundOwner+'手记':d.entry.source;
+      }).join(', ');
+      ragNote='<div class="chat-rag-indicator"><span class="rag-dot"></span>RAG · '+docs.length+' 条（'+npcHits+' 条专属）· '+srcNames+'</div>';
+    }
+    agentMsg.innerHTML='<div class="chat-agent-avatar">'+npc.icon+'</div><div class="chat-bubble">'+escHtml(response)+'</div>'+ragNote+'<div class="chat-meta">'+npc.name+' · '+npc.role+' · '+nowStr()+'</div>';
     msgs.appendChild(agentMsg);
     msgs.scrollTop=msgs.scrollHeight;
-  },500+Math.random()*500);
-  msgs.scrollTop=msgs.scrollHeight;
+  },500+Math.random()*600);
 }
-
-function nowStr(){
-  var d=new Date();
-  return d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0')+':'+d.getSeconds().toString().padStart(2,'0');
-}
-function escHtml(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
 
 /* ═══════════════ 初始化 ═══════════════ */
 function init(){
-  initKnowledgeIndex();
   renderNPCOptions();
   renderKBList();
   updateStats();
-  selectedNPC='A';
-  renderNPCOptions();
-  var npc=NPC_LIST[0];
+  var npc=getNPC(selectedNPC);
   document.getElementById('chat-npc-badge').textContent=npc.icon+' '+npc.name+' · '+npc.role;
+  renderNPCKBPanel(npc);
 }
 init();
 </script>
